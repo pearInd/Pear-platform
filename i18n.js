@@ -6,7 +6,7 @@
    deliberately not defer/async. It has to run before the browser paints
    the body, because it sets <html lang> / <html dir> and swaps the
    document title + meta description.
-
+שגשגשג
    STRICT RESOLUTION ORDER (first hit wins):
      1. ?lang=he|en in the URL — what the hreflang alternates point at,
         so a search engine landing on /?lang=en gets English markup with
