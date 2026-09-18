@@ -297,8 +297,9 @@ const GUIDE_HTML = `
 
   <!-- Support note -->
   <section>
+    <!-- Decorative emoji <b> removed; see the matching note in
+         index.html. The flex gap collapses with a single child. -->
     <div class="pa-guide__note">
-      <b aria-hidden="true">💡</b>
       <p data-i18n-html="guide.note">
         אין לכם עדיין <code dir="ltr">STORE_ID</code>?
         <a href="mailto:pearytrank@gmail.com">צרו קשר</a>

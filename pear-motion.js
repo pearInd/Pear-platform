@@ -3,13 +3,19 @@
    ------------------------------------------------------------------
    The interaction layer for the landing view: custom cursor, magnetic
    buttons, card tilt with a cursor-tracked highlight, staggered scroll
-   reveals, light parallax, nav state and the footer clock.
+   reveals, light parallax, nav state, the footer clock — and the
+   skyline hero's copy defocus.
 
    Deliberately NOT included: a smooth-scroll hijacker. This page routes
    three views, opens a server-gated docs route and moves the viewport
    from data-scroll handlers; taking ownership of the scroll position
    away from the browser risks all three for a nicety, so the native
    scroller keeps it and GSAP animates on top.
+
+   Also NOT included any more: scroll-driven video. The hero briefly
+   scrubbed pear-ad.mp4's currentTime across a ~275vh runway; the clip
+   is now an ordinary autoplaying background video declared in the
+   markup, and nothing in this file reads or writes its playhead.
 
    Everything here degrades to nothing: if GSAP never loads, the .pa-js
    class is dropped and the stylesheet stops hiding anything.
@@ -68,6 +74,7 @@
       initTouch();
       initReveals();
       initParallax();
+      initSkyline();
       initNav();
       initHud();
       initClock();
@@ -474,6 +481,83 @@
         scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1 }
       });
     });
+  }
+
+  /* ───────────────────── SKYLINE HERO ───────────────────────────── */
+  /* All that is left of the hero here is the copy's EXIT: the headline,
+     lede and CTA fade and lift away as the hero scrolls out. Nothing in
+     this file touches the film.
+
+     NO BLUR. This used to be a defocus — the same tween carried
+     `filter: blur(0px)` -> `blur(16px)` alongside the fade — and the
+     blur is removed. Two reasons, and the first is the one that
+     matters: once the phone hero became a full-bleed film with the copy
+     overlaid ON it, a copy block softening over a sharp video read as
+     the VIDEO going out of focus, which is what it was reported as. The
+     second is cost: blur is the one filter that cannot be composited
+     from a cached layer, so scrubbing it re-rasterised the whole copy
+     block on every frame of the scroll.
+
+     Nothing else on this page animates `filter`, and nothing ever
+     filtered the film or the stage — verified in the browser across the
+     hero's whole scroll range, at 390px and 1440px: #demoVideoEl and
+     .pa-skyline__stage compute `filter: none` at every scroll position.
+     The one remaining blur in the project is .pa-contact__wash's static
+     blur(28px), a decorative radial wash in the contact section that is
+     not scroll-driven and not on this hero.
+
+     The scroll-scrubbing that used to live in this function — a ~275vh
+     runway, a position:sticky stage, and scroll progress mapped onto
+     the clip's currentTime — has been removed. #hero is a plain 100svh
+     section in normal flow and pear-ad.mp4 is an ordinary background
+     video: autoplay + muted + loop + playsinline in the markup, with
+     the browser owning playback end to end. The only script that goes
+     near it is the IntersectionObserver in index.html block 7b, which
+     parks the decoder while the hero is off-screen.
+
+     That also means there is nothing left to stand down: no runway to
+     collapse, no sticky to release, no playback for a fallback to
+     start. If this file never runs, or GSAP never loads, the hero is
+     already correct — it is a 100svh section with an autoplaying video
+     in it — and the copy simply never moves. */
+
+  function initSkyline() {
+    var sky = $('#hero');
+    var copy = $('#skyCopy');
+    if (!sky || !copy) return;
+
+    /* No exit tween under reduced motion. The stylesheet pins the copy
+       opaque and upright with !important for the same case; this is what
+       stops the tween being built in the first place. */
+    if (REDUCED) return;
+
+    /* The copy fades and lifts as the hero leaves. `filter` is NOT in
+       this tween — see the note above — so the only properties being
+       scrubbed are opacity and transform, both of which a compositor
+       can animate on a cached layer without repainting the block.
+
+       fromTo, not to: fromTo's immediateRender paints the start state at
+       rest, which is what the copy should look like before any scrolling
+       anyway. It also pins the resting values explicitly rather than
+       inheriting whatever a reveal animation happened to leave behind.
+
+       The window is exactly one viewport of scroll: `top top` is scroll
+       position 0, because #hero starts flush with the top of the page,
+       and `bottom top` is the moment the hero's last pixel leaves. So
+       the copy is full strength on arrival and fully gone the instant
+       #playground takes the screen. */
+    gsap.fromTo(copy,
+      { opacity: 1, y: 0 },
+      {
+        opacity: 0, y: -52,
+        ease: 'power1.in',
+        scrollTrigger: {
+          trigger: sky,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.5
+        }
+      });
   }
 
   /* ──────────────────────── CHROME ──────────────────────────────── */

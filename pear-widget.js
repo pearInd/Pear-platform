@@ -8,7 +8,7 @@
    What it does:
      1. Scans the host page for product images (og:image → known product-image
         selectors → generic large-image heuristic).
-     2. Injects a "👗 נסה עלי" button onto each product image.
+     2. Injects a "נסה עלי" button onto each product image.
      3. On click, opens a fullscreen modal with the PEAR fitting room in an
         iframe, handing over the garment via URL params
         (garment_url / garment_type / garment_name), plus an OPTIONAL
@@ -386,7 +386,11 @@
     var btn = d.createElement("button");
     btn.className = "pear-widget-btn";
     btn.type = "button";
-    btn.textContent = "👗 נסה עלי";
+    /* Text only — the dress emoji that led this label was removed in the
+       site-wide emoji sweep. Note this button renders on MERCHANT
+       storefronts, so the change reaches every shop already embedding
+       the widget the next time they load this file. */
+    btn.textContent = "נסה עלי";
     btn.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();

@@ -154,13 +154,12 @@
       'a11y.viewDocs':      'מדריך הטמעת הוויג\'ט',
       'a11y.viewContact':   'צור קשר',
       /* heroVideo/vtonPause/vtonPlay labelled the hero phone's silent
-         loop and its play toggle. Both went with that stage. The vton*
-         names that remain are the sound widget's, which moved intact
-         onto the cinematic player and kept every id it binds. */
+         loop and its play toggle; vtonMute/vtonUnmute/vtonVolume
+         labelled the mute button and volume slider that later sat on
+         the cinematic player. All six are gone with the controls they
+         named — the hero film is silent and has no controls at all.
+         demoVideo is the one survivor: it labels the <video> itself. */
       'a11y.demoVideo':     'סרטון הדגמה מלא של הוידג\'ט PEAR AI Virtual Try-On',
-      'a11y.vtonMute':      'השתקת הקול',
-      'a11y.vtonUnmute':    'ביטול השתקה',
-      'a11y.vtonVolume':    'עוצמת קול',
       'a11y.directMeasure': 'מדידה וירטואלית חד-פעמית, ללא שלב הרשמה, פעם אחת בביקור',
       'a11y.fittingRoom':   'PEAR, מדידה וירטואלית חד-פעמית',
       'a11y.closeModal':    'סגירה',
@@ -185,20 +184,45 @@
          לחנות" described the mechanism; this states the outcome the
          buyer is actually shopping for and names the cost it removes.
          Every figure on the page is unchanged. */
-      'hero.title':         '<span dir="ltr" class="block text-lg sm:text-xl font-bold text-pear-600 tracking-tight mb-2"><span class="brand-pear">PEAR</span> Platform · AI Virtual Try-On &amp; Measurement</span>\n          מידה מדויקת.\n          <span class="block mt-2 text-pear-600">בלי חדר מדידה.</span>',
-      'hero.sub':           '<span class="brand-pear">PEAR</span> מלביש את הבגד על הלקוח בזמן אמת וממליץ מידה. הוא קונה בביטחון, אתם סופגים פחות החזרות.',
-      'hero.ctaPrimary':    '✨ נסו את הוויג\'ט · 30 שניות',
-      'hero.ctaSecondary':  '▶ צפו ב-17 שניות',
+      /* The LTR product-name kicker that opened this headline was
+         REMOVED, here and from the matching inline paint in index.html.
+         The two must still mirror each other exactly; see the note at
+         that <h1>. The old wording is not quoted here on purpose — this
+         file is served to the browser, so a comment repeating it would
+         ship the very string the removal was meant to retire. */
+      /* hero.title is KEPT as it stands, and that is a decision, not an
+         oversight. Two things pin it: .pa-skyline__title is capped at
+         max-width 15ch, so a longer line wraps to three rows and starts
+         pushing the CTA down a 100svh stage; and the existing pair is
+         already the strongest construction available in that width — a
+         concrete promise and the differentiator, in parallel fragments.
+         Every longer rewrite tried here traded the rhyme and the fit for
+         nothing. If it is to change, the CSS measure changes with it. */
+      'hero.title':         'מידה מדויקת.\n          <span class="block mt-2 text-pear-600">בלי חדר מדידה.</span>',
+      /* Was three clauses ending on the mechanism. Now two, ending on
+         the number the buyer is actually here for. */
+      'hero.sub':           'הלקוח רואה את הבגד על עצמו ומקבל מידה מדויקת, בזמן אמת. אתם מקבלים יותר המרות ופחות החזרות.',
+      'hero.ctaPrimary':    'נסו את הוויג\'ט · 30 שניות',
+      /* hero.ctaSecondary ("▶ צפו ב-17 שניות") and hero.scrollHint
+         ("גללו כדי להריץ את הסרטון") were removed with the scroll-
+         scrubbing hero: one played a clip that scroll was holding
+         still, the other told the visitor to scroll to play it. The
+         clip plays itself now, so both statements were false. */
       'hero.proof1':        '<span class="font-bold text-slate-700">100% ביטחון בהתאמה</span> ברגע התשלום',
       'hero.proof2':        '<span class="font-bold text-slate-700">אפס Bracketing</span>, סוף להזמנת שלוש מידות',
       'hero.proof3':        '<span class="font-bold text-slate-700">עד כ-25% פחות החזרות</span> ופחות עלויות תפעול',
       'hero.badgeSize':     'מידה מומלצת: <span class="font-mono text-pear-600">M</span>',
-      'hero.badgeRealtime': 'התאמה בזמן אמת ✨',
+      'hero.badgeRealtime': 'התאמה בזמן אמת',
 
-      /* — live widget playground — */
+      /* — live widget playground —
+         The old title claimed the widget was "real" and "right here",
+         which is two ways of saying the same thing. The new one answers
+         the objection a visitor actually arrives with — that this is a
+         canned demo — and the sub stops instructing (the button below it
+         already says what to do) and just states what they are seeing. */
       'play.eyebrow':      'Live Widget · בלי הרשמה',
-      'play.title':        'זה הוויג\'ט האמיתי. ממש כאן.',
-      'play.sub':          'בדיוק מה שהלקוח רואה בדף מוצר. לחצו, ומדדו.',
+      'play.title':        'זה הוויג\'ט. לא הדגמה.',
+      'play.sub':          'בדיוק מה שהלקוח רואה בדף מוצר.',
       'play.productAlt':   'הוידג\'ט PEAR AI Virtual Try-On בדף מוצר אופנה, חולצת הלוגו של PEAR, גזרה רפויה/אוברסייז, מידות S-XXL',
       'play.modelAlt':     'חולצת PEAR האוברסייז לבושה על דוגמן/ית',
       'play.modelPreview': 'תצוגה על דוגמן/ית',
@@ -210,7 +234,10 @@
       'play.fitTag':       'גזרה רפויה / אוברסייז',
       'play.fitGuidance':  'סילואט אוברסייז: רדו מידה אחת להתאמה סטנדרטית, או בחרו את המידה הרגילה למראה בוקסי מכוון.',
       'play.physicsNote':  'ארבע תוכניות, כולן ניתנות לעריכה: אתם קובעים כמה מדידות מקבל כל משתמש.',
-      'play.cta':          '⚡ מדידה חד-פעמית מהירה',
+      /* Was a description of the offer ("a quick one-time measurement").
+         A button should name the action: play.ctaNote directly beneath
+         it already carries the "no signup, once per visit" terms. */
+      'play.cta':          'מדדו עכשיו',
       'play.ctaNote':      'בלי הרשמה. שימוש אחד בכל ביקור.',
       'play.ctaUsed':      '✓ המדידה נוצלה לביקור הזה',
       'play.ctaUsedTitle': 'כבר בוצעה מדידה חד-פעמית בביקור הזה',
@@ -225,9 +252,14 @@
          names the figure its card animates, and each figure is one the
          page already states: 100% from hero.proof1, 3→0 from proof2,
          ~25% from proof3 and value.card3Body. */
+      /* Title and sub used to say the same thing twice — "pillars of
+         profitability" over "what changes in the bottom line". The title
+         now makes the claim and the sub previews the three cards under
+         it, so the pair does two jobs instead of one. "עמודי תווך" also
+         went: it is consultancy language, not a promise. */
       'value.eyebrow':       'השפעה עסקית',
-      'value.title':         'שלושה עמודי תווך לרווחיות באופנה',
-      'value.sub':           'מה משתנה בשורת הרווח כשמפסיקים לנחש מידה.',
+      'value.title':         'שלוש דרכים שמידה מדויקת מחזירה כסף',
+      'value.sub':           'המרה, מלאי ותפעול — מה משתנה בכל אחד מהם.',
       'value.card1Tag':      'המרה',
       'value.card1Title':    'הגדלת המרות',
       'value.card1Metric':   'ביטחון בהתאמה',
@@ -247,17 +279,25 @@
       'value.card3Bullet1':  'פחות סחורה נכנסת למיון',
       'value.card3Bullet2':  'מחזור מזומנים קצר יותר',
 
-      /* — final CTA — */
-      'cta.title':     'מוכנים להוריד את אחוז ההחזרות?',
-      'cta.sub':       'חמש דקות מהדבקת הקוד ועד המדידה הראשונה.',
-      'cta.primary':   '✨ נסו את הוויג\'ט',
+      /* — final CTA —
+         The closing headline was a yes/no question, which invites "not
+         today". It states the action instead, and keeps the returns
+         number that is the whole reason to take it. */
+      'cta.title':     'התחילו להוריד החזרות כבר השבוע',
+      'cta.sub':       'חמש דקות מהקוד ועד המדידה הראשונה.',
+      /* cta.primary ("נסו את הוויג'ט") was REMOVED with the button it
+         labelled: it scrolled back up to #playground, which the visitor
+         has already passed by the time they reach the closing section. */
       'cta.docs':      'למדריך ההטמעה ←',
-      'cta.contact':   'דברו איתנו 💬',
+      'cta.contact':   'דברו איתנו',
       'cta.platforms': 'Shopify · WooCommerce · Magento · פיתוח מותאם',
 
       /* — docs view + access gate — */
       'docs.title':             'מדריך הטמעת הוויג\'ט',
-      'docs.sub':               'הטמעת הוויג\'ט של <span class="brand-pear">PEAR</span> לוקחת <span class="font-semibold text-slate-700">פחות מ-5 דקות</span> ולא דורשת\n        שינויים בארכיטקטורת האתר. שלושה שלבים והלקוחות שלכם מודדים.',
+      /* Was two sentences making the same promise twice — "under five
+         minutes, no architecture changes" and then "three steps". One
+         sentence, both facts, no repetition. */
+      'docs.sub':               'הטמעה של <span class="font-semibold text-slate-700">פחות מ-5 דקות</span>, בשלושה שלבים, בלי שינוי בארכיטקטורת האתר.',
       'docs.gateTitle':         'המדריך נעול לקהל הרחב',
       'docs.gateSub':           'גישה למדריך ההטמעה הטכני ניתנת באישור ידני של צוות הפיתוח.',
       'docs.gatePlaceholder':   'קוד גישה',
@@ -271,7 +311,7 @@
 
       /* — contact — */
       'contact.title':          'בואו נדבר',
-      'contact.sub':            'שאלה על הטמעה, בקשת דמו למותג שלכם, או סתם רוצים להכיר?\n        מלאו את הטופס או פנו אלינו ישירות.',
+      'contact.sub':            'שאלה על הטמעה או דמו למותג שלכם — מלאו את הטופס או פנו אלינו ישירות.',
       'contact.fieldName':      'שם מלא',
       'contact.phName':         'ישראל ישראלי',
       'contact.fieldEmail':     'אימייל',
@@ -307,8 +347,8 @@
       'prefill.integration.subject': 'עזרה בהטמעת PEAR באתר',
       'prefill.integration.message': 'היי, אני מנסה להטמיע את PEAR באתר שלי ואשמח לקבל עזרה קלה מהצוות הטכני שלכם.',
       'prefill.docsAccess.subject':  'בקשת גישה למדריך ההטמעה',
-      'prefill.docsAccess.message':  '🔐 בקשת גישה למדריך ההטמעה\n\nהיי, אשמח לקבל קוד גישה למדריך ההטמעה הטכני של PEAR.\n\n(לאישור: השיבו לכתובת המייל הזו עם קוד הגישה)',
-      'prefill.docsAccess.type':     'בקשת גישה למדריך ההטמעה 🔐',
+      'prefill.docsAccess.message':  'בקשת גישה למדריך ההטמעה\n\nהיי, אשמח לקבל קוד גישה למדריך ההטמעה הטכני של PEAR.\n\n(לאישור: השיבו לכתובת המייל הזו עם קוד הגישה)',
+      'prefill.docsAccess.type':     'בקשת גישה למדריך ההטמעה',
 
       /* — the gated implementation guide (markup lives in api/get-docs.js) — */
       'guide.reqTitle':    'הקדמה ודרישות מערכת',
@@ -357,13 +397,12 @@
       'a11y.viewDocs':      'Widget integration guide',
       'a11y.viewContact':   'Contact us',
       /* heroVideo/vtonPause/vtonPlay labelled the hero phone's silent
-         loop and its play toggle. Both went with that stage. The vton*
-         names that remain are the sound widget's, which moved intact
-         onto the cinematic player and kept every id it binds. */
+         loop and its play toggle; vtonMute/vtonUnmute/vtonVolume
+         labelled the mute button and volume slider that later sat on
+         the cinematic player. All six are gone with the controls they
+         named — the hero film is silent and has no controls at all.
+         demoVideo is the one survivor: it labels the <video> itself. */
       'a11y.demoVideo':     'PEAR AI Virtual Try-On Widget, full demo video',
-      'a11y.vtonMute':      'Mute sound',
-      'a11y.vtonUnmute':    'Unmute sound',
-      'a11y.vtonVolume':    'Volume',
       'a11y.directMeasure': 'One-time virtual try-on, no signup step, once per visit',
       'a11y.fittingRoom':   'PEAR, one-time virtual try-on',
       'a11y.closeModal':    'Close',
@@ -387,20 +426,32 @@
          The old sub ran 31 words through four gerunds before reaching a
          benefit. This is the same promise in two sentences, and every
          figure on the page is unchanged. */
-      'hero.title':         '<span dir="ltr" class="block text-lg sm:text-xl font-bold text-pear-600 tracking-tight mb-2"><span class="brand-pear">PEAR</span> Platform · Real-Time AI Virtual Try-On</span>\n          The right size.\n          <span class="block mt-2 text-pear-600">No fitting room.</span>',
-      'hero.sub':           '<span class="brand-pear">PEAR</span> puts the garment on your shopper in real time and recommends their size. They buy with confidence. You eat fewer returns.',
-      'hero.ctaPrimary':    '✨ Try the widget · 30 seconds',
-      'hero.ctaSecondary':  '▶ Watch 17 seconds',
+      /* The LTR product-name kicker that opened this headline — worded
+         differently here than in the Hebrew — was REMOVED to match, so
+         the span does not come back on a language switch and reopen the
+         gap the removal was meant to close. Wording not quoted, for the
+         reason given in the Hebrew dictionary above. */
+      /* Kept, for the reasons given against the Hebrew hero.title. */
+      'hero.title':         'The right size.\n          <span class="block mt-2 text-pear-600">No fitting room.</span>',
+      /* Was three sentences and 22 words. Two now, closing on the
+         business outcome rather than on how the product works. */
+      'hero.sub':           'Your shopper sees the garment on themselves and gets their exact size, in real time. You get more conversions and fewer returns.',
+      'hero.ctaPrimary':    'Try the widget · 30 seconds',
+      /* hero.ctaSecondary and hero.scrollHint removed — see the Hebrew
+         dictionary above for why. */
       'hero.proof1':        '<span class="font-bold text-slate-700">100% fit confidence</span> at checkout',
       'hero.proof2':        '<span class="font-bold text-slate-700">Zero bracketing</span>, no more 3-size orders',
       'hero.proof3':        '<span class="font-bold text-slate-700">~25% fewer returns</span> and lower OPEX',
       'hero.badgeSize':     'Recommended size: <span class="font-mono text-pear-600">M</span>',
-      'hero.badgeRealtime': 'Real-time try-on ✨',
+      'hero.badgeRealtime': 'Real-time try-on',
 
-      /* — live widget playground — */
+      /* — live widget playground —
+         Same reasoning as the Hebrew: the title answers the "is this a
+         canned demo?" objection instead of asserting realness twice, and
+         the sub stops instructing, since the button already does. */
       'play.eyebrow':      'Live Widget · No Signup Required',
-      'play.title':        'This is the real widget. Right here.',
-      'play.sub':          'Exactly what your shopper sees on a product page. Tap it, and measure.',
+      'play.title':        'This is the widget. Not a demo.',
+      'play.sub':          'Exactly what customers see on the product page.',
       'play.productAlt':   'PEAR AI Virtual Try-On Widget on a fashion product page, PEAR Signature Logo Tee, cream, relaxed/oversized fit, sizes S-XXL',
       'play.modelAlt':     'The PEAR oversized tee worn on a model',
       'play.modelPreview': 'On Model Preview',
@@ -411,8 +462,9 @@
       'play.productMeta':  'Beige · sizes S-XXL',
       'play.fitTag':       'Relaxed / Oversized Fit',
       'play.fitGuidance':  'Oversized silhouette: size down for a standard fit, or select true size for an intentional boxy look.',
-      'play.physicsNote':  'Four fully editable plans: you set how many try-ons each user gets.',
-      'play.cta':          '⚡ Quick one-time measurement',
+      'play.physicsNote':  'Four fully customizable plans: you set how many try-ons each user gets.',
+      /* Names the action; play.ctaNote under it carries the terms. */
+      'play.cta':          'Measure now',
       'play.ctaNote':      'No signup. One use per visit.',
       'play.ctaUsed':      '✓ Fitting already used this visit',
       'play.ctaUsedTitle': 'You have already used your one-time fitting on this visit',
@@ -431,9 +483,11 @@
          names the figure its card animates, and each figure is one the
          page already states: 100% from hero.proof1, 3→0 from proof2,
          ~25% from proof3 and value.card3Body. */
+      /* Title makes the claim, sub previews the three cards — the old
+         pair said the same thing twice, in consultancy language. */
       'value.eyebrow':       'Business impact',
-      'value.title':         'Three pillars of fashion profitability',
-      'value.sub':           'What changes across your P&L when shoppers stop guessing.',
+      'value.title':         'Three ways the right size pays you back',
+      'value.sub':           'Conversion, inventory, operations — what changes in each.',
       'value.card1Tag':      'Conversion',
       'value.card1Title':    'Conversion Boost',
       'value.card1Metric':   'fit confidence',
@@ -453,17 +507,19 @@
       'value.card3Bullet1':  'Less inbound to sort and restock',
       'value.card3Bullet2':  'Shorter cash-conversion cycle',
 
-      /* — final CTA — */
-      'cta.title':     'Ready to let your shoppers try before they buy?',
-      'cta.sub':       'Five minutes from first paste to first try-on.',
-      'cta.primary':   '✨ Try the widget',
+      /* — final CTA —
+         A yes/no question invites "not today"; this states the action
+         and keeps the number that justifies taking it. */
+      'cta.title':     'Start cutting returns this week',
+      'cta.sub':       'Five minutes from paste to first try-on.',
+      /* cta.primary removed — see the Hebrew dictionary above. */
       'cta.docs':      'To the integration guide →',
-      'cta.contact':   'Talk to us 💬',
+      'cta.contact':   'Talk to us',
       'cta.platforms': 'Shopify · WooCommerce · Magento · custom builds',
 
       /* — docs view + access gate — */
       'docs.title':             'Widget integration guide',
-      'docs.sub':               'Installing the <span class="brand-pear">PEAR</span> widget takes <span class="font-semibold text-slate-700">under 5 minutes</span> and needs no\n        changes to your site architecture. Three steps and your shoppers are trying garments on.',
+      'docs.sub':               'Install in <span class="font-semibold text-slate-700">under 5 minutes</span>, in three steps, with no changes to your site architecture.',
       'docs.gateTitle':         'This guide is not public',
       'docs.gateSub':           'Access to the technical integration guide is granted manually by the development team.',
       'docs.gatePlaceholder':   'Access code',
@@ -477,7 +533,7 @@
 
       /* — contact — */
       'contact.title':          'Let\'s talk',
-      'contact.sub':            'A question about integration, a demo for your brand, or just want to say hello?\n        Fill in the form or reach us directly.',
+      'contact.sub':            'A question about integration, or a demo for your brand — fill in the form or reach us directly.',
       'contact.fieldName':      'Full name',
       'contact.phName':         'Jane Doe',
       'contact.fieldEmail':     'Email',
@@ -513,8 +569,8 @@
       'prefill.integration.subject': 'Help integrating PEAR on our site',
       'prefill.integration.message': 'Hi, I am trying to integrate PEAR on my site and would appreciate a hand from your technical team.',
       'prefill.docsAccess.subject':  'Access request for the integration guide',
-      'prefill.docsAccess.message':  '🔐 Access request for the integration guide\n\nHi, I would like an access code for the PEAR technical integration guide.\n\n(To approve: reply to this email address with the access code)',
-      'prefill.docsAccess.type':     'Integration guide access request 🔐',
+      'prefill.docsAccess.message':  'Access request for the integration guide\n\nHi, I would like an access code for the PEAR technical integration guide.\n\n(To approve: reply to this email address with the access code)',
+      'prefill.docsAccess.type':     'Integration guide access request',
 
       /* — the gated implementation guide (markup lives in api/get-docs.js) — */
       'guide.reqTitle':    'Overview and requirements',

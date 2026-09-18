@@ -56,6 +56,27 @@
   --pa-radius-lg: 34px;
   --pa-pill: 999px;
 
+  /* Published height of the fixed nav capsule, for anything that has to
+     sit clear of it — currently the hero's badge row, which overlays a
+     full-bleed film and has no layout relationship to the bar at all.
+     The bar is slimmed at 860px and re-declares this there; nothing that
+     reads it should hard-code a figure of its own.
+
+     MEASURED, not guessed, because a figure that is too small silently
+     reinstates the overlap it exists to prevent. Desktop, at 16px root
+     and the body's 1.625 line-height:
+
+       tallest child is the CTA  .pa-btn--sm
+         .8rem x 1.625 + .62rem x 2      = 40.6px
+       + .pa-nav__bar padding .5rem x 2  =  16.0px
+       + its 1px border, top and bottom  =   2.0px
+       + .pa-nav padding 1.35rem x 2     =  43.2px
+                                           ------
+                                          101.8px = 6.36rem
+
+     Rounded up. Re-derive this if any of those five declarations move. */
+  --pa-nav-h: 6.4rem;
+
   --pa-ease-out: cubic-bezier(.16, 1, .3, 1);
   --pa-ease-io:  cubic-bezier(.65, .05, .36, 1);
 }
@@ -402,15 +423,17 @@ body.pa .pa-nav {
 .pa-nav__tools { display: flex; align-items: center; gap: .45rem; flex: none; }
 
 /* ═════════════════ LIQUID GLASS component system ══════════════════
-   Shared by the language switch and both video sound widgets (hero
-   phone + demo band): one translucent, blurred material recipe — it
-   works over both the light hero card and the dark onyx band since it
-   mostly picks up whatever is behind it — plus one drag-physics engine
-   (makeElasticDrag, block 10) giving every draggable knob here the
-   same rubber-band overshoot past its track's edges and a spring
-   snap-back on release, instead of three separate hand-rolled drags.
+   One translucent, blurred material recipe plus one drag-physics engine
+   (makeElasticDrag, block 10), giving a draggable knob its rubber-band
+   overshoot past the track's edges and a spring snap-back on release.
    .pa-glass is the track/surface look; .pa-glass-knob is the frosted
-   circular handle that rides on top of it. ═══════════════════════ */
+   circular handle that rides on top of it.
+
+   The language switch is the only caller left. The system was built for
+   three — the switch and the two video sound widgets — and the sound
+   widgets are gone; the material rules below are kept as a system
+   rather than folded into .pa-lang because they are still the recipe
+   any future glass control should be cut from. ═══════════════════ */
 .pa-glass {
   background: linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.10));
   border: 1px solid rgba(255,255,255,.38);
@@ -431,14 +454,12 @@ body.pa .pa-nav {
               width .45s cubic-bezier(.175,.885,.32,1.275);
 }
 .is-dragging .pa-glass-knob { transition: none; }
-/* transform itself is NOT set here: the sound-slider thumb positions
-   via left/margin-top so JS can set transform:scaleX(...) directly,
-   but the language-switch thumb positions via transform:translateX(),
-   so its stretch has to be combined into that same string in JS —
-   one shared CSS rule can't know which case it's in, so both callers
-   (block 10) just write the right transform themselves. This rule only
-   turns the spring transition off while a stretch is active, so the
-   stretch itself tracks the pointer immediately instead of lagging. */
+/* transform itself is NOT set here: the language-switch thumb positions
+   via transform:translateX(), so its edge-stretch has to be combined
+   into that same string in JS rather than applied from a rule of its
+   own. This rule only turns the spring transition off while a stretch
+   is active, so the stretch tracks the pointer immediately instead of
+   lagging behind it. */
 .pa-glass-knob.is-elastic { transition: none; }
 
 /* the flash at the moment a drag first reaches either edge */
@@ -483,56 +504,14 @@ body.pa .pa-nav {
 .pa-lang button:hover { color: var(--pa-ink); }
 .pa-lang button[aria-pressed="true"] { color: var(--pa-ink); font-weight: 700; }
 
-/* video sound widgets — shared by the hero phone (#vtonSound) and the
-   demo band (#demoSound); both anchor to the same bottom corner of
-   their own video frame, so one class carries the position too. */
-.pa-glass-sound {
-  position: absolute; bottom: 1rem; inset-inline-end: 1rem; z-index: 3;
-  display: flex; align-items: center; gap: .6rem;
-}
-.pa-glass-btn {
-  flex: none; width: 40px; height: 40px; border-radius: 50%;
-  display: grid; place-items: center;
-  color: var(--pa-ink); cursor: pointer;
-  transition: transform .3s var(--pa-ease-out);
-}
-.pa-glass-btn:hover { transform: scale(1.08); }
-.pa-glass-btn:active { transform: scale(.94); }
-.pa-glass-btn svg { width: 16px; height: 16px; }
+/* The video sound widgets (.pa-glass-sound, .pa-glass-btn and the whole
+   custom .pa-glass-slider — track, fill, thumb and its hover/touch
+   reveal) stood here and are REMOVED. The hero film is silent and has
+   no controls; nothing else on the site ever used them.
 
-/* custom slider (not a native <input type=range>): a native range
-   can't be dragged past its own min/max, so it can't produce the
-   rubber-band overshoot the brief asks for. This is a plain glass
-   track + a positioned knob, driven entirely by JS/makeElasticDrag —
-   but role="slider" + the aria-value* attributes + arrow-key support
-   (block 10) keep it as accessible as the input it replaces. */
-.pa-glass-slider {
-  position: relative;
-  width: 0; height: 34px; border-radius: 999px;
-  opacity: 0; pointer-events: none;
-  transition: width .3s var(--pa-ease-out), opacity .25s var(--pa-ease-out);
-  touch-action: none; cursor: pointer;
-}
-.pa-glass-sound:hover .pa-glass-slider,
-.pa-glass-sound:focus-within .pa-glass-slider,
-.pa-glass-slider.is-dragging {
-  width: 92px; opacity: 1; pointer-events: auto;
-}
-.pa-glass-slider__fill {
-  position: absolute; top: 50%; margin-top: -2px; left: 9px;
-  height: 4px; border-radius: 999px;
-  background: linear-gradient(90deg, var(--pa-pear), var(--pa-pear-deep));
-  width: 0;
-}
-.pa-glass-slider__thumb {
-  position: absolute; top: 50%; margin-top: -9px; left: 9px;
-  width: 18px; height: 18px; border-radius: 50%;
-}
-@media (hover: none) {
-  /* touch has no hover to reveal it with, and it needs to stay
-     reachable without a pointer */
-  .pa-glass-slider { width: 64px; opacity: 1; pointer-events: auto; }
-}
+   .pa-glass and .pa-glass-knob above are NOT part of that removal: the
+   language switch is their other caller and still draws its track and
+   sliding thumb from them, shimmer and elastic states included. */
 
 /* ──────────────────────── 6 · BUTTONS ───────────────────────────── */
 body.pa .pa-btn {
@@ -571,12 +550,14 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
 
 .pa-btn--sm { padding: .62rem 1.05rem; font-size: .8rem; }
 
-/* one pulsing halo on the page, on the closing CTA only */
-.pa-btn--pulse::after {
-  content: ''; position: absolute; inset: -2px; z-index: -2;
-  border-radius: inherit; border: 1px solid var(--pa-pear);
-  animation: pa-halo 2.6s var(--pa-ease-io) infinite;
-}
+/* .pa-btn--pulse was REMOVED: the halo it drew existed for exactly one
+   element — the closing CTA's "try the widget" button — and that button
+   is gone, because it scrolled the visitor back up to a playground they
+   had already passed. The class has no other caller in the project.
+
+   @keyframes pa-halo STAYS, and is not dead with it: .pa-dot::after in
+   §8 drives the pulsing green dot inside the "real-time fit" badge off
+   the same animation, and that badge is still on the hero. */
 @keyframes pa-halo {
   0%   { transform: scale(1);    opacity: .9; }
   70%, 100% { transform: scale(1.22); opacity: 0; }
@@ -595,145 +576,258 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
 .pa-js [data-pa-reveal] { opacity: 0; }
 .pa-js [data-pa-stagger] > * { opacity: 0; }
 
-/* ─────────────────────────── 8 · HERO ───────────────────────────── */
-/* Single column, centred: headline → lede → actions → the film → the
-   proof row. min-height:100svh is gone. It forced a full screen of hero
-   before the player could even begin, and with the player now IN the
-   hero a locked viewport height either cropped it or stranded it below
-   the fold. The hero is exactly as tall as its content needs. */
-.pa-hero {
+/* ────────────────────── 8 · SKYLINE HERO ────────────────────────── */
+/* The landing view opens on the film itself: pear-ad.mp4 at full bleed
+   behind the copy. The old hero (centred copy on beige, the clip framed
+   underneath) is gone — its markup and its i18n keys are not. Every key
+   the copy block uses is the same one it always used.
+
+   ONE VIEWPORT TALL, IN NORMAL FLOW. The section was briefly a ~275vh
+   scroll runway with a position:sticky stage, because scroll was
+   driving the clip's currentTime and a scrub needs somewhere to happen.
+   That is all removed: the clip is an ordinary autoplaying background
+   video, so the runway had nothing left to measure and the sticky had
+   nothing left to hold. Height is exactly 100svh and the hero scrolls
+   away like any other section.
+
+   svh rather than vh: on mobile Safari and Chrome the 100vh box is the
+   tallest the viewport ever gets, so the stage is cropped by the URL
+   bar until the visitor scrolls. svh is the smallest, which is the one
+   that is always actually on screen. */
+.pa-skyline {
   position: relative; z-index: 3;
-  padding-top: clamp(6.5rem, 13vh, 8.5rem);
-  padding-bottom: clamp(2.5rem, 5vw, 4rem);
-  display: flex; flex-direction: column;
-  align-items: center;
+  height: 100svh;
+  /* Overlay ink. The page's own ground colour, used as type colour over
+     the film — which ties the overlay to the palette instead of
+     dropping a generic white on top of it. */
+  --sk-paper: #F4F1EA;
+  /* --pa-pear-deep is a 4.2:1 accent ON BEIGE. Over a dark film it
+     drops under 3:1, so the headline's accent line gets a lifted pear
+     that clears 7:1 on the veil. Same hue, different ground. */
+  --sk-pear-lit: #C3D96B;
+  --sk-shade: 9, 10, 7;
 }
-.pa-hero__lead {
-  width: 100%;
-  text-align: center;
-  margin-inline: auto;
+.pa-skyline__stage {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--pa-onyx);
+  isolation: isolate;
+  /* One named cell, so every layer — film, veil, copy, badges, sound
+     widget — stacks in the same area without a single position:absolute
+     inset chain. z-index alone orders them. */
+  display: grid;
+  grid-template-areas: 'stage';
+  place-items: stretch;
 }
+.pa-skyline__stage > * { grid-area: stage; min-width: 0; }
+
+/* ── the film ──
+   cover, not contain: a 100svh stage letterboxed top and bottom is a
+   framed player again, which is the thing this section replaced.
+   object-position sits at 32% rather than centre because the clip's
+   subject is a person and the crop has to take the floor, not the
+   head — the same concern the old framed player solved with contain.
+   Portrait viewports are the case cover cannot save (a 16:9 clip in a
+   9:19 hole crops to a sliver), so those letterbox instead; the onyx
+   stage behind reads as a deliberate frame there. */
+.pa-skyline__film {
+  width: 100%; height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 32%;
+  background: var(--pa-onyx);
+  z-index: 0;
+}
+/* Tablet portrait only, and the lower bound is load-bearing. Below
+   768px the hero is a PHONE-shaped full-bleed film with the copy
+   overlaid on it (see the 767.98px block), and letterboxing a 9:19
+   viewport leaves the copy sitting on black bars instead of on the
+   picture. So `contain` is confined to the one band — a portrait
+   tablet — where the frame is close enough to 16:9 that the bars are
+   thin and the crop would otherwise take most of the width. */
+@media (orientation: portrait) and (min-width: 768px) and (max-width: 860px) {
+  .pa-skyline__film { object-fit: contain; }
+}
+
+/* ── the veil ──
+   Three gradients, each earning its place: a short top wash so the
+   white glass navbar reads as an object against a bright frame, a deep
+   bottom wash carrying the copy, and an inline-start wash so the
+   headline holds its own on a light frame. The side wash is the only
+   one that has to flip with direction. */
+.pa-skyline__veil {
+  z-index: 1; pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(var(--sk-shade), .42) 0%, rgba(var(--sk-shade), 0) 17%),
+    linear-gradient(to top,    rgba(var(--sk-shade), .88) 0%, rgba(var(--sk-shade), .52) 28%, rgba(var(--sk-shade), 0) 62%),
+    linear-gradient(to left,   rgba(var(--sk-shade), .52) 0%, rgba(var(--sk-shade), 0) 58%);
+}
+html[dir="ltr"] .pa-skyline__veil {
+  background:
+    linear-gradient(to bottom, rgba(var(--sk-shade), .42) 0%, rgba(var(--sk-shade), 0) 17%),
+    linear-gradient(to top,    rgba(var(--sk-shade), .88) 0%, rgba(var(--sk-shade), .52) 28%, rgba(var(--sk-shade), 0) 62%),
+    linear-gradient(to right,  rgba(var(--sk-shade), .52) 0%, rgba(var(--sk-shade), 0) 58%);
+}
+
+/* ── the copy ──
+   Lower inline-start third, not centred. Centred copy over video is the
+   default treatment for every hero of this shape; start-aligned reads
+   as a film title card and, under dir=rtl, starts where the eye already
+   is. pointer-events are handed back only to the .pa-shell inside, so
+   the empty half of the stage never swallows a click. */
+.pa-skyline__copy {
+  z-index: 3;
+  display: flex; align-items: flex-end;
+  padding-block-end: clamp(4.5rem, 11vh, 8rem);
+  pointer-events: none;
+  /* `filter` was the third name here, because initSkyline used to blur
+     this block as the hero left. That blur is REMOVED — a copy block
+     softening over a sharp full-bleed film read as the video itself
+     going out of focus — so the hint is trimmed to what is actually
+     animated. That is the point of will-change: naming a property the
+     page never animates asks the compositor to keep a layer ready for
+     nothing, which costs memory and buys no frames. */
+  will-change: transform, opacity;
+}
+.pa-skyline__copy > .pa-shell { pointer-events: auto; text-align: start; }
 /* The headline and the lede take their own measures, in their OWN ch —
    which tracks each one's font-size, so both hold a sensible line length
    from 360px to 1920px. A single max-width on the parent cannot do this:
    its ch is the 1rem body figure, and at 58ch that capped the container
    near 460px, which forced the display-size Hebrew headline onto five
-   lines at 1920 (measured 433px tall against English's 149px). */
-.pa-hero__title {
-  margin-block: 0 clamp(.9rem, 1.8vw, 1.4rem);
-  max-width: 17ch;
-  margin-inline: auto;
-}
-/* The kicker is centred with the headline it labels, so it cannot keep
-   the start-aligned margin it had in the old two-column hero.
+   lines at 1920 (measured 433px tall against English's 149px).
 
-   A min-height reservation was tried here to absorb the EN→HE language
-   flip and REVERTED after measurement: the lede is TALLER in English
-   while the headline is taller in Hebrew, so reserving the lede's
-   three-line English case added height on top of a delta that already
-   pointed the other way — 1280px CLS went 0.086 → 0.155. The flip has
-   to be fixed where it happens (i18n.js paints DEFAULT_LANG first),
-   not absorbed downstream. Measure before re-adding anything here. */
-.pa-hero__lede { margin-inline: auto; max-width: 46ch; }
-/* the dictionary's hero.title ships an LTR product kicker as its first
-   span; it is a label, not part of the headline scale */
-.pa-hero__title > span[dir="ltr"]:first-child {
-  display: block;
-  font-family: var(--pa-mono);
-  font-size: clamp(.62rem, .8vw, .72rem);
-  font-weight: 500; letter-spacing: .18em; text-transform: uppercase;
-  color: var(--pa-pear-deep);
-  margin-bottom: 1.1rem;
+   These are start-aligned now rather than centred, so the auto inline
+   margins the old centred hero needed are gone. The measures are not:
+   they are what keeps the Hebrew headline off five lines at 1920. */
+.pa-skyline__title {
+  margin-block: 0 clamp(.85rem, 1.7vw, 1.3rem);
+  max-width: 15ch;
+  color: var(--sk-paper);
+  /* Two shadows, not one: a tight dark offset that keeps the stems
+     legible on a bright frame, and a wide soft pool that separates the
+     whole block from whatever is moving behind it. A single blurred
+     shadow does one job or the other, never both. */
+  text-shadow: 0 1px 2px rgba(0,0,0,.42), 0 14px 44px rgba(0,0,0,.5);
 }
-.pa-hero__actions {
-  display: flex; flex-wrap: wrap; gap: .7rem;
-  justify-content: center;
-  margin-top: clamp(1.2rem, 2.2vw, 1.7rem);
-}
+/* hero.title's second line ships class="text-pear-600", which block 4
+   maps to --pa-pear-deep — an accent picked against beige. Over the
+   film it has to be the lifted pear instead. The dictionary string is
+   byte-locked to the inline copy in index.html, so this is corrected
+   here in CSS rather than by editing the key. */
+.pa-skyline__title .text-pear-600 { color: var(--sk-pear-lit); }
 
-/* glassmorphic proof badges — now the closing line of the hero, sitting
-   UNDER the film rather than above it, so they read as the receipt for
-   what was just shown. No top border: the film's own dark mass is
-   already the rule they would have drawn. */
-.pa-proof {
-  display: flex; flex-wrap: wrap; gap: .5rem;
-  justify-content: center;
-  width: 100%;
-  margin-top: clamp(1.3rem, 2.4vw, 1.9rem);
-}
-.pa-proof p {
-  display: inline-flex; align-items: baseline; gap: .45rem;
-  padding: .5rem .9rem;
-  background: rgba(255,255,255,.6);
-  border: 1px solid var(--pa-hair-soft);
-  border-radius: var(--pa-pill);
-  font-size: .8rem; color: var(--pa-ink-50);
-  backdrop-filter: blur(8px);
+/* A min-height reservation was tried on the lede to absorb the EN→HE
+   language flip and REVERTED after measurement: the lede is TALLER in
+   English while the headline is taller in Hebrew, so reserving the
+   lede's three-line English case added height on top of a delta that
+   already pointed the other way — 1280px CLS went 0.086 → 0.155. The
+   flip has to be fixed where it happens (i18n.js paints DEFAULT_LANG
+   first), not absorbed downstream. Measure before re-adding anything.
+
+   Over the film that delta costs nothing anyway: the stage is a fixed
+   100svh and the copy is anchored to its bottom edge, so a taller lede
+   grows upward into empty frame instead of pushing the page. */
+.pa-skyline__lede {
+  max-width: 42ch;
   margin: 0;
+  color: rgba(244, 241, 234, .84);
+  text-shadow: 0 1px 16px rgba(0,0,0,.55);
 }
-.pa-proof p span:first-child { font-weight: 600; color: var(--pa-ink); letter-spacing: -0.015em; }
+/* The mono-label rule for `.pa-skyline__title > span[dir="ltr"]` was
+   REMOVED with the kicker it styled. hero.title no longer ships an LTR
+   product label in either dictionary, and the one span the headline
+   still carries has no dir attribute, so the selector matched nothing
+   in any language. */
+.pa-skyline__actions {
+  display: flex; flex-wrap: wrap; gap: .7rem;
+  justify-content: flex-start;
+  margin-top: clamp(1.15rem, 2.1vw, 1.6rem);
+}
+/* The primary CTA, INVERTED for the film. .pa-btn--primary is cut for
+   beige: an onyx pill with paper type. The veil that carries the copy
+   bottoms out near black, so on the film that pill was onyx on onyx —
+   the button was genuinely invisible, at every width, and only the
+   label could be read. Swapping the two colours is the whole fix: a
+   paper pill with onyx type, which is also the treatment the headline
+   above it already uses.
 
-/* ── the cinematic player ──
-   Replaces .pa-stage, the phone mockup that used to hold the try-on
-   loop beside the headline. The hero now shows one clip, full width,
-   under the copy rather than next to it.
+   The hover wipe needs no rule of its own. .pa-btn--primary::before
+   already fills with --pa-pear and :hover already sets the label onyx,
+   so paper → pear is a hover that lands correctly on the first try.
 
-   The dark frame does the work the old onyx demo band did: it is the
-   one hard tonal break on the page, so the beige around it reads as
-   deliberate. It just does it in 60vh instead of a whole section. */
-.pa-cinema {
-  position: relative;
-  width: 100%;
-  margin-top: clamp(1.8rem, 3.4vw, 2.8rem);
-  /* Caps the player's HEIGHT by capping its width, which is the only
-     way to do it without contradicting the aspect-ratio below. 72svh of
-     height at 53:30 is this much width; beyond it the clip would push
-     the proof row off the fold on a short laptop screen. */
-  max-width: min(100%, calc(72svh * 848 / 480));
-  margin-inline: auto;
-}
-.pa-cinema__frame {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--pa-radius-lg);
-  border: 1px solid rgba(20,20,19,.14);
-  box-shadow: 0 50px 120px -46px rgba(0,0,0,.55);
-  background: #000;
-  /* pear-ad.mp4 is 848x480. Declaring it reserves the box at first
-     paint: without this the <video> lays out at the 300x150 default
-     until metadata arrives, then snaps to its real height and shoves
-     the CTAs, the proof row and every section below it down the page —
-     measured at 0.19 CLS on a 1920 viewport before this rule, which is
-     twice the 0.1 "good" threshold. The video element carries the same
-     numbers as width/height attributes for the same reason, so the box
-     is correct even in the frame before this stylesheet applies. */
-  aspect-ratio: 848 / 480;
-  /* The GSAP scrub at index.html block 8 animates scale on this
-     element; declaring it here keeps that on the compositor. */
-  will-change: transform;
-}
-/* The clip is letterboxed rather than cropped: object-fit:cover on an
-   ad whose subject is a person would cut heads off at some viewport
-   widths, and #000 behind it makes the letterbox read as a frame. In
-   practice the frame's ratio matches the file's exactly, so there is
-   nothing to letterbox — contain is the safe behaviour if the clip is
-   ever swapped for one cut to a different ratio. */
-.pa-cinema__frame video {
-  width: 100%; height: 100%; display: block;
-  object-fit: contain;
-  background: #000;
+   (0,2,0), which beats .pa-btn--primary's own (0,1,0) and leaves the
+   button on beige — the closing CTA's — exactly as it was. */
+.pa-skyline__actions .pa-btn--primary {
+  background: var(--sk-paper);
+  color: var(--pa-onyx);
+  box-shadow: 0 10px 30px rgba(0,0,0,.34);
 }
 
-/* The ambient pear-tinted glow the device stage used to cast, kept and
-   widened to the new frame. z-index:-1 puts it behind the frame while
-   staying inside .pa-cinema's stacking context. */
-.pa-cinema__glow {
-  position: absolute; inset-inline: 6%; bottom: -5%;
-  height: 45%; z-index: -1;
-  background: radial-gradient(50% 50% at 50% 50%, var(--pa-pear-glow), transparent 70%);
-  filter: blur(34px);
-  opacity: .85;
+/* The ghost-button re-cut that lived here went with the secondary CTA
+   it styled. .pa-btn--ghost itself is untouched and still drawn for
+   beige; there is simply no ghost button on the film any more.
+
+   The measuring-tape scrub rail (.pa-skyline__tape, __tapeRead, __rail,
+   __tapeHead) and the scroll invitation (.pa-skyline__hint plus its
+   @keyframes sk-nudge) were removed with the scrubbing. The tape read a
+   --sk-progress that nothing writes now, and the hint asked for a
+   gesture the clip no longer needs. Neither class has any other caller
+   in the project, so both rulesets are deleted rather than orphaned. */
+
+/* ── the badges ──
+   Both kept their i18n keys from the framed player; only the anchor
+   moved. They sit in a row under the navbar rather than in the frame's
+   corners, which is the one band of the stage the fixed nav does not
+   cross at any width. They leave with the copy. */
+.pa-skyline__badges {
+  z-index: 4;
+  align-self: start;
+  display: flex; align-items: flex-start; flex-wrap: wrap; gap: .5rem;
+  padding-block-start: clamp(5.2rem, 13vh, 7.4rem);
   pointer-events: none;
+}
+.pa-skyline__badges .pa-badge { position: static; }
+
+/* The .is-playing block that stood here (copy hidden, badges hidden,
+   with an !important to beat the scrub's inline opacity) went with the
+   secondary CTA that set the class. Nothing writes .is-playing,
+   .is-ready, .is-scrubbing or .is-complete on the hero any more.
+
+   The badges' `transition: opacity` went with it: nothing animates
+   their opacity any more, so the declaration was doing nothing.
+
+   The glassmorphic proof pills (.pa-proof / .pa-skyline__proof) were
+   removed earlier, along with their markup; #value restates all three
+   claims as counters further down the page. */
+
+/* ── reduced motion ──
+   The .is-static fallback class that stood here is gone with the rest
+   of the scrub machinery: it existed to collapse a scroll runway and
+   un-stick a sticky stage, and the hero now has neither — it is a plain
+   100svh section whether or not any script runs. What still has to be
+   handled is the copy's fade-and-lift exit, which initSkyline skips
+   entirely under reduced motion; these rules are the belt to that
+   braces, so the copy is opaque and upright even if a tween managed to
+   land first.
+
+   `filter: none !important` stood alongside these two and is gone with
+   the blur it neutralised: nothing sets a filter on this element any
+   more, at any scroll position, so the override had nothing left to
+   override. */
+@media (prefers-reduced-motion: reduce) {
+  .pa-skyline__copy {
+    opacity: 1 !important; transform: none !important;
+  }
+}
+
+/* Short viewports run out of vertical room before they run out of
+   content: the badge row and the copy converge on a 100svh stage. The
+   badges go first — they restate what the headline underneath already
+   says, and the headline is the thing that has to survive. */
+@media (max-height: 620px) {
+  .pa-skyline__badges { display: none; }
 }
 
 .pa-badge {
@@ -748,12 +842,20 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
   backdrop-filter: blur(10px);
   white-space: nowrap;
 }
-/* Both badges hung OFF the edges of the old phone card on negative
-   insets. They sit inside .pa-cinema__frame now, which clips its
-   overflow, so the insets are positive — and --live is pulled to the
-   top corner because #demoSound already owns the bottom one. */
-.pa-badge--size { top: 1.1rem; inset-inline-start: 1.1rem; }
-.pa-badge--live { top: 1.1rem; inset-inline-end: 1.1rem; }
+/* .pa-badge--size / --live carried corner insets here (and narrower
+   ones in the phone media queries) from the days when both badges hung
+   off a phone card, then sat in the framed player's corners. Every one
+   of those declarations is DELETED rather than kept.
+
+   An earlier note in this file claimed they were "kept for the badge
+   pattern's other callers". That was wrong, and checking is what found
+   it: --size and --live appear exactly once each in the project, both
+   inside .pa-skyline__badges, which sets position:static at (0,2,0) and
+   beats a (0,1,0) modifier every time. Inset properties do nothing on a
+   static box, so the rules could not fire anywhere.
+
+   position:absolute stays on the .pa-badge BASE above — .pa-flip__badge
+   in the playground is a third caller and does rely on it. */
 .pa-badge .font-mono, .pa-badge span[class*="mono"] { color: var(--pa-pear-deep); font-family: var(--pa-mono); }
 
 .pa-dot {
@@ -1103,6 +1205,23 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
   gap: clamp(2rem, 5vw, 5rem);
   align-items: center;
 }
+/* Below the two-column breakpoint the grid collapses to one column and
+   DOM order would put the garment card first, leaving the visitor to
+   work out what they are looking at before the copy explains it. The
+   copy is pulled above the card instead.
+
+   `order` and not a DOM move: the two-column desktop layout is
+   deliberately mirrored against the hero (artefact leads, copy follows),
+   so the source has to keep the card first for that to hold. One
+   property flips it where the mirror stops applying. */
+@media (max-width: 899.98px) {
+  .pa-play { grid-template-columns: minmax(0, 1fr); gap: clamp(1.6rem, 5vw, 2.4rem); }
+  .pa-play__copy { order: -1; }
+  /* The copy column is start-aligned beside the card on desktop; stacked
+     above it the measure is the full column, so the lede needs its own
+     cap back or it runs the width of a phone screen. */
+  .pa-play__copy .pa-lede { max-width: 46ch; }
+}
 .pa-play__card {
   background: var(--pa-white);
   border: 1px solid var(--pa-hair);
@@ -1249,14 +1368,10 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
 
 /* ─────────────────────── 12 · DEMO BAND ─────────────────────────── */
 /* Section 12 was the full-bleed onyx demo band. It is gone: its video is
-   the hero's cinematic player now (see .pa-cinema in §8) and the dark
-   frame around that clip carries the tonal break this band existed to
-   provide. .pa-demo/.pa-demo__frame have no markup left to style. */
-
-/* Rest-state default before JS syncs the real state: the player starts
-   muted (autoplay requires it), so hiding the wave paths is the correct
-   first paint for the icon rather than a flash of the wrong one. */
-#demoSoundWave1, #demoSoundWave2 { display: none; }
+   the hero itself now (see .pa-skyline in §8), and a stage that fills
+   the viewport in onyx carries the tonal break this band existed to
+   provide several times over. .pa-demo/.pa-demo__frame, and the
+   .pa-cinema frame that briefly replaced them, have no markup left. */
 
 /* ────────────────────── 13 · CLOSING CTA ────────────────────────── */
 /* .pa-solution stood here: a floating glass panel between the bento and
@@ -1400,28 +1515,195 @@ body.pa #hudLabel {
   .pa-nav__bar { padding-inline-start: .7rem; gap: .5rem; }
   .pa-nav__tools { margin-inline-start: auto; }
   .pa-cell { min-height: 180px; }
-  .pa-badge--size { inset-inline-start: .6rem; }
-  .pa-badge--live { inset-inline-end: .6rem; }
+
+  /* ── the floating nav capsule, slimmed for small screens ──
+     With the links gone the bar carries only a lockup, a language
+     toggle and one button, but it kept a desktop bar's vertical
+     padding — on a phone that is a thick capsule over the top of the
+     hero for no content.
+
+     --pa-nav-h is published here because the hero's badge row has to
+     clear this bar and cannot guess its height; everything below that
+     needs the figure reads the variable rather than repeating a magic
+     number that drifts the moment any of this changes. */
+  body.pa .pa-nav { padding-block: .5rem; }
+  .pa-nav__bar {
+    padding-block: .3rem;
+    padding-inline-end: .3rem;
+    gap: .4rem;
+  }
+  .pa-nav__brand img { width: 18px; }
+  .pa-nav__word { font-size: .92rem; }
+  .pa-lang button { font-size: .72rem; padding: .28rem .5rem; }
+  /* body.pa-scoped, and it has to be: the base rule is `body.pa .pa-btn`
+     at (0,2,1), so a bare `.pa-nav__tools .pa-btn--sm` scores (0,2,0)
+     and LOSES however late it comes in the file. Written that way this
+     rule silently did nothing, the CTA kept its full .95rem/.88rem
+     desktop box, and the measured token below — which the hero's badge
+     row trusts to clear the bar — was ~20px short of the real height.
+     That was the badge/nav overlap. */
+  body.pa .pa-nav__tools .pa-btn--sm { padding: .42rem .8rem; font-size: .78rem; }
+  /* Same arithmetic as the base token, against the slimmed figures
+     above: the CTA is still the tallest child at .78rem x 1.625 +
+     .42rem x 2 = 33.7px, + .3rem x 2 bar padding + 2px border = 45.3px,
+     + .5rem x 2 nav padding = 61.3px = 3.83rem. Rounded up. */
+  :root { --pa-nav-h: 3.9rem; }
 }
 @media (max-width: 767.98px) {
-  /* The hero's phone try-on stage was dropped whole below this width and
-     its 800KB clip never fetched. The stage is gone at every width now —
-     the hero holds one cinematic player instead — so only the hero's own
-     top padding is still tuned here, for a navbar that wraps taller once
-     the links collapse out of it. */
-  .pa-hero { padding-block-start: clamp(5.5rem, 20vw, 7rem); }
-  /* A 72svh cap is most of a phone screen for a 16:9 clip that will
-     never be that tall anyway; releasing it avoids a pointless
-     letterbox on a narrow viewport. */
-  .pa-cinema__frame video { max-height: none; }
-  /* Both badges on one edge would collide on a narrow frame. */
-  .pa-badge--live { top: auto; bottom: 1rem; inset-inline-end: 1rem; }
+  /* ══ THE NAV CAPSULE, CUT TO THE BONE ══════════════════════════════
+     The bar was slimmed once already at 860px. On a phone it is slimmed
+     again, hard: it carries a lockup, a two-word language toggle and
+     one button, and it floats over a FULL-BLEED film — so every pixel
+     of vertical padding it keeps is a pixel of the hero it hides.
+
+     --pa-nav-h is re-published here for the same reason it is published
+     at 860px: the hero's badge row clears the bar by reading this
+     token, and a stale figure silently reinstates the overlap it exists
+     to prevent. MEASURED, not guessed, at 16px root / 1.625 leading.
+
+     The two tallest children are deliberately matched, so neither one
+     alone sets the height:
+       .pa-btn--sm  .66rem x 1.625 + .28rem x 2        = 17.2 + 9.0 = 26.2px
+       .pa-lang     .58rem x 1.625 + .16rem x 2
+                      + 2px track padding x 2 + 2px border           = 26.2px
+       + .pa-nav__bar padding .16rem x 2                             =  5.1px
+       + its 1px border, top and bottom                              =  2.0px
+       + .pa-nav padding .26rem x 2                                  =  8.3px
+                                                                       ------
+                                                                       41.6px
+     = 2.60rem, rounded to 2.7rem for the tolerance a fallback face or
+     a bumped user font-size needs. Down from 3.9rem at 860px. */
+  body.pa .pa-nav { padding-block: .26rem; }
+  .pa-nav__bar {
+    padding-block: .16rem;
+    padding-inline-start: .55rem;
+    padding-inline-end: .16rem;
+    gap: .35rem;
+  }
+  .pa-nav__brand { gap: .4rem; }
+  .pa-nav__brand img { width: 16px; }
+  .pa-nav__word { font-size: .82rem; }
+  .pa-lang { padding: 2px; }
+  .pa-lang__thumb { top: 2px; bottom: 2px; }
+  .pa-lang button { font-size: .58rem; padding: .16rem .38rem; }
+  /* body.pa-scoped for the same reason as the 860px rule above: the
+     base is `body.pa .pa-btn` at (0,2,1) and out-specifies a bare
+     `.pa-nav__tools .pa-btn--sm`. */
+  body.pa .pa-nav__tools .pa-btn--sm { padding: .28rem .66rem; font-size: .66rem; }
+  :root { --pa-nav-h: 2.7rem; }
+
+  /* ══ THE HERO — FULL-BLEED FILM, COPY ON TOP ═══════════════════════
+     The phone used to get a different hero entirely: the stage SPLIT
+     into a 4:5 film panel on top and the copy below it on beige, in
+     ordinary ink. That is gone. The phone now gets the same hero as
+     every other width — one film filling the whole stage with the
+     headline, the lede and the CTA overlaid on it in paper-coloured
+     type, carried by the veil.
+
+     Almost nothing has to be declared for that: the base .pa-skyline
+     rules in §8 already describe it. What is here is (a) the film
+     pinned as a true background layer, (b) a veil cut deeper than the
+     desktop one because a phone gives the copy a much larger share of
+     the frame to stay legible over, and (c) the copy re-fitted to a
+     narrow column. Every ink/beige override the split layout needed is
+     DELETED rather than overridden — the base paper treatment is the
+     one that applies now.
+
+     Height stays the base 100svh: svh, not vh, so the stage is the
+     viewport that is actually on screen rather than the tallest one the
+     URL bar ever allows. */
+  .pa-skyline__film {
+    /* Absolute rather than a grid cell: the film is a background, not a
+       participant in the layout, so it is lifted out of flow and pinned
+       to the stage's own box. .pa-skyline__stage is position:relative
+       (§8), which is what inset:0 resolves against. */
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Same reasoning as the desktop crop, pulled a little higher: a
+       portrait viewport crops hard off the sides of a 16:9 frame, and
+       the subject's floor matters more than the headroom. */
+    object-position: center 34%;
+    z-index: 0;
+  }
+
+  /* A deeper bottom wash than the desktop veil, and no side wash. On a
+     phone the copy occupies most of the lower half of the frame instead
+     of an inline-start third, so the gradient that carries it has to
+     start higher and land darker — this is what keeps white type at
+     100% legibility over whatever the film is doing underneath. The
+     top wash is unchanged: it is what the glass navbar and the badges
+     read against. No direction-dependent layer is left, so the [dir]
+     variant simply matches. */
+  .pa-skyline__veil,
+  html[dir="ltr"] .pa-skyline__veil {
+    background:
+      linear-gradient(to bottom, rgba(var(--sk-shade), .46) 0%, rgba(var(--sk-shade), 0) 22%),
+      linear-gradient(to top,    rgba(var(--sk-shade), .92) 0%, rgba(var(--sk-shade), .68) 34%, rgba(var(--sk-shade), .18) 66%, rgba(var(--sk-shade), 0) 100%);
+  }
+
+  /* The badge row sits on the film and still has to clear the fixed
+     nav. It is measured off --pa-nav-h — re-declared above, much
+     smaller — plus a gap, rather than a guessed clamp that overlaps
+     whenever the bar runs taller than the guess.
+
+     .75rem of real air below the capsule, not a hairline: the token is
+     a computed figure and a phone can still render the bar a little
+     taller than the arithmetic (a fallback face with different metrics,
+     a user font-size bump). The gap is that tolerance. */
+  .pa-skyline__badges {
+    padding-block-start: calc(var(--pa-nav-h) + .75rem);
+    padding-inline: var(--pa-gutter);
+  }
+
+  /* The copy, overlaid. It keeps the base paper colour, the base accent,
+     the base text shadows and the base bottom anchor — all four exist
+     for exactly this case — and only two figures change: the pad under
+     it, so the CTA never sits on the very edge of a short phone, and
+     the two measures, so the lines break for a narrow column. */
+  .pa-skyline__copy { padding-block-end: clamp(2.6rem, 9vh, 4.2rem); }
+  .pa-skyline__title { max-width: 14ch; }
+  .pa-skyline__lede  { max-width: 34ch; }
+
+  /* ══ THE FOOTER BAR, HORIZONTAL ════════════════════════════════════
+     One line, same reading order as desktop: lockup · rights · clock.
+     The row was never told to stack — it is `flex-wrap: wrap` (§14) and
+     the three children simply outgrew a phone, so it wrapped itself
+     into three stacked lines. nowrap is what stops that, and it only
+     works if the one flexible child is allowed to shrink: `min-width:
+     0` overrides the `auto` minimum that would otherwise hold the
+     rights line at its longest word and push the clock off-screen.
+
+     Sizes come down with it. The rights line is the only child that
+     wraps internally, and at .56rem the Hebrew string sets on two short
+     lines inside its own cell rather than forcing the row apart. */
+  .pa-foot__row {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: .55rem;
+  }
+  .pa-foot__brand { flex: none; gap: .4rem; }
+  .pa-foot__brand img { width: 20px; }
+  .pa-foot__brand .pa-nav__word { font-size: .8rem; }
+  .pa-foot__row p { flex: 1 1 auto; min-width: 0; font-size: .56rem; line-height: 1.45; }
+  /* .pa-clock is a <p> too, so it is caught by the rule above at
+     (0,1,1) — which is also why the base sheet's own `.pa-clock`
+     font-size never applied. Scoped to (0,2,1) here so the clock keeps
+     its own size and, more importantly, stays `flex: none`: as a
+     shrinkable child it would have been squeezed until the time itself
+     wrapped. */
+  .pa-foot__row .pa-clock { flex: none; gap: .35rem; font-size: .56rem; white-space: nowrap; }
 }
 @media (max-width: 560px) {
-  .pa-hero__actions .pa-btn { flex: 1 1 100%; justify-content: center; }
-  /* #demoSound sits in the same bottom corner; the live badge steps
-     above it rather than overlapping the volume slider. */
-  .pa-badge--live { bottom: 4.2rem; }
+  .pa-skyline__actions .pa-btn { flex: 1 1 100%; justify-content: center; }
+  /* `.pa-badge--live { bottom: 4.2rem }` stood here to step the live
+     badge above the volume slider of a sound widget that no longer
+     exists. It never did step anything: the badge is position:static
+     inside .pa-skyline__badges, so `bottom` was ignored. Deleted with
+     the other inset rules. */
 
   /* The compatibility line is a single unbreakable-looking string
      ("Shopify · WooCommerce · Magento · custom builds"), and inside its

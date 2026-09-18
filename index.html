@@ -698,8 +698,8 @@
 
      The standalone onyx demo band was folded into the hero: one video
      showcase at the top rather than two competing players on one page.
-     #demoVideoEl and the whole #demoSound widget kept their ids through
-     that move, so wireSoundControl() binds exactly as it always did.
+     #demoVideoEl kept its id through that move; the sound widget that
+     came with it has since been removed entirely.
 
      Two contracts constrain the markup and are easy to break by accident:
        · anything carrying data-i18n-html has its innerHTML replaced, so
@@ -711,109 +711,130 @@
 <main id="view-overview" class="view active" data-i18n-aria-label="a11y.viewOverview" aria-label="אודות המיזם והפתרון">
 
   <!-- ─────────────────────────── HERO ─────────────────────────── -->
-  <section id="hero" data-hud="hud.intro" class="pa-hero pa-shell">
-    <div class="pa-hero__lead" data-pa-seq>
-      <!-- hero.title ships its own LTR product kicker as the first
-           span; the stylesheet demotes it to a mono label so the
-           headline underneath keeps the display scale to itself. -->
-      <!-- This inline copy is the pre-i18n paint. It must mirror the he
-           dictionary's hero.title BYTE FOR BYTE, classes included: the
-           dictionary's second line carries `block mt-2`, and a fallback
-           that omitted it rendered the line inline, then grew by ~15px
-           the moment PearI18n.apply() swapped the real string in —
-           dragging the CTAs, the proof row and every section below them
-           with it. That single mismatch was most of this page's layout
-           shift on a phone. Change one, change the other. -->
-      <h1 class="pa-display pa-d-xl pa-hero__title" data-pa-reveal data-i18n-html="hero.title">
-        <span dir="ltr" class="block text-lg sm:text-xl font-bold text-pear-600 tracking-tight mb-2"><span class="brand-pear">PEAR</span> Platform · AI Virtual Try-On &amp; Measurement</span>
-        מידה מדויקת.
-        <span class="block mt-2 text-pear-600">בלי חדר מדידה.</span>
-      </h1>
+  <!-- ── SKYLINE HERO ──────────────────────────────────────────────
+       One viewport tall, the film full-bleed behind everything. The
+       section is an ORDINARY 100svh block in normal flow: the scroll
+       runway and the position:sticky stage that went with it are both
+       gone, along with the scroll-scrubbing they existed to serve.
 
-      <p class="pa-lede pa-hero__lede" data-pa-reveal data-i18n-html="hero.sub">
-        <span class="brand-pear">PEAR</span> מלביש את הבגד על הלקוח בזמן אמת וממליץ מידה. הוא קונה בביטחון, אתם סופגים פחות החזרות.
-      </p>
+       The clip is a plain background video again — autoplay + muted +
+       loop + playsinline, the autoplay-policy-compliant set — and
+       nothing in JavaScript touches its currentTime. The only thing
+       scroll still drives is the copy's defocus as the hero leaves,
+       which is initSkyline's whole job in pear-motion.js now.
 
-      <div class="pa-hero__actions" data-pa-stagger>
-        <button type="button" class="pa-btn pa-btn--primary pa-magnetic" data-scroll="playground"
-                data-i18n="hero.ctaPrimary" data-pa-hover>✨ נסו את הוויג'ט · 30 שניות</button>
-        <button type="button" class="pa-btn pa-btn--ghost pa-magnetic" data-scroll="film"
-                data-i18n="hero.ctaSecondary" data-pa-hover>▶ צפו ב-17 שניות</button>
-      </div>
-    </div>
+       The clip is SILENT by contract, not by default: `muted` is never
+       cleared by anything, and the mute/volume widget that used to
+       clear it has been removed from this file, from the stylesheet and
+       from both dictionaries. #demoVideoEl is the only id left here.
 
-    <!-- ── CINEMATIC PLAYER ──────────────────────────────────────────
-         pear-ad.mp4, lifted here out of the onyx demo band it used to
-         sit in halfway down the page. Everything the sound widget binds
-         to kept its id through the move — #demoVideoEl, #demoSound and
-         every control inside it — so wireSoundControl() at block 7b is
-         untouched and still finds all seven nodes it requires.
+       THE SAME LAYOUT ON A PHONE. The stage used to split below 768px —
+       film panel on top, copy on beige underneath. It does not any
+       more: the film is a full-bleed background at every width and the
+       copy sits on it in paper-coloured type, carried by the veil.
 
-         The frame is the positioning context for .pa-glass-sound
-         (absolute, bottom corner) exactly as .pa-demo__frame was.
+       preload="metadata", not "auto": "auto" was here only because
+       seeking into an unbuffered range makes a SCRUBBED video stutter.
+       Nothing seeks any more, autoplay pulls what it needs on its own,
+       and the clip is 2.9MB at the top of the page — so the first
+       paint goes back to not waiting on it. -->
+  <section id="hero" data-hud="hud.intro" class="pa-skyline">
+    <div class="pa-skyline__stage" id="film">
 
-         preload="metadata", not "auto": the clip is 2.9MB and it now
-         loads at the top of the page rather than a scroll down, so the
-         first paint must not wait on it. autoplay+muted is the same
-         autoplay-compliant pair it always shipped with. -->
-    <div class="pa-cinema" id="film" data-pa-reveal>
-      <span class="pa-cinema__glow" aria-hidden="true"></span>
+      <!-- width/height are pear-ad.mp4's real intrinsic size. They are
+           not a display size — CSS sizes the element — they are what
+           lets the browser reserve the right box before the file's
+           metadata arrives. The stage is a fixed 100svh so this no
+           longer guards the page against the 0.19 CLS the framed
+           player could cause, but it still spares the first frame. -->
+      <video id="demoVideoEl" class="pa-skyline__film" src="pear-ad.mp4"
+             autoplay muted loop playsinline preload="metadata"
+             width="848" height="480"
+             data-i18n-aria-label="a11y.demoVideo"
+             aria-label="סרטון הדגמה מלא של הוידג'ט PEAR AI Virtual Try-On"></video>
 
-      <div class="pa-cinema__frame">
-        <!-- width/height are pear-ad.mp4's real intrinsic size. They are
-             not a display size — CSS sizes the element — they are what
-             lets the browser reserve the right box before the file's
-             metadata arrives, which is the difference between 0.19 CLS
-             and 0.00 on this page. .pa-cinema__frame states the same
-             ratio; both are deliberate. -->
-        <video id="demoVideoEl" src="pear-ad.mp4" muted loop playsinline preload="metadata" autoplay
-               width="848" height="480"
-               data-i18n-aria-label="a11y.demoVideo"
-               aria-label="סרטון הדגמה מלא של הוידג'ט PEAR AI Virtual Try-On"></video>
+      <span class="pa-skyline__veil" aria-hidden="true"></span>
 
-        <!-- Liquid-glass mute/volume widget, bottom corner. Shared
-             .pa-glass-sound system (see pear-atelier.css and block 10's
-             makeElasticDrag). demoMuteBtn's aria-label alternates with
-             mute state, so it carries no data-i18n-aria-label; the
-             slider's own label is static, so it keeps one. -->
-        <div id="demoSound" class="pa-glass-sound">
-          <button id="demoMuteBtn" type="button" class="pa-glass-btn pa-glass"
-                  aria-label="השתקת הקול" data-pa-hover>
-            <svg id="demoSoundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M11 5 6 9H3v6h3l5 4z"/>
-              <path id="demoSoundWave1" d="M15.2 8.8a5 5 0 0 1 0 6.4"/>
-              <path id="demoSoundWave2" d="M18.3 5.7a9.5 9.5 0 0 1 0 12.6"/>
-              <path id="demoSoundMuteX" d="m22.5 9-5.5 5.5M17 9l5.5 5.5"/>
-            </svg>
-          </button>
-          <div id="demoVolumeTrack" class="pa-glass-slider pa-glass" role="slider" tabindex="0"
-               aria-label="עוצמת קול" data-i18n-aria-label="a11y.vtonVolume"
-               aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
-            <div class="pa-glass-slider__fill" id="demoVolumeFill"></div>
-            <div class="pa-glass-slider__thumb pa-glass-knob" id="demoVolumeThumb">
-              <span class="pa-glass-knob__shimmer"></span>
-            </div>
-          </div>
-        </div>
-
-        <!-- The two badges the phone stage used to float. They keep the
-             same two i18n keys; only their anchor changed. -->
-        <span class="pa-badge pa-badge--size" data-i18n-html="hero.badgeSize">מידה מומלצת: <span class="font-mono">M</span></span>
+      <!-- The two badges the framed player floated in its corners. Same
+           two i18n keys, laid out as a row clear of the fixed navbar. -->
+      <div class="pa-skyline__badges">
+        <span class="pa-badge pa-badge--size" data-i18n-html="hero.badgeSize">מידה מומלצת: <span class="font-mono text-pear-600">M</span></span>
         <span class="pa-badge pa-badge--live">
           <span class="pa-dot" aria-hidden="true"></span>
-          <span data-i18n="hero.badgeRealtime">התאמה בזמן אמת ✨</span>
+          <span data-i18n="hero.badgeRealtime">התאמה בזמן אמת</span>
         </span>
       </div>
-    </div>
 
-    <!-- The three pillars in badge form: Conversion, Inventory,
-         Operations, in that order. proof3 is a returns-reduction
-         claim and must stay distinct from the pillar card bodies. -->
-    <div class="pa-proof" data-pa-stagger>
-      <p data-i18n-html="hero.proof1"><span class="font-bold text-slate-700">100% ביטחון בהתאמה</span> ברגע התשלום</p>
-      <p data-i18n-html="hero.proof2"><span class="font-bold text-slate-700">אפס Bracketing</span>, סוף להזמנת שלוש מידות</p>
-      <p data-i18n-html="hero.proof3"><span class="font-bold text-slate-700">עד כ-25% פחות החזרות</span> ופחות עלויות תפעול</p>
+      <!-- The overlay copy. initSkyline animates THIS wrapper as the
+           hero scrolls away, while data-pa-reveal inside it is the
+           ordinary entrance the motion layer runs on load — two
+           different elements, so the two never fight over the same
+           opacity. -->
+      <div class="pa-skyline__copy" id="skyCopy">
+        <div class="pa-shell" data-pa-seq>
+          <!-- This inline copy is the pre-i18n paint. It must mirror the he
+               dictionary's hero.title BYTE FOR BYTE, classes included: the
+               dictionary's second line carries `block mt-2`, and a fallback
+               that omitted it rendered the line inline, then grew by ~15px
+               the moment PearI18n.apply() swapped the real string in —
+               dragging the CTA and every section below it with it. That
+               single mismatch was most of this page's layout shift on a
+               phone. Change one, change the other.
+
+               The LTR product-name kicker that led this headline has
+               been removed from the markup AND from both dictionaries,
+               so there is no span left here to leave a gap. Its wording
+               is deliberately not quoted anywhere in this file: HTML
+               comments are served to the browser, so repeating the
+               string would put the very text that was meant to be gone
+               back into the shipped page. -->
+          <h1 class="pa-display pa-d-xl pa-skyline__title" data-pa-reveal data-i18n-html="hero.title">
+            מידה מדויקת.
+            <span class="block mt-2 text-pear-600">בלי חדר מדידה.</span>
+          </h1>
+
+          <p class="pa-lede pa-skyline__lede" data-pa-reveal data-i18n-html="hero.sub">
+            הלקוח רואה את הבגד על עצמו ומקבל מידה מדויקת, בזמן אמת. אתם מקבלים יותר המרות ופחות החזרות.
+          </p>
+
+          <!-- The ghost secondary CTA ("▶ צפו ב-17 שניות") was removed
+               with the scrubbing: it existed to play a clip that scroll
+               was otherwise holding still. The clip plays itself now,
+               silently, and this is the hero's only button. -->
+          <div class="pa-skyline__actions" data-pa-stagger>
+            <button type="button" class="pa-btn pa-btn--primary pa-magnetic" data-scroll="playground"
+                    data-i18n="hero.ctaPrimary" data-pa-hover>נסו את הוויג'ט · 30 שניות</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- The measuring-tape scrub rail (#skyTape) and the scroll hint
+           (#skyHint) both stood here. Both are gone: the tape reported a
+           scrub position that no longer exists, and the hint told the
+           visitor to scroll in order to play a film that now plays on
+           its own. -->
+
+      <!-- The liquid-glass mute/volume widget (#demoSound and the seven
+           ids inside it) stood here and is REMOVED, along with
+           wireSoundControl() at block 7b, its whole .pa-glass-sound /
+           .pa-glass-slider ruleset, and the a11y.vtonMute / vtonUnmute /
+           vtonVolume dictionary keys. The clip is a silent background
+           film: autoplay + muted + loop, never unmuted by anything, so
+           there is no audio for a control to control. .pa-glass and
+           .pa-glass-knob stay in the stylesheet — the language switch
+           is their other caller. -->
+
+      <!-- The three-pillar proof row (.pa-proof / #skyProof) stood here
+           and has been removed. Its three claims are not lost: #value
+           below restates all three as the animated counters at block
+           14 — 100% fit confidence, 3→0 bracketing, ~25% fewer returns
+           — so the hero no longer says them twice.
+
+           The hero.proof1/2/3 keys are still in both dictionaries and
+           are now unused by any markup. They are left in place because
+           the counters' comments cite them by name as the source of
+           their numerals; delete them only alongside those. -->
+
     </div>
   </section>
 
@@ -867,7 +888,7 @@
               <span class="pa-flip__shine" aria-hidden="true"></span>
             </div>
           </div>
-          <span class="pa-badge pa-flip__badge" data-i18n="play.modelPreview">On Model Preview</span>
+          <span class="pa-badge pa-flip__badge" data-i18n="play.modelPreview">תצוגה על דוגמן/ית</span>
           <span class="pa-play__scan" aria-hidden="true"></span>
         </div>
 
@@ -901,16 +922,16 @@
                 style="width:100%;justify-content:center"
                 data-i18n-aria-label="a11y.directMeasure"
                 aria-label="מדידה וירטואלית חד-פעמית, ללא שלב הרשמה, פעם אחת בביקור"
-                data-pa-hover>⚡ מדידה חד-פעמית מהירה</button>
+                data-pa-hover>מדדו עכשיו</button>
 
-        <p class="pa-play__note" data-i18n="play.ctaNote">דילוג על שלב ההרשמה, ישר למדידה, שימוש אחד בכל ביקור.</p>
+        <p class="pa-play__note" data-i18n="play.ctaNote">בלי הרשמה. שימוש אחד בכל ביקור.</p>
       </div>
 
       <div class="pa-play__copy" data-pa-seq>
         <p class="pa-eyebrow" data-pa-reveal data-i18n="play.eyebrow">Live Widget · בלי הרשמה</p>
-        <h2 class="pa-display pa-d-lg" style="margin-top:1rem" data-pa-reveal data-i18n="play.title">זה הוויג'ט האמיתי. ממש כאן.</h2>
-        <p class="pa-lede" style="margin-top:1.2rem" data-pa-reveal data-i18n="play.sub">כך זה נראה בדף מוצר: לחצו על "מדידה חד-פעמית מהירה" וקבלו מדידה וירטואלית אמיתית, בלי הרשמה.</p>
-        <p class="pa-play__physics" data-pa-reveal data-i18n="play.physicsNote">תוכנית מותאמת אישית לכל עסק: קבעו בעצמכם את כמות המדידות המותרת למשתמש. התממשקו בקלות עם אחת מ-4 התוכניות שלנו שניתנות לעריכה מלאה.</p>
+        <h2 class="pa-display pa-d-lg" style="margin-top:1rem" data-pa-reveal data-i18n="play.title">זה הוויג'ט. לא הדגמה.</h2>
+        <p class="pa-lede" style="margin-top:1.2rem" data-pa-reveal data-i18n="play.sub">בדיוק מה שהלקוח רואה בדף מוצר.</p>
+        <p class="pa-play__physics" data-pa-reveal data-i18n="play.physicsNote">ארבע תוכניות, כולן ניתנות לעריכה: אתם קובעים כמה מדידות מקבל כל משתמש.</p>
       </div>
 
     </div>
@@ -944,9 +965,9 @@
              Hebrew title is a seven-word line and at the shared .pa-d-lg
              size it set too small against the three cards under it. See
              §9 of pear-atelier.css for the size and leading. -->
-        <h2 class="pa-display pa-d-lg pa-head__title pa-head__title--xl" data-pa-reveal data-i18n="value.title">שלושה עמודי תווך לרווחיות באופנה</h2>
+        <h2 class="pa-display pa-d-lg pa-head__title pa-head__title--xl" data-pa-reveal data-i18n="value.title">שלוש דרכים שמידה מדויקת מחזירה כסף</h2>
       </div>
-      <p class="pa-lede" data-pa-reveal data-i18n="value.sub">מה משתנה בשורת הרווח כשהקונים מפסיקים לנחש מידה.</p>
+      <p class="pa-lede" data-pa-reveal data-i18n="value.sub">המרה, מלאי ותפעול — מה משתנה בכל אחד מהם.</p>
     </div>
 
     <!-- ── The three pillars ────────────────────────────────────────
@@ -995,7 +1016,7 @@
         <p class="pa-pillar__metricLabel" data-i18n="value.card1Metric">ביטחון בהתאמה</p>
 
         <h3 class="pa-cell__title" data-i18n="value.card1Title">הגדלת המרות</h3>
-        <p class="pa-cell__body" data-i18n="value.card1Body">תנו לקונים 100% ביטחון בהתאמה עוד לפני הרכישה.</p>
+        <p class="pa-cell__body" data-i18n="value.card1Body">ביטחון מלא בהתאמה עוד לפני התשלום.</p>
         <ul class="pa-cell__list">
           <li data-i18n="value.card1Bullet1">פחות עגלות נטושות</li>
           <li data-i18n="value.card1Bullet2">בלי ניחושים בטבלת מידות</li>
@@ -1032,7 +1053,7 @@
         <p class="pa-pillar__metricLabel" data-i18n="value.card2Metric">מידות מיותרות בעגלה</p>
 
         <h3 class="pa-cell__title" data-i18n="value.card2Title">הגנה על המלאי</h3>
-        <p class="pa-cell__body" data-i18n-html="value.card2Body">עצרו קונים שמזמינים שלוש מידות של אותו פריט רק כדי למדוד בבית.</p>
+        <p class="pa-cell__body" data-i18n-html="value.card2Body">סוף להזמנת שלוש מידות של אותו פריט למדידה בבית.</p>
         <ul class="pa-cell__list">
           <li data-i18n="value.card2Bullet1">הדגמים החמים נשארים למכירה</li>
           <li data-i18n="value.card2Bullet2">נתוני ביקוש נקיים יותר</li>
@@ -1067,7 +1088,7 @@
         <p class="pa-pillar__metricLabel" data-i18n="value.card3Metric">פחות החזרות</p>
 
         <h3 class="pa-cell__title" data-i18n="value.card3Title">יעילות תפעולית</h3>
-        <p class="pa-cell__body" data-i18n="value.card3Body">צמצמו את שיעור ההחזרות בעד כ-25%.</p>
+        <p class="pa-cell__body" data-i18n="value.card3Body">צמצום שיעור ההחזרות בעד כ-25%.</p>
         <ul class="pa-cell__list">
           <li data-i18n="value.card3Bullet1">פחות סחורה נכנסת למיון</li>
           <li data-i18n="value.card3Bullet2">מחזור מזומנים קצר יותר</li>
@@ -1084,16 +1105,20 @@
   <section id="cta" data-hud="hud.cta" class="pa-section pa-pad pa-shell">
     <div class="pa-close" data-pa-reveal data-pa-tilt="glow">
       <span class="pa-cell__glow" aria-hidden="true"></span>
-      <h2 class="pa-display pa-d-lg" data-i18n="cta.title">מוכנים להוריד את אחוז ההחזרות?</h2>
-      <p class="pa-lede" style="margin-top:1.2rem;text-align:center" data-i18n="cta.sub">חמש דקות מהדבקת הקוד ועד המדידה הראשונה.</p>
+      <h2 class="pa-display pa-d-lg" data-i18n="cta.title">התחילו להוריד החזרות כבר השבוע</h2>
+      <p class="pa-lede" style="margin-top:1.2rem;text-align:center" data-i18n="cta.sub">חמש דקות מהקוד ועד המדידה הראשונה.</p>
 
+      <!-- The "try the widget" button that led this row was REMOVED. It
+           scrolled back UP to #playground, which the visitor has already
+           passed to reach this section, so it sent them backwards at the
+           exact moment the page should be handing them forward. The two
+           that remain are the only ones that advance: the guide and the
+           contact form. -->
       <div class="pa-close__actions" data-pa-stagger>
-        <button type="button" class="pa-btn pa-btn--pear pa-btn--pulse pa-magnetic" data-scroll="playground"
-                data-i18n="cta.primary" data-pa-hover>✨ נסו את הוויג'ט</button>
         <a class="pa-btn pa-btn--ghost pa-magnetic" href="#docs" data-nav="docs" data-view="docs" data-scroll="docsGate"
            data-i18n="cta.docs" data-pa-hover>למדריך ההטמעה ←</a>
         <button type="button" class="pa-btn pa-btn--ghost pa-magnetic" data-nav="contact" data-view="contact" data-scroll="contact-section"
-                data-i18n="cta.contact" data-pa-hover>דברו איתנו 💬</button>
+                data-i18n="cta.contact" data-pa-hover>דברו איתנו</button>
       </div>
 
       <!-- Platform compatibility, kept from the removed solution panel:
@@ -1118,8 +1143,7 @@
       <p class="pa-eyebrow">Developer Docs</p>
       <h1 data-i18n="docs.title">מדריך הטמעת הוויג'ט</h1>
       <p data-i18n-html="docs.sub">
-        הטמעת הוויג'ט של <span class="brand-pear">PEAR</span> לוקחת <span class="font-semibold text-slate-700">פחות מ-5 דקות</span> ולא דורשת
-        שינויים בארכיטקטורת האתר. שלושה שלבים והלקוחות שלכם מודדים.
+        הטמעה של <span class="font-semibold text-slate-700">פחות מ-5 דקות</span>, בשלושה שלבים, בלי שינוי בארכיטקטורת האתר.
       </p>
     </div>
   </section>
@@ -1184,8 +1208,7 @@
       <p class="pa-eyebrow">Get In Touch</p>
       <h1 data-i18n="contact.title">בואו נדבר</h1>
       <p data-i18n="contact.sub">
-        שאלה על הטמעה, בקשת דמו למותג שלכם, או סתם רוצים להכיר?
-        מלאו את הטופס או פנו אלינו ישירות.
+        שאלה על הטמעה או דמו למותג שלכם — מלאו את הטופס או פנו אלינו ישירות.
       </p>
     </div>
   </section>
@@ -1315,8 +1338,12 @@
           </a>
         </div>
 
+        <!-- The decorative <b> that held an emoji here was removed with
+             it, not left empty: .pa-contact__note is a flex row with a
+             gap, so an empty <b> would still have taken its slot and
+             pushed the paragraph sideways. With one child the gap
+             collapses on its own and no CSS change is needed. -->
         <div class="pa-contact__note">
-          <b aria-hidden="true">🍐</b>
           <p data-i18n-html="contact.teamNote">
             צוות <span class="brand-pear">PEAR</span> זמין לשאלות טכניות, הדגמות למותגים ותמיכה בהטמעה.
           </p>
@@ -1813,17 +1840,14 @@ document.querySelectorAll('[data-pa-count]').forEach((el) => {
   io.observe(el);
 });
 
-/* Shared by every mute-button + volume-slider widget on the page (today
-   just the hero player's; the helper stays generic because it costs
-   nothing and the docs view may grow one). video.muted/.volume are the
-   only state that actually matters; everything else here is just
-   keeping a button's icon and a slider's thumb in sync with them.
-   muteXId is optional — a widget whose "muted" glyph is a bare speaker
-   with no wave lines simply omits it. */
+/* wireSoundControl() — the mute-button + volume-slider binder — stood
+   here and is REMOVED with the widget it drove. The hero clip is a
+   silent autoplaying background film; there is no audio on the page for
+   a control to control, so there is no sound control. */
 
 /* ── Liquid-glass elastic drag ──────────────────────────────────────
-   One drag engine shared by the language switch (below) and both
-   volume sliders (wireSoundControl, right after this): a plain 0..1
+   One drag engine, today the language switch's alone (the volume
+   sliders it also served are gone): a plain 0..1
    drag surface, measured against trackEl's own box, that reports how
    far PAST either edge the raw pointer position has gone — negative
    before the start, positive beyond the end — so a caller can turn
@@ -1874,123 +1898,52 @@ function makeElasticDrag(surfaceEl, trackEl, { onDrag, onRelease, onTap } = {}) 
   });
 }
 
-function wireSoundControl(video, ids) {
-  const btn = document.getElementById(ids.btnId);
-  const track = document.getElementById(ids.sliderId);
-  const fill = document.getElementById(ids.fillId);
-  const thumb = document.getElementById(ids.thumbId);
-  const wave1 = document.getElementById(ids.wave1Id);
-  const wave2 = document.getElementById(ids.wave2Id);
-  const muteX = ids.muteXId ? document.getElementById(ids.muteXId) : null;
-  if (!video || !btn || !track || !fill || !thumb || !wave1 || !wave2) return;
-
-  video.volume = 0.8;
-
-  /* Positions the knob (left, in px) and fill (width, in px) for a
-     given 0..1 level. pad keeps the knob's own radius inside the
-     track's rounded ends instead of poking through them. */
-  const renderVolume = (v) => {
-    const w = track.clientWidth || 92, pad = 9;
-    const x = pad + v * Math.max(0, w - pad * 2);
-    fill.style.width = `${Math.max(0, x - pad)}px`;
-    thumb.style.left = `${x}px`;
-  };
-
-  const sync = () => {
-    const muted = video.muted || video.volume === 0;
-    const shown = muted ? 0 : video.volume;
-    wave1.style.display = muted ? 'none' : '';
-    wave2.style.display = (muted || shown < 0.5) ? 'none' : '';
-    if (muteX) muteX.style.display = muted ? '' : 'none';
-    btn.setAttribute('aria-label', t(muted ? 'a11y.vtonUnmute' : 'a11y.vtonMute'));
-    renderVolume(shown);
-    track.setAttribute('aria-valuenow', String(Math.round(shown * 100)));
-  };
-  window.PearI18n?.onChange(sync);
-  addEventListener('resize', sync);
-
-  const apply = (v) => {
-    video.volume = v;
-    video.muted = v === 0;   // dragging up from 0 unmutes; dragging to 0 mutes
-    sync();
-  };
-
-  btn.addEventListener('click', () => {
-    video.muted = !video.muted;
-    // coming back from 0 (via the slider, not the button) would
-    // otherwise unmute into silence
-    if (!video.muted && video.volume === 0) video.volume = 0.8;
-    sync();
-  });
-
-  /* The knob's own edge-stretch: a native <input type=range> can't be
-     dragged past its min/max, so this custom slider is what makes the
-     rubber-band overshoot possible at all. transform:scaleX from the
-     anchored edge keeps that edge fixed while the far side stretches
-     toward the pointer; a one-shot shimmer fires the instant a drag
-     first reaches a limit (not every frame it stays there). */
-  let atLimit = null;
-  const triggerShimmer = () => {
-    const shimmer = thumb.querySelector('.pa-glass-knob__shimmer');
-    if (!shimmer) return;
-    shimmer.classList.remove('is-active');
-    void shimmer.offsetWidth; // restart the animation
-    shimmer.classList.add('is-active');
-  };
-  const setElastic = (over) => {
-    const stretch = 1 + Math.min(0.32, Math.abs(over) * 1.7);
-    if (stretch < 1.015) {
-      thumb.classList.remove('is-elastic');
-      thumb.style.transform = '';
-      atLimit = null;
-      return;
-    }
-    thumb.classList.add('is-elastic');
-    thumb.style.transformOrigin = over < 0 ? 'right center' : 'left center';
-    thumb.style.transform = `scaleX(${stretch})`;
-    const edge = over < 0 ? 'start' : 'end';
-    if (atLimit !== edge) { atLimit = edge; triggerShimmer(); }
-  };
-
-  makeElasticDrag(track, track, {
-    onDrag: (fraction, over) => { apply(fraction); setElastic(over); },
-    onTap: apply,
-  });
-
-  // Arrow-key/Home/End support — what this custom slider had to pick
-  // back up itself after replacing a native <input type=range>.
-  track.addEventListener('keydown', (e) => {
-    const cur = video.muted ? 0 : video.volume;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') apply(Math.min(1, cur + 0.05));
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') apply(Math.max(0, cur - 0.05));
-    else if (e.key === 'Home') apply(0);
-    else if (e.key === 'End') apply(1);
-    else return;
-    e.preventDefault();
-  });
-
-  sync();
-}
-
-/* The hero player autoplays muted (the pair the autoplay policy
-   requires) and is the only video on the landing view now, so it needs
-   no lazy-attach gate — it is the thing the visitor came to see, above
-   the fold, not an asset a phone should be spared. The pause-when-
-   offscreen observer below parks the decoder once it scrolls away. */
+/* The hero player needs no lazy-attach gate — it is the thing the
+   visitor came to see, above the fold, not an asset a phone should be
+   spared. It autoplays muted and loops, which is the whole of its
+   behaviour: nothing reads or writes its currentTime any more, and
+   nothing unmutes it — the sound control that used to is gone. */
 const heroFilm = document.getElementById('demoVideoEl');
 
-wireSoundControl(heroFilm, {
-  btnId: 'demoMuteBtn', sliderId: 'demoVolumeTrack',
-  fillId: 'demoVolumeFill', thumbId: 'demoVolumeThumb',
-  wave1Id: 'demoSoundWave1', wave2Id: 'demoSoundWave2', muteXId: 'demoSoundMuteX',
-});
+/* An 18s clip looping forever behind the headline is exactly the moving
+   content prefers-reduced-motion exists to stop, and the markup's
+   `autoplay` attribute fires before any script can have an opinion. So
+   it is stopped here, on the first frame, and the observer below is
+   gated to match — otherwise scrolling the hero back into view would
+   start it again.
 
+   The visitor keeps the whole hero: a full-bleed still frame under the
+   same copy. Nothing is hidden and nothing is lost.
+
+   Three lines rather than one because a bare pause() races the autoplay
+   it is trying to cancel: this script runs at block 7b, well after the
+   <video> was parsed, so playback may not have started yet and a pause
+   issued now would be overtaken a moment later. Clearing .autoplay
+   stops it if it has not begun, the pause() stops it if it has, and the
+   one-shot `play` listener catches the case where it begins in between.
+   `once` matters — after that single catch the element is free to play
+   normally, so nothing here permanently pins the clip shut. */
+if (heroFilm && REDUCED) {
+  heroFilm.autoplay = false;
+  heroFilm.addEventListener('play', () => heroFilm.pause(), { once: true });
+  heroFilm.pause();
+}
+
+/* Park the decoder once the hero has scrolled away, and start it again
+   when it comes back. A 2.9MB clip looping against a page the visitor
+   has scrolled past is battery and GPU spent on something nobody can
+   see — this is the whole reason the observer exists.
+
+   It PLAYS as well as pauses again now. While scroll drove the playhead
+   it could only pause, because resuming would have fought the scrub;
+   there is no scrub left to fight. */
 if (heroFilm && 'IntersectionObserver' in window) {
   new IntersectionObserver(([e]) => {
     /* A blocked autoplay rejects here and the poster frame is a fine
        resting state, so the rejection is swallowed deliberately. */
-    e.isIntersecting ? heroFilm.play().catch(() => {}) : heroFilm.pause();
-  }, { threshold: 0.15 }).observe(heroFilm);
+    if (e.isIntersecting) { if (!REDUCED) heroFilm.play().catch(() => {}); }
+    else if (!heroFilm.paused) heroFilm.pause();
+  }, { threshold: 0.05 }).observe(heroFilm);
 }
 
 /* ── 8 · Scroll HUD (ring gauge + % + chapter) + navbar elevation ─
@@ -2042,6 +1995,12 @@ function revealAll() {
    page's core functionality can never depend on it. */
 try {
   const GSAP_ON = !REDUCED && window.gsap && window.ScrollTrigger;
+
+  /* The hero's reduced-motion / no-GSAP stand-down used to sit here
+     too. It moved with the engine: pear-motion.js owns both halves now,
+     so the fallback cannot drift out of step with the thing it is a
+     fallback for. */
+
   if (GSAP_ON) {
     gsap.registerPlugin(ScrollTrigger);
 
@@ -2147,20 +2106,12 @@ try {
                          start: 'top bottom', end: 'bottom top', scrub: true } });
     });
 
-    /* A cinematic PIN stood here: it held the old onyx demo band at the
-       top of the viewport while its video scaled .9 → 1. That band is
-       gone — the video is the hero's now — and pinning a section that
-       already sits at the top of the page only buys scroll distance
-       before the visitor reaches anything new. Same scale-in, as an
-       ordinary scrub, with nothing pinned and no layout shift. */
-    const film = document.querySelector('#film .pa-cinema__frame');
-    if (film && matchMedia('(min-width: 1024px)').matches) {
-      gsap.fromTo(film,
-        { scale: .95, transformOrigin: 'center top' },
-        { scale: 1, ease: 'none',
-          scrollTrigger: { trigger: '#film', start: 'top 92%', end: 'top 45%',
-                           scrub: .4 } });
-    }
+    /* The skyline hero's scrub engine used to sit here. The scrubbing
+       is gone entirely — the clip is an ordinary autoplaying background
+       video — and what survives of it is the copy's defocus on scroll,
+       which lives in pear-motion.js as initSkyline(). Nothing in this
+       file drives the hero any more; what is left of it here is the
+       markup and the observer above that parks the decoder off-screen. */
 
     /* HUD chapter label follows the section under the viewport center.
        data-hud holds a TRANSLATION KEY, so it is resolved here and the
