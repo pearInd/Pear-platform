@@ -38,7 +38,14 @@
 
   /* Inter Tight carries Latin; Heebo has no Latin competition here
      because Inter Tight resolves first, and it catches every Hebrew
-     glyph Inter Tight cannot draw. One stack, two scripts. */
+     glyph Inter Tight cannot draw. One stack, two scripts.
+
+     Metric-override fallback faces (ascent/descent/size-adjust on a
+     local Arial) were tried here to absorb the font-swap reflow and
+     were REVERTED: measured against this page they made it worse, not
+     better — mobile CLS went 0.0001 → 0.134, because the overrides
+     moved first paint further from the system metrics the swap was
+     already close to. Do not re-add them without measuring. */
   --pa-sans:  'Inter Tight', 'Heebo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   --pa-serif: 'Instrument Serif', 'Times New Roman', Georgia, serif;
   --pa-mono:  'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -80,7 +87,15 @@ body.pa :focus-visible {
 }
 
 .pa-section { position: relative; z-index: 2; }
-.pa-pad { padding-block: clamp(5.5rem, 12vw, 11rem); }
+/* Was clamp(5.5rem, 12vw, 11rem) — 176px of air above AND below every
+   section on a desktop, so any two neighbours were pushed 352px apart
+   and the page read as four unrelated screens. At this scale a section
+   break is still unmistakable and the whole landing view fits into
+   roughly one fewer screen of scrolling. */
+.pa-pad { padding-block: clamp(3.25rem, 6.5vw, 5.75rem); }
+/* Consecutive padded sections would otherwise stack their two paddings
+   into a gap twice the size of the one either section asked for. */
+.pa-pad + .pa-pad { padding-block-start: 0; }
 
 /* ── display type ── */
 .pa-display {
@@ -242,19 +257,14 @@ body.pa .font-mono { font-family: var(--pa-mono); }
 
 /* On the onyx panels the same utilities have to invert or the copy
    they colour drops out of the surface entirely. */
-body.pa .pa-demo .text-slate-700,
 body.pa .pa-close .text-slate-700 { color: var(--pa-beige); }
-body.pa .pa-demo .text-pear-600,
 body.pa .pa-close .text-pear-600,
-body.pa .pa-demo .text-pear-700,
 body.pa .pa-close .text-pear-700 { color: var(--pa-pear); }
-/* Every dark surface on the site, in one list: the demo band, the
-   closing CTA, the onyx bento cell, the contact aside, the guide's help
-   card and the access gate. The name is lifted off near-black rather
-   than clipped to the deep-pear gradient, which goes muddy on onyx. */
-body.pa .pa-demo .brand-pear,
+/* Every dark surface on the site, in one list: the closing CTA, the
+   contact aside, the guide's help card and the access gate. The name is
+   lifted off near-black rather than clipped to the deep-pear gradient,
+   which goes muddy on onyx. */
 body.pa .pa-close .brand-pear,
-body.pa .pa-cell--onyx .brand-pear,
 body.pa .pa-contact__card .brand-pear,
 body.pa .pa-guide__help .brand-pear,
 body.pa .pa-gate__card .brand-pear {
@@ -586,20 +596,45 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
 .pa-js [data-pa-stagger] > * { opacity: 0; }
 
 /* ─────────────────────────── 8 · HERO ───────────────────────────── */
+/* Single column, centred: headline → lede → actions → the film → the
+   proof row. min-height:100svh is gone. It forced a full screen of hero
+   before the player could even begin, and with the player now IN the
+   hero a locked viewport height either cropped it or stranded it below
+   the fold. The hero is exactly as tall as its content needs. */
 .pa-hero {
   position: relative; z-index: 3;
-  min-height: 100svh;
-  padding-top: clamp(7rem, 14vh, 11rem);
-  padding-bottom: clamp(2rem, 6vh, 5rem);
-  display: flex; flex-direction: column; justify-content: center;
-}
-.pa-hero__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
-  gap: clamp(2rem, 4vw, 4rem);
+  padding-top: clamp(6.5rem, 13vh, 8.5rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  display: flex; flex-direction: column;
   align-items: center;
 }
-.pa-hero__title { margin-block: clamp(1.1rem, 2.2vw, 1.9rem) clamp(1.3rem, 2.4vw, 2rem); }
+.pa-hero__lead {
+  width: 100%;
+  text-align: center;
+  margin-inline: auto;
+}
+/* The headline and the lede take their own measures, in their OWN ch —
+   which tracks each one's font-size, so both hold a sensible line length
+   from 360px to 1920px. A single max-width on the parent cannot do this:
+   its ch is the 1rem body figure, and at 58ch that capped the container
+   near 460px, which forced the display-size Hebrew headline onto five
+   lines at 1920 (measured 433px tall against English's 149px). */
+.pa-hero__title {
+  margin-block: 0 clamp(.9rem, 1.8vw, 1.4rem);
+  max-width: 17ch;
+  margin-inline: auto;
+}
+/* The kicker is centred with the headline it labels, so it cannot keep
+   the start-aligned margin it had in the old two-column hero.
+
+   A min-height reservation was tried here to absorb the EN→HE language
+   flip and REVERTED after measurement: the lede is TALLER in English
+   while the headline is taller in Hebrew, so reserving the lede's
+   three-line English case added height on top of a delta that already
+   pointed the other way — 1280px CLS went 0.086 → 0.155. The flip has
+   to be fixed where it happens (i18n.js paints DEFAULT_LANG first),
+   not absorbed downstream. Measure before re-adding anything here. */
+.pa-hero__lede { margin-inline: auto; max-width: 46ch; }
 /* the dictionary's hero.title ships an LTR product kicker as its first
    span; it is a label, not part of the headline scale */
 .pa-hero__title > span[dir="ltr"]:first-child {
@@ -610,14 +645,21 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
   color: var(--pa-pear-deep);
   margin-bottom: 1.1rem;
 }
-.pa-hero__actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: clamp(1.5rem, 2.8vw, 2.2rem); }
+.pa-hero__actions {
+  display: flex; flex-wrap: wrap; gap: .7rem;
+  justify-content: center;
+  margin-top: clamp(1.2rem, 2.2vw, 1.7rem);
+}
 
-/* glassmorphic proof badges */
+/* glassmorphic proof badges — now the closing line of the hero, sitting
+   UNDER the film rather than above it, so they read as the receipt for
+   what was just shown. No top border: the film's own dark mass is
+   already the rule they would have drawn. */
 .pa-proof {
   display: flex; flex-wrap: wrap; gap: .5rem;
-  margin-top: clamp(1.8rem, 3.6vw, 2.8rem);
-  padding-top: clamp(1.3rem, 2.4vw, 1.9rem);
-  border-top: 1px solid var(--pa-hair);
+  justify-content: center;
+  width: 100%;
+  margin-top: clamp(1.3rem, 2.4vw, 1.9rem);
 }
 .pa-proof p {
   display: inline-flex; align-items: baseline; gap: .45rem;
@@ -631,60 +673,68 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
 }
 .pa-proof p span:first-child { font-weight: 600; color: var(--pa-ink); letter-spacing: -0.015em; }
 
-/* ── the elevated device stage that frames the try-on loop ── */
-.pa-stage {
+/* ── the cinematic player ──
+   Replaces .pa-stage, the phone mockup that used to hold the try-on
+   loop beside the headline. The hero now shows one clip, full width,
+   under the copy rather than next to it.
+
+   The dark frame does the work the old onyx demo band did: it is the
+   one hard tonal break on the page, so the beige around it reads as
+   deliberate. It just does it in 60vh instead of a whole section. */
+.pa-cinema {
   position: relative;
-  perspective: 1400px;
-}
-.pa-stage__card {
-  position: relative;
-  background: var(--pa-white);
-  border: 1px solid var(--pa-hair);
-  border-radius: var(--pa-radius-lg);
-  box-shadow: var(--pa-lift-3);
-  padding: .8rem;
-  transform-style: preserve-3d;
-  will-change: transform;
+  width: 100%;
+  margin-top: clamp(1.8rem, 3.4vw, 2.8rem);
+  /* Caps the player's HEIGHT by capping its width, which is the only
+     way to do it without contradicting the aspect-ratio below. 72svh of
+     height at 53:30 is this much width; beyond it the clip would push
+     the proof row off the fold on a short laptop screen. */
+  max-width: min(100%, calc(72svh * 848 / 480));
   margin-inline: auto;
-  max-width: 380px;
 }
-.pa-stage__screen {
-  position: relative; overflow: hidden;
-  border-radius: calc(var(--pa-radius-lg) - .55rem);
-  background: var(--pa-beige-deep);
-  aspect-ratio: 464 / 832;
+.pa-cinema__frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--pa-radius-lg);
+  border: 1px solid rgba(20,20,19,.14);
+  box-shadow: 0 50px 120px -46px rgba(0,0,0,.55);
+  background: #000;
+  /* pear-ad.mp4 is 848x480. Declaring it reserves the box at first
+     paint: without this the <video> lays out at the 300x150 default
+     until metadata arrives, then snaps to its real height and shoves
+     the CTAs, the proof row and every section below it down the page —
+     measured at 0.19 CLS on a 1920 viewport before this rule, which is
+     twice the 0.1 "good" threshold. The video element carries the same
+     numbers as width/height attributes for the same reason, so the box
+     is correct even in the frame before this stylesheet applies. */
+  aspect-ratio: 848 / 480;
+  /* The GSAP scrub at index.html block 8 animates scale on this
+     element; declaring it here keeps that on the compositor. */
+  will-change: transform;
 }
-.pa-stage__screen video { width: 100%; height: 100%; object-fit: contain; display: block; }
+/* The clip is letterboxed rather than cropped: object-fit:cover on an
+   ad whose subject is a person would cut heads off at some viewport
+   widths, and #000 behind it makes the letterbox read as a frame. In
+   practice the frame's ratio matches the file's exactly, so there is
+   nothing to letterbox — contain is the safe behaviour if the clip is
+   ever swapped for one cut to a different ratio. */
+.pa-cinema__frame video {
+  width: 100%; height: 100%; display: block;
+  object-fit: contain;
+  background: #000;
+}
 
-/* the ambient glow beneath the device, tinted by the clip */
-.pa-stage__glow {
-  position: absolute; inset-inline: 8%; bottom: -6%;
-  height: 40%; z-index: -1;
+/* The ambient pear-tinted glow the device stage used to cast, kept and
+   widened to the new frame. z-index:-1 puts it behind the frame while
+   staying inside .pa-cinema's stacking context. */
+.pa-cinema__glow {
+  position: absolute; inset-inline: 6%; bottom: -5%;
+  height: 45%; z-index: -1;
   background: radial-gradient(50% 50% at 50% 50%, var(--pa-pear-glow), transparent 70%);
-  filter: blur(28px);
-  opacity: .9;
+  filter: blur(34px);
+  opacity: .85;
+  pointer-events: none;
 }
-
-.pa-stage__toggle {
-  position: absolute; bottom: .85rem; inset-inline-end: .85rem; z-index: 3;
-  width: 38px; height: 38px; border-radius: 50%;
-  display: grid; place-items: center;
-  background: rgba(255,255,255,.85);
-  border: 1px solid var(--pa-hair);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--pa-lift-1);
-  color: var(--pa-onyx); cursor: pointer;
-  transition: transform .35s var(--pa-ease-out), background-color .3s;
-}
-.pa-stage__toggle:hover { transform: scale(1.08); background: var(--pa-pear); }
-.pa-stage__toggle svg { width: 15px; height: 15px; }
-
-/* The hero phone's sound widget (.pa-glass-sound, defined with the rest
-   of the liquid-glass system near .pa-lang) needs the OPPOSITE corner
-   from .pa-stage__toggle, which already owns inset-inline-end here —
-   the demo band has no competing button, so it keeps the shared
-   default on that side. */
-#vtonSound { inset-inline-start: 1rem; inset-inline-end: auto; }
 
 .pa-badge {
   position: absolute; z-index: 4;
@@ -698,8 +748,12 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
   backdrop-filter: blur(10px);
   white-space: nowrap;
 }
-.pa-badge--size { top: 1.4rem; inset-inline-start: -1.1rem; }
-.pa-badge--live { bottom: 3.4rem; inset-inline-end: -1.1rem; }
+/* Both badges hung OFF the edges of the old phone card on negative
+   insets. They sit inside .pa-cinema__frame now, which clips its
+   overflow, so the insets are positive — and --live is pulled to the
+   top corner because #demoSound already owns the bottom one. */
+.pa-badge--size { top: 1.1rem; inset-inline-start: 1.1rem; }
+.pa-badge--live { top: 1.1rem; inset-inline-end: 1.1rem; }
 .pa-badge .font-mono, .pa-badge span[class*="mono"] { color: var(--pa-pear-deep); font-family: var(--pa-mono); }
 
 .pa-dot {
@@ -755,12 +809,12 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
   max-width: 19ch;
 }
 
-/* ───────────────────── 10 · BENTO / CARDS ───────────────────────── */
-.pa-bento {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: clamp(.7rem, 1.1vw, 1.1rem);
-}
+/* ───────────────────── 10 · PILLAR CARDS ────────────────────────── */
+/* .pa-bento (a 6-column grid) stood here with .pa-w2/3/4/6 span helpers
+   and a .pa-cell--onyx variant. The only thing that ever used them was
+   the three-pillar row, which is now .pa-pillars — repeat(3) with no
+   spans to keep in sync. .pa-cell and its parts stay: .pa-pillar is
+   built on them. */
 .pa-cell {
   position: relative; overflow: hidden;
   background: var(--pa-white);
@@ -846,13 +900,6 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
 .pa-cell:hover .pa-mark__hair,
 .pa-cell.is-touching .pa-mark__hair { opacity: .62; }
 
-.pa-cell--onyx .pa-mark {
-  color: var(--pa-pear);
-  background: linear-gradient(150deg, rgba(155,181,58,.20), rgba(155,181,58,.06));
-  border-color: rgba(155,181,58,.28);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
-}
-
 .pa-cell__title {
   margin: 1.5rem 0 .6rem;
   letter-spacing: -0.03em; font-weight: 600;
@@ -930,26 +977,124 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
   .pa-cell--pillar:hover { transform: none; }
 }
 
-.pa-w2 { grid-column: span 2; }
-.pa-w3 { grid-column: span 3; }
-.pa-w4 { grid-column: span 4; }
-.pa-w6 { grid-column: span 6; }
-
-.pa-cell--onyx { background: var(--pa-onyx); border-color: var(--pa-onyx); color: var(--pa-beige); }
-.pa-cell--onyx .pa-cell__tag { color: rgba(244,241,234,.45); }
-.pa-cell--onyx .pa-cell__body { color: rgba(244,241,234,.72); }
-.pa-cell--onyx .pa-cell__list { border-color: rgba(244,241,234,.14); }
-.pa-cell--onyx .pa-cell__list li { color: rgba(244,241,234,.6); }
-
-/* metric cells */
-.pa-metric {
-  font-weight: 500; letter-spacing: -0.05em; line-height: .88;
-  font-size: clamp(2.6rem, 5.4vw, 4.8rem);
-  font-variant-numeric: tabular-nums;
-  direction: ltr;
+/* ── the pillar row ──
+   .pa-bento's 6-column grid is gone from this section: with exactly
+   three equal cards it was three span-2 cells doing what repeat(3) does
+   in one declaration, and the extra indirection meant every responsive
+   step had to restate both the track count and the spans. */
+.pa-pillars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(.8rem, 1.2vw, 1.15rem);
+  align-items: start;
 }
-.pa-metric small { font-size: .3em; letter-spacing: -0.02em; color: var(--pa-ink-35); margin-inline-start: .1em; }
-.pa-cell--onyx .pa-metric small { color: rgba(244,241,234,.4); }
+.pa-pillar {
+  /* Taller than the shared .pa-cell min-height because a metric now
+     sits between the head and the title. Equal heights across the row
+     come from align-items:stretch on the grid item itself. */
+  min-height: 0;
+  height: 100%;
+  padding-block: clamp(1.5rem, 2.2vw, 2.1rem);
+  cursor: default;
+}
+/* The card is focusable (tabindex=0) so the bullet reveal is reachable
+   from the keyboard; it is not a control, so it takes the page's focus
+   ring rather than a button's. */
+.pa-pillar:focus-visible { outline: 2px solid var(--pa-pear-deep); outline-offset: 3px; }
+.pa-pillar .pa-cell__head { margin-bottom: 0; }
+
+/* ── the metric ──
+   Set in the display face at a size that carries across the row, with
+   tabular figures so a counting number does not shuffle the glyphs
+   beside it on every frame. dir=ltr is on the element in the markup —
+   a Hebrew paragraph must not reorder a figure and its unit. */
+.pa-pillar__metric {
+  margin: clamp(1rem, 1.8vw, 1.5rem) 0 0;
+  font-family: var(--pa-sans);
+  font-weight: 600; letter-spacing: -0.05em; line-height: .9;
+  font-size: clamp(2.4rem, 4.6vw, 3.6rem);
+  font-variant-numeric: tabular-nums;
+  color: var(--pa-ink);
+  display: flex; align-items: baseline;
+}
+/* The unit and the ~ qualifier: same colour relationship the tag has to
+   the title, so they read as annotation rather than as part of the
+   figure. font-style:normal because <i> is being used for its brevity
+   as a hook, not for emphasis. */
+.pa-pillar__metric i {
+  font-style: normal;
+  font-size: .42em; font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--pa-pear-deep);
+}
+.pa-pillar__metricLabel {
+  margin: .35rem 0 0;
+  font-size: .76rem; font-weight: 500;
+  color: var(--pa-ink-50);
+}
+.pa-pillar .pa-cell__title { margin-top: clamp(.9rem, 1.6vw, 1.3rem); }
+
+/* ── the bullet reveal ──
+   The list keeps its space at ALL times and only fades in. It used to
+   collapse to grid-template-rows:0fr at rest and animate open, which
+   read well on its own but grew the card by ~51px on hover — and
+   because the three cards share a grid row, ALL THREE grew and the
+   closing CTA below them jumped 52px up the page every time the cursor
+   crossed a card. A hover that reflows the page is worse than a hover
+   that reveals nothing.
+
+   Holding the space costs a strip of white inside each card at rest,
+   which is what makes the row scan as three equal objects, and the
+   fade + 6px rise still reads as a reveal. Nothing outside the card
+   moves, at any viewport, ever. */
+.pa-pillar .pa-cell__list {
+  margin-top: 1rem;
+  padding-top: .9rem;
+  border-top: 1px solid var(--pa-hair-soft);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity .45s var(--pa-ease-out),
+    transform .45s var(--pa-ease-out);
+}
+.pa-pillar:hover .pa-cell__list,
+.pa-pillar:focus-within .pa-cell__list,
+.pa-pillar.is-touching .pa-cell__list {
+  opacity: 1;
+  transform: none;
+}
+
+/* A slow diagonal sheen that only crosses the card while it is engaged
+   — the glass cue that separates "this responds" from "this is a
+   picture of a card". Purely decorative and pointer-events:none, so it
+   never intercepts the hover it is reacting to. */
+.pa-pillar__sheen {
+  position: absolute; inset: 0; z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(115deg, transparent 38%, rgba(255,255,255,.55) 50%, transparent 62%);
+  transform: translateX(-60%);
+  transition: opacity .3s var(--pa-ease-out);
+}
+.pa-pillar:hover .pa-pillar__sheen,
+.pa-pillar:focus-within .pa-pillar__sheen {
+  opacity: 1;
+  animation: pa-sheen 1.15s var(--pa-ease-out) forwards;
+}
+@keyframes pa-sheen {
+  from { transform: translateX(-60%); }
+  to   { transform: translateX(60%); }
+}
+
+/* The mark answers the hover too, so the card reads as one object
+   reacting rather than as a list that happened to open. */
+.pa-pillar:hover .pa-mark,
+.pa-pillar:focus-within .pa-mark,
+.pa-pillar.is-touching .pa-mark {
+  transform: scale(1.06) rotate(-3deg);
+  background: linear-gradient(150deg, rgba(155,181,58,.3), rgba(155,181,58,.1));
+  border-color: rgba(155,181,58,.45);
+}
 
 /* ─────────────────── 11 · PLAYGROUND / WIDGET ───────────────────── */
 .pa-play {
@@ -1103,33 +1248,14 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
 }
 
 /* ─────────────────────── 12 · DEMO BAND ─────────────────────────── */
-.pa-demo { position: relative; z-index: 3; background: var(--pa-onyx); color: var(--pa-beige); overflow: hidden; }
-.pa-demo::before {
-  content: ''; position: absolute; inset-inline: -10%; top: -40%; height: 140%;
-  background: radial-gradient(50% 50% at 50% 40%, rgba(155,181,58,.2), transparent 70%);
-  pointer-events: none;
-}
-.pa-demo > * { position: relative; }
-.pa-demo .pa-eyebrow { color: rgba(244,241,234,.5); }
-.pa-demo .pa-lede { color: rgba(244,241,234,.66); }
-.pa-demo__frame {
-  position: relative;
-  margin-top: clamp(2rem, 4vw, 3.5rem);
-  border-radius: var(--pa-radius-lg);
-  overflow: hidden;
-  border: 1px solid rgba(244,241,234,.14);
-  box-shadow: 0 50px 120px -40px rgba(0,0,0,.7);
-  background: #000;
-  will-change: transform;
-}
-.pa-demo__frame video { width: 100%; height: auto; display: block; }
+/* Section 12 was the full-bleed onyx demo band. It is gone: its video is
+   the hero's cinematic player now (see .pa-cinema in §8) and the dark
+   frame around that clip carries the tonal break this band existed to
+   provide. .pa-demo/.pa-demo__frame have no markup left to style. */
 
-/* demoSound/vtonSound (structure + drag physics) share the liquid-glass
-   .pa-glass-sound/-btn/-slider system defined near .pa-lang. Rest-state
-   default before JS syncs the real state: both videos start muted
-   (autoplay requires it), so hiding the wave paths is the correct
-   first paint for demo's icon rather than a flash of the wrong one. */
-#vtonSoundWave1, #vtonSoundWave2,
+/* Rest-state default before JS syncs the real state: the player starts
+   muted (autoplay requires it), so hiding the wave paths is the correct
+   first paint for the icon rather than a flash of the wrong one. */
 #demoSoundWave1, #demoSoundWave2 { display: none; }
 
 /* ────────────────────── 13 · CLOSING CTA ────────────────────────── */
@@ -1255,41 +1381,47 @@ body.pa #hudLabel {
 /* ─────────────────────── 16 · RESPONSIVE ────────────────────────── */
 @media (max-width: 1100px) {
   body.pa #scrollHud { display: none; }
-  .pa-hero__grid { grid-template-columns: minmax(0, 1fr); gap: clamp(2.5rem, 6vw, 4rem); }
   .pa-play { grid-template-columns: minmax(0, 1fr); }
   .pa-head { grid-template-columns: minmax(0, 1fr); align-items: start; }
-  .pa-w2, .pa-w3, .pa-w4 { grid-column: span 3; }
+}
+@media (max-width: 900px) {
+  /* Three pillars side by side stop working before the nav does: at this
+     width each card is under ~270px and the Hebrew titles start breaking
+     across three lines. One column, full width, in the same order. */
+  .pa-pillars { grid-template-columns: minmax(0, 1fr); }
+  /* With one card on screen at a time there is nothing to scan past, so
+     the bullets are simply always visible — a hover reveal on a
+     full-width card on a touch device is a list most visitors never
+     find. The space was already reserved, so this changes no geometry. */
+  .pa-pillar .pa-cell__list { opacity: 1; transform: none; }
 }
 @media (max-width: 860px) {
   .pa-nav__links { display: none; }
   .pa-nav__bar { padding-inline-start: .7rem; gap: .5rem; }
   .pa-nav__tools { margin-inline-start: auto; }
-  .pa-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pa-w2, .pa-w3, .pa-w4, .pa-w6 { grid-column: span 2; }
   .pa-cell { min-height: 180px; }
   .pa-badge--size { inset-inline-start: .6rem; }
   .pa-badge--live { inset-inline-end: .6rem; }
 }
 @media (max-width: 767.98px) {
-  /* The hero try-on stage is dropped whole below 768px.
-
-     Two reasons, and the second is the one that matters: it costs a
-     phone visitor 800KB of video before the fold (index.html block 7b
-     withholds the src so that download never starts), and it costs them
-     most of a screen height of scrolling to get past a clip that repeats
-     what the demo band shows later at full width. The headline, the two
-     CTAs and the three proof lines now open the page on their own.
-
-     display:none rather than a visibility trick: the <video> must be
-     genuinely absent from layout, and block 7b keys off this same
-     768px threshold, so the two must agree exactly. */
-  #heroStage { display: none; }
-  .pa-hero { padding-block-start: clamp(6rem, 22vw, 8rem); }
+  /* The hero's phone try-on stage was dropped whole below this width and
+     its 800KB clip never fetched. The stage is gone at every width now —
+     the hero holds one cinematic player instead — so only the hero's own
+     top padding is still tuned here, for a navbar that wraps taller once
+     the links collapse out of it. */
+  .pa-hero { padding-block-start: clamp(5.5rem, 20vw, 7rem); }
+  /* A 72svh cap is most of a phone screen for a 16:9 clip that will
+     never be that tall anyway; releasing it avoids a pointless
+     letterbox on a narrow viewport. */
+  .pa-cinema__frame video { max-height: none; }
+  /* Both badges on one edge would collide on a narrow frame. */
+  .pa-badge--live { top: auto; bottom: 1rem; inset-inline-end: 1rem; }
 }
 @media (max-width: 560px) {
-  .pa-bento { grid-template-columns: minmax(0, 1fr); }
-  .pa-w2, .pa-w3, .pa-w4, .pa-w6 { grid-column: span 1; }
   .pa-hero__actions .pa-btn { flex: 1 1 100%; justify-content: center; }
+  /* #demoSound sits in the same bottom corner; the live badge steps
+     above it rather than overlapping the volume slider. */
+  .pa-badge--live { bottom: 4.2rem; }
 
   /* The compatibility line is a single unbreakable-looking string
      ("Shopify · WooCommerce · Magento · custom builds"), and inside its
@@ -1963,6 +2095,11 @@ textarea.pa-field__input { resize: vertical; min-height: 7.5rem; line-height: 1.
   .pa-js [data-pa-reveal], .pa-js [data-pa-stagger] > * { opacity: 1 !important; }
   .pa-js .pa-line > span { transform: none !important; }
   .pa-play__scan { display: none; }
+  /* The blanket rule above collapses the sheen's duration to nothing,
+     which turns a 1.15s sweep into a white flash across the card on
+     every hover — worse than the motion it is standing in for. The
+     pillars keep their glow and their lift; they lose only this. */
+  .pa-pillar__sheen { display: none; }
   html.pa-cursor-on, html.pa-cursor-on * { cursor: auto !important; }
   .pa-cursor { display: none; }
 }

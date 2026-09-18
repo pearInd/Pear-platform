@@ -153,10 +153,11 @@
       'a11y.viewOverview':  'אודות המיזם והפתרון',
       'a11y.viewDocs':      'מדריך הטמעת הוויג\'ט',
       'a11y.viewContact':   'צור קשר',
-      'a11y.heroVideo':     'הדגמת הוידג\'ט PEAR AI Virtual Try-On, לולאה ללא קול',
+      /* heroVideo/vtonPause/vtonPlay labelled the hero phone's silent
+         loop and its play toggle. Both went with that stage. The vton*
+         names that remain are the sound widget's, which moved intact
+         onto the cinematic player and kept every id it binds. */
       'a11y.demoVideo':     'סרטון הדגמה מלא של הוידג\'ט PEAR AI Virtual Try-On',
-      'a11y.vtonPause':     'השהיית ההדגמה',
-      'a11y.vtonPlay':      'הפעלת ההדגמה',
       'a11y.vtonMute':      'השתקת הקול',
       'a11y.vtonUnmute':    'ביטול השתקה',
       'a11y.vtonVolume':    'עוצמת קול',
@@ -171,18 +172,23 @@
       'nav.docs':    'מדריך הטמעה',
       'nav.contact': 'דברו איתנו',
 
-      /* — scroll HUD chapters — */
+      /* — scroll HUD chapters —
+         hud.demo went with the onyx demo band; the clip it labelled is
+         the hero's now and hud.intro covers it. */
       'hud.intro':      'פתיחה',
       'hud.playground': 'נסו בעצמכם',
-      'hud.demo':       'הדגמה חיה',
       'hud.value':      'השפעה עסקית',
       'hud.cta':        'סיום',
 
-      /* — hero — */
-      'hero.title':         '<span dir="ltr" class="block text-lg sm:text-xl font-bold text-pear-600 tracking-tight mb-2"><span class="brand-pear">PEAR</span> Platform · AI Virtual Try-On &amp; Measurement</span>\n          הלקוחות שלכם מודדים\n          <span class="block mt-2 text-pear-600">בלי להגיע לחנות.</span>',
-      'hero.sub':           '<span class="brand-pear">PEAR</span> מלביש את הבגד על הלקוח בזמן אמת, ממליץ מידה מדויקת ומוריד החזרות.\n          <span class="font-semibold text-slate-700"><br> מודדים בבית, קונים בביטחון.</span>',
-      'hero.ctaPrimary':    '✨ נסו את הוויג\'ט האמיתי · 30 שניות',
-      'hero.ctaSecondary':  '▶ איך זה עובד? ב-17 שניות',
+      /* — hero —
+         Two sentences replaced five. "הלקוחות שלכם מודדים בלי להגיע
+         לחנות" described the mechanism; this states the outcome the
+         buyer is actually shopping for and names the cost it removes.
+         Every figure on the page is unchanged. */
+      'hero.title':         '<span dir="ltr" class="block text-lg sm:text-xl font-bold text-pear-600 tracking-tight mb-2"><span class="brand-pear">PEAR</span> Platform · AI Virtual Try-On &amp; Measurement</span>\n          מידה מדויקת.\n          <span class="block mt-2 text-pear-600">בלי חדר מדידה.</span>',
+      'hero.sub':           '<span class="brand-pear">PEAR</span> מלביש את הבגד על הלקוח בזמן אמת וממליץ מידה. הוא קונה בביטחון, אתם סופגים פחות החזרות.',
+      'hero.ctaPrimary':    '✨ נסו את הוויג\'ט · 30 שניות',
+      'hero.ctaSecondary':  '▶ צפו ב-17 שניות',
       'hero.proof1':        '<span class="font-bold text-slate-700">100% ביטחון בהתאמה</span> ברגע התשלום',
       'hero.proof2':        '<span class="font-bold text-slate-700">אפס Bracketing</span>, סוף להזמנת שלוש מידות',
       'hero.proof3':        '<span class="font-bold text-slate-700">עד כ-25% פחות החזרות</span> ופחות עלויות תפעול',
@@ -192,7 +198,7 @@
       /* — live widget playground — */
       'play.eyebrow':      'Live Widget · בלי הרשמה',
       'play.title':        'זה הוויג\'ט האמיתי. ממש כאן.',
-      'play.sub':          'כך זה נראה בדף מוצר: לחצו על "מדידה חד-פעמית מהירה" וקבלו מדידה וירטואלית אמיתית, בלי הרשמה.',
+      'play.sub':          'בדיוק מה שהלקוח רואה בדף מוצר. לחצו, ומדדו.',
       'play.productAlt':   'הוידג\'ט PEAR AI Virtual Try-On בדף מוצר אופנה, חולצת הלוגו של PEAR, גזרה רפויה/אוברסייז, מידות S-XXL',
       'play.modelAlt':     'חולצת PEAR האוברסייז לבושה על דוגמן/ית',
       'play.modelPreview': 'תצוגה על דוגמן/ית',
@@ -203,36 +209,41 @@
       'play.productMeta':  'בז\' · מידות S-XXL',
       'play.fitTag':       'גזרה רפויה / אוברסייז',
       'play.fitGuidance':  'סילואט אוברסייז: רדו מידה אחת להתאמה סטנדרטית, או בחרו את המידה הרגילה למראה בוקסי מכוון.',
-      'play.physicsNote':  'תוכנית מותאמת אישית לכל עסק: קבעו בעצמכם את כמות המדידות המותרת למשתמש. התממשקו בקלות עם אחת מ-4 התוכניות שלנו שניתנות לעריכה מלאה.',
+      'play.physicsNote':  'ארבע תוכניות, כולן ניתנות לעריכה: אתם קובעים כמה מדידות מקבל כל משתמש.',
       'play.cta':          '⚡ מדידה חד-פעמית מהירה',
-      'play.ctaNote':      'דילוג על שלב ההרשמה, ישר למדידה, שימוש אחד בכל ביקור.',
+      'play.ctaNote':      'בלי הרשמה. שימוש אחד בכל ביקור.',
       'play.ctaUsed':      '✓ המדידה נוצלה לביקור הזה',
       'play.ctaUsedTitle': 'כבר בוצעה מדידה חד-פעמית בביקור הזה',
       'play.ctaLoading':   'טוען…',
       'play.loadError':    'לא הצלחנו לטעון את הוויג׳ט. נסו שוב בעוד רגע.',
 
-      /* — demo band — */
-      'demo.eyebrow': '17 שניות · לפני/אחרי',
-      'demo.title':   'כך זה נראה ללקוח שלכם',
-      'demo.sub':     'מהעמוד מוצר ועד תמונת לבוש, חוויה חלקה ישירות בדפדפן, ללא צורך באפליקציה.',
+      /* demo.eyebrow/title/sub belonged to the onyx band. The clip they
+         introduced is the hero's now, under the hero's own headline. */
 
-      /* — business impact · the three pillars — */
+      /* — business impact · the three pillars —
+         *Metric are the labels under the counting numerals. Each one
+         names the figure its card animates, and each figure is one the
+         page already states: 100% from hero.proof1, 3→0 from proof2,
+         ~25% from proof3 and value.card3Body. */
       'value.eyebrow':       'השפעה עסקית',
       'value.title':         'שלושה עמודי תווך לרווחיות באופנה',
-      'value.sub':           'מה משתנה בשורת הרווח כשהקונים מפסיקים לנחש מידה.',
+      'value.sub':           'מה משתנה בשורת הרווח כשמפסיקים לנחש מידה.',
       'value.card1Tag':      'המרה',
       'value.card1Title':    'הגדלת המרות',
-      'value.card1Body':     'תנו לקונים 100% ביטחון בהתאמה עוד לפני הרכישה.',
+      'value.card1Metric':   'ביטחון בהתאמה',
+      'value.card1Body':     'ביטחון מלא בהתאמה עוד לפני התשלום.',
       'value.card1Bullet1':  'פחות עגלות נטושות',
       'value.card1Bullet2':  'בלי ניחושים בטבלת מידות',
       'value.card2Tag':      'מלאי',
       'value.card2Title':    'הגנה על המלאי',
-      'value.card2Body':     'עצרו קונים שמזמינים שלוש מידות של אותו פריט רק כדי למדוד בבית.',
+      'value.card2Metric':   'מידות מיותרות בעגלה',
+      'value.card2Body':     'סוף להזמנת שלוש מידות של אותו פריט למדידה בבית.',
       'value.card2Bullet1':  'הדגמים החמים נשארים למכירה',
       'value.card2Bullet2':  'נתוני ביקוש נקיים יותר',
       'value.card3Tag':      'תפעול',
       'value.card3Title':    'יעילות תפעולית',
-      'value.card3Body':     'צמצמו את שיעור ההחזרות בעד כ-25%.',
+      'value.card3Metric':   'פחות החזרות',
+      'value.card3Body':     'צמצום שיעור ההחזרות בעד כ-25%.',
       'value.card3Bullet1':  'פחות סחורה נכנסת למיון',
       'value.card3Bullet2':  'מחזור מזומנים קצר יותר',
 
@@ -345,10 +356,11 @@
       'a11y.viewOverview':  'About the product and the solution',
       'a11y.viewDocs':      'Widget integration guide',
       'a11y.viewContact':   'Contact us',
-      'a11y.heroVideo':     'PEAR AI Virtual Try-On Widget demo, silent loop',
+      /* heroVideo/vtonPause/vtonPlay labelled the hero phone's silent
+         loop and its play toggle. Both went with that stage. The vton*
+         names that remain are the sound widget's, which moved intact
+         onto the cinematic player and kept every id it binds. */
       'a11y.demoVideo':     'PEAR AI Virtual Try-On Widget, full demo video',
-      'a11y.vtonPause':     'Pause the demo',
-      'a11y.vtonPlay':      'Play the demo',
       'a11y.vtonMute':      'Mute sound',
       'a11y.vtonUnmute':    'Unmute sound',
       'a11y.vtonVolume':    'Volume',
@@ -363,18 +375,22 @@
       'nav.docs':    'Integration guide',
       'nav.contact': 'Talk to us',
 
-      /* — scroll HUD chapters — */
+      /* — scroll HUD chapters —
+         hud.demo went with the onyx demo band; the clip it labelled is
+         the hero's now and hud.intro covers it. */
       'hud.intro':      'Intro',
       'hud.playground': 'Try it yourself',
-      'hud.demo':       'Live demo',
       'hud.value':      'Business impact',
       'hud.cta':        'Wrap-up',
 
-      /* — hero — */
-      'hero.title':         '<span dir="ltr" class="block text-lg sm:text-xl font-bold text-pear-600 tracking-tight mb-2"><span class="brand-pear">PEAR</span> Platform · Real-Time AI Virtual Try-On</span>\n          Your shoppers try garments on\n          <span class="block mt-2 text-pear-600">without ever stepping into a store.</span>',
-      'hero.sub':           '<span class="brand-pear">PEAR</span> puts garments directly onto your shoppers in real time, delivering instant fit certainty, boosting purchase confidence and eliminating costly returns.\n          <span class="font-semibold text-slate-700"><br> They try it on at home. They buy with confidence.</span>',
-      'hero.ctaPrimary':    '✨ Try the real widget · 30 seconds',
-      'hero.ctaSecondary':  '▶ How does it work? In 17 seconds',
+      /* — hero —
+         The old sub ran 31 words through four gerunds before reaching a
+         benefit. This is the same promise in two sentences, and every
+         figure on the page is unchanged. */
+      'hero.title':         '<span dir="ltr" class="block text-lg sm:text-xl font-bold text-pear-600 tracking-tight mb-2"><span class="brand-pear">PEAR</span> Platform · Real-Time AI Virtual Try-On</span>\n          The right size.\n          <span class="block mt-2 text-pear-600">No fitting room.</span>',
+      'hero.sub':           '<span class="brand-pear">PEAR</span> puts the garment on your shopper in real time and recommends their size. They buy with confidence. You eat fewer returns.',
+      'hero.ctaPrimary':    '✨ Try the widget · 30 seconds',
+      'hero.ctaSecondary':  '▶ Watch 17 seconds',
       'hero.proof1':        '<span class="font-bold text-slate-700">100% fit confidence</span> at checkout',
       'hero.proof2':        '<span class="font-bold text-slate-700">Zero bracketing</span>, no more 3-size orders',
       'hero.proof3':        '<span class="font-bold text-slate-700">~25% fewer returns</span> and lower OPEX',
@@ -384,7 +400,7 @@
       /* — live widget playground — */
       'play.eyebrow':      'Live Widget · No Signup Required',
       'play.title':        'This is the real widget. Right here.',
-      'play.sub':          'This is how it looks on a brand product page: tap “Quick one-time measurement” to experience real virtual fitting.',
+      'play.sub':          'Exactly what your shopper sees on a product page. Tap it, and measure.',
       'play.productAlt':   'PEAR AI Virtual Try-On Widget on a fashion product page, PEAR Signature Logo Tee, cream, relaxed/oversized fit, sizes S-XXL',
       'play.modelAlt':     'The PEAR oversized tee worn on a model',
       'play.modelPreview': 'On Model Preview',
@@ -395,38 +411,44 @@
       'play.productMeta':  'Beige · sizes S-XXL',
       'play.fitTag':       'Relaxed / Oversized Fit',
       'play.fitGuidance':  'Oversized silhouette: size down for a standard fit, or select true size for an intentional boxy look.',
-      'play.physicsNote':  'Custom plans for every business. Set your allowed try-on quota per user and seamlessly integrate with one of our four fully editable plans.',
+      'play.physicsNote':  'Four fully editable plans: you set how many try-ons each user gets.',
       'play.cta':          '⚡ Quick one-time measurement',
-      'play.ctaNote':      'Skips the signup step, straight into the fitting room, once per visit.',
+      'play.ctaNote':      'No signup. One use per visit.',
       'play.ctaUsed':      '✓ Fitting already used this visit',
       'play.ctaUsedTitle': 'You have already used your one-time fitting on this visit',
       'play.ctaLoading':   'Loading…',
       'play.loadError':    'We could not load the widget. Please try again in a moment.',
 
-      /* — demo band — */
-      'demo.eyebrow': '17 seconds · before/after',
-      'demo.title':   'Here is what your shopper sees',
-      'demo.sub':     'From the product page to the garment on their own body, one smooth flow straight in the browser, with no app to install.',
+      /* demo.eyebrow/title/sub belonged to the onyx band. The clip they
+         introduced is the hero's now, under the hero's own headline. */
 
       /* — business impact · the three pillars —
          Card bodies own their pillar outright; nothing here restates the
          hero metrics or the problem section. Bullets carry a second-order
-         consequence, never a paraphrase of the body above them. */
+         consequence, never a paraphrase of the body above them.
+
+         *Metric are the labels under the counting numerals. Each one
+         names the figure its card animates, and each figure is one the
+         page already states: 100% from hero.proof1, 3→0 from proof2,
+         ~25% from proof3 and value.card3Body. */
       'value.eyebrow':       'Business impact',
       'value.title':         'Three pillars of fashion profitability',
-      'value.sub':           'What changes across your P&L when shoppers stop guessing their size.',
+      'value.sub':           'What changes across your P&L when shoppers stop guessing.',
       'value.card1Tag':      'Conversion',
       'value.card1Title':    'Conversion Boost',
-      'value.card1Body':     'Give shoppers 100% fit confidence before they buy.',
+      'value.card1Metric':   'fit confidence',
+      'value.card1Body':     'Full fit confidence before they reach checkout.',
       'value.card1Bullet1':  'Fewer abandoned carts',
       'value.card1Bullet2':  'No size-chart guesswork',
       'value.card2Tag':      'Inventory',
       'value.card2Title':    'Inventory Protection',
-      'value.card2Body':     'Stop consumers from buying 3 sizes of the same garment to try at home.',
+      'value.card2Metric':   'spare sizes in the cart',
+      'value.card2Body':     'No more 3-size orders bought purely to try at home.',
       'value.card2Bullet1':  'Best-sellers stay sellable',
       'value.card2Bullet2':  'Cleaner demand signals',
       'value.card3Tag':      'Operations',
       'value.card3Title':    'Operational Efficiency',
+      'value.card3Metric':   'fewer returns',
       'value.card3Body':     'Cut return rates by up to ~25%.',
       'value.card3Bullet1':  'Less inbound to sort and restock',
       'value.card3Bullet2':  'Shorter cash-conversion cycle',

@@ -218,7 +218,24 @@
      ════════════════════════════════════════════════════════════════ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- display=optional, not swap. With swap the page painted in Arial and
+     then re-rendered in Heebo/Inter Tight, and because the hero headline
+     is the first thing on the page every section below it moved when
+     that second render landed: 0.15 of layout shift on a phone, 0.66 on
+     a 1280 laptop, both far past the 0.1 "good" threshold.
+
+     optional gives the font ~100ms to arrive and then commits to
+     whatever it has for that page view, with no later swap and so no
+     reflow. A first-time visitor on a slow connection sees the fallback
+     for one page view; the file still downloads and is cached, so every
+     subsequent view — and every other page of the site — renders in the
+     real face from first paint. That is the trade this page wants: the
+     headline moving under the reader's eye is more damaging than one
+     uncached view set in Arial.
+
+     Both font requests carry it; changing only one would leave the other
+     family still swapping and the shift with it. -->
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=optional" rel="stylesheet">
 
 <!-- ════════════════════════════════════════════════════════════════
      TAILWIND (precompiled) · restrained palette:
@@ -379,37 +396,10 @@
   .cta-glow:hover::before { inset-inline-start: 130%; }
   .cta-glow:hover { box-shadow: 0 0 0 1px rgb(16 185 129 / .4), 0 10px 40px -6px rgb(16 185 129 / .65); }
 
-  /* ── Hero mockup: 3D tilt driven by mouse (JS sets --rx/--ry) ── */
-  .tilt-scene { perspective: 1200px; }
-  .tilt-card {
-    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-    transition: transform .18s ease-out;
-    transform-style: preserve-3d;
-    will-change: transform;
-  }
-  .tilt-card .tilt-float {
-    transform: translateZ(46px);                            /* badges hover above the card */
-    transition: transform .45s cubic-bezier(.16, 1, .3, 1),
-                box-shadow .45s cubic-bezier(.16, 1, .3, 1);
-  }
-  /* Written as a translateZ, not a scale/translateY: these badges live
-     inside the card's 3D context, so anything that drops the Z would
-     slam them back down onto the card face on hover. They rise further
-     off it instead. */
-  .tilt-card .tilt-float:hover {
-    transform: translateZ(74px);
-    box-shadow: 0 4px 8px rgba(13,13,13,.04), 0 40px 90px -32px rgba(13,13,13,.24);
-  }
-
-  /* ── Hero VTon loop · the clip is 5s, silent and portrait, so it runs as an
-       ambient loop with no native chrome. The single toggle fades in on hover,
-       and stays visible whenever the clip is paused — otherwise touch and
-       reduced-motion visitors would have no way to start it. ── */
-  .vton-toggle { opacity: 0; transition: opacity .25s ease; }
-  .vton-frame:hover .vton-toggle,
-  .vton-frame.is-paused .vton-toggle,
-  .vton-toggle:focus-visible { opacity: 1; }
-  @media (hover: none) { .vton-toggle { opacity: 1; } }
+  /* .tilt-scene/.tilt-card/.tilt-float and the .vton-frame toggle rules
+     stood here. They dressed the hero's phone mockup and the silent
+     pear-VTon loop inside it; the hero shows one cinematic player now
+     and no element on the page carries any of those classes. */
 
   /* ── Scroll HUD · glowing ring gauge + % + chapter label (fixed corner) ── */
   #scrollHud {
@@ -566,8 +556,6 @@
   /* ── Reduced motion: kill all decorative movement ── */
   @media (prefers-reduced-motion: reduce) {
     .reveal { opacity: 1; transform: none; transition: none; }
-    .tilt-card { transform: none !important; }
-    .tilt-card .tilt-float, .tilt-card .tilt-float:hover { transition: none; }
     #scrollHud, #pearStage { display: none; }
     [data-split] .w { transform: none !important; opacity: 1 !important; }
   }
@@ -625,7 +613,7 @@
      a high-contrast serif to match the logo's Bodoni/Didot character.
      Bundled into the same request as the page's other two families —
      one round trip, and it rides the preconnect already opened above. -->
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=optional" rel="stylesheet">
 <script>document.documentElement.classList.add('pa-js');</script>
 </head>
 
@@ -701,15 +689,17 @@
 </header>
 
 <!-- ════════════════════════════════════════════════════════════════
-     VIEW 1 · LANDING (high-converting overview)
-     ════════════════════════════════════════════════════════════════ -->
-<!-- ════════════════════════════════════════════════════════════════
-     VIEW 1 · LANDING
-     Rebuilt on the atelier design system. The copy is untouched — every
-     string still arrives through the same data-i18n key it always did —
-     but the structure is asymmetric now: the hero splits copy against an
-     elevated device stage, the playground mirrors that split, the demo
-     band inverts to onyx full-bleed, and the pillars become a bento.
+     VIEW 1 · LANDING — four sections, in this order:
+
+       1 · #hero       headline over a cinematic pear-ad.mp4 player
+       2 · #playground the live fitting room (widget logic UNTOUCHED)
+       3 · #value      the three pillars, as interactive glass cards
+       4 · #cta        the returns-reduction close
+
+     The standalone onyx demo band was folded into the hero: one video
+     showcase at the top rather than two competing players on one page.
+     #demoVideoEl and the whole #demoSound widget kept their ids through
+     that move, so wireSoundControl() binds exactly as it always did.
 
      Two contracts constrain the markup and are easy to break by accident:
        · anything carrying data-i18n-html has its innerHTML replaced, so
@@ -722,116 +712,108 @@
 
   <!-- ─────────────────────────── HERO ─────────────────────────── -->
   <section id="hero" data-hud="hud.intro" class="pa-hero pa-shell">
-    <div class="pa-hero__grid">
+    <div class="pa-hero__lead" data-pa-seq>
+      <!-- hero.title ships its own LTR product kicker as the first
+           span; the stylesheet demotes it to a mono label so the
+           headline underneath keeps the display scale to itself. -->
+      <!-- This inline copy is the pre-i18n paint. It must mirror the he
+           dictionary's hero.title BYTE FOR BYTE, classes included: the
+           dictionary's second line carries `block mt-2`, and a fallback
+           that omitted it rendered the line inline, then grew by ~15px
+           the moment PearI18n.apply() swapped the real string in —
+           dragging the CTAs, the proof row and every section below them
+           with it. That single mismatch was most of this page's layout
+           shift on a phone. Change one, change the other. -->
+      <h1 class="pa-display pa-d-xl pa-hero__title" data-pa-reveal data-i18n-html="hero.title">
+        <span dir="ltr" class="block text-lg sm:text-xl font-bold text-pear-600 tracking-tight mb-2"><span class="brand-pear">PEAR</span> Platform · AI Virtual Try-On &amp; Measurement</span>
+        מידה מדויקת.
+        <span class="block mt-2 text-pear-600">בלי חדר מדידה.</span>
+      </h1>
 
-      <div class="pa-hero__copy" data-pa-seq>
-        <!-- hero.title ships its own LTR product kicker as the first
-             span; the stylesheet demotes it to a mono label so the
-             headline underneath keeps the display scale to itself. -->
-        <h1 class="pa-display pa-d-xl pa-hero__title" data-pa-reveal data-i18n-html="hero.title">
-          <span dir="ltr"><span class="brand-pear">PEAR</span> Platform · AI Virtual Try-On &amp; Measurement</span>
-          הלקוחות שלכם מודדים
-          <span>בלי להגיע לחנות.</span>
-        </h1>
+      <p class="pa-lede pa-hero__lede" data-pa-reveal data-i18n-html="hero.sub">
+        <span class="brand-pear">PEAR</span> מלביש את הבגד על הלקוח בזמן אמת וממליץ מידה. הוא קונה בביטחון, אתם סופגים פחות החזרות.
+      </p>
 
-        <p class="pa-lede" data-pa-reveal data-i18n-html="hero.sub">
-          <span class="brand-pear">PEAR</span> מלביש את הבגד על הלקוח בזמן אמת, ממליץ מידה מדויקת ומוריד החזרות.
-          <span><br> מודדים בבית, קונים בביטחון.</span>
-        </p>
-
-        <div class="pa-hero__actions" data-pa-stagger>
-          <button type="button" class="pa-btn pa-btn--primary pa-magnetic" data-scroll="playground"
-                  data-i18n="hero.ctaPrimary" data-pa-hover>✨ נסו את הוויג'ט האמיתי · 30 שניות</button>
-          <button type="button" class="pa-btn pa-btn--ghost pa-magnetic" data-scroll="demo"
-                  data-i18n="hero.ctaSecondary" data-pa-hover>▶ איך זה עובד? ב-17 שניות</button>
-        </div>
-
-        <!-- The three pillars in badge form: Conversion, Inventory,
-             Operations, in that order. proof3 is a returns-reduction
-             claim and must stay distinct from the pillar card bodies. -->
-        <div class="pa-proof" data-pa-stagger>
-          <p data-i18n-html="hero.proof1"><span>100% ביטחון בהתאמה</span> ברגע התשלום</p>
-          <p data-i18n-html="hero.proof2"><span>אפס Bracketing</span>, סוף להזמנת שלוש מידות</p>
-          <p data-i18n-html="hero.proof3"><span>עד כ-25% פחות החזרות</span> ופחות עלויות תפעול</p>
-        </div>
+      <div class="pa-hero__actions" data-pa-stagger>
+        <button type="button" class="pa-btn pa-btn--primary pa-magnetic" data-scroll="playground"
+                data-i18n="hero.ctaPrimary" data-pa-hover>✨ נסו את הוויג'ט · 30 שניות</button>
+        <button type="button" class="pa-btn pa-btn--ghost pa-magnetic" data-scroll="film"
+                data-i18n="hero.ctaSecondary" data-pa-hover>▶ צפו ב-17 שניות</button>
       </div>
+    </div>
 
-      <!-- pear-VTon.mp4 already ships its own phone device mockup, so no
-           second bezel is drawn around it: the clip sits in an elevated
-           glass stage with a pear-tinted ambient glow beneath it.
-           #tiltCard keeps its id so the existing mouse-tilt block still
-           finds and drives this card. -->
-      <!-- tilt-card and vton-frame are load-bearing, not decorative: the
-           existing tilt block drives this card through the --rx/--ry
-           custom properties that .tilt-card consumes, and the hero-loop
-           block reaches for .vton-frame with closest() to flag the
-           paused state. Dropping either one crashes that script at boot.
-           Because that tilt owns `transform`, this card deliberately does
-           NOT carry data-pa-tilt — two handlers writing the same property
-           is one handler too many. -->
-      <!-- MOBILE: this whole stage is dropped below 768px — see the
-           `#heroStage` media query in the style block. The <video> carries
-           NO src attribute: pear-VTon.mp4 is 800KB and preload="auto" would
-           have the browser pull all of it before a phone visitor has read
-           the headline. Block 7b assigns data-src → src only once the
-           viewport is actually wide enough to show the stage, so on a phone
-           the file is never requested at all. -->
-      <div class="pa-stage" id="heroStage" data-pa-reveal>
-        <div id="tiltCard" class="pa-stage__card tilt-card vton-frame" data-pa-touch>
-          <span class="pa-stage__glow" aria-hidden="true"></span>
+    <!-- ── CINEMATIC PLAYER ──────────────────────────────────────────
+         pear-ad.mp4, lifted here out of the onyx demo band it used to
+         sit in halfway down the page. Everything the sound widget binds
+         to kept its id through the move — #demoVideoEl, #demoSound and
+         every control inside it — so wireSoundControl() at block 7b is
+         untouched and still finds all seven nodes it requires.
 
-          <div class="pa-stage__screen">
-            <video id="vtonVideo" data-src="pear-VTon.mp4" muted loop playsinline preload="auto"
-                   data-i18n-aria-label="a11y.heroVideo"
-                   aria-label="הדגמת מדידה וירטואלית של PEAR, לולאה ללא קול"></video>
+         The frame is the positioning context for .pa-glass-sound
+         (absolute, bottom corner) exactly as .pa-demo__frame was.
 
-            <!-- No data-i18n-aria-label: the label alternates with
-                 playback state, so the hero-loop block owns it and
-                 re-reads it on language change. -->
-            <button id="vtonToggle" type="button" class="pa-stage__toggle"
-                    aria-label="השהיית ההדגמה" data-pa-hover>
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path id="vtonPath" d="M8 5h3v14H8zM13 5h3v14h-3z"/>
-              </svg>
-            </button>
+         preload="metadata", not "auto": the clip is 2.9MB and it now
+         loads at the top of the page rather than a scroll down, so the
+         first paint must not wait on it. autoplay+muted is the same
+         autoplay-compliant pair it always shipped with. -->
+    <div class="pa-cinema" id="film" data-pa-reveal>
+      <span class="pa-cinema__glow" aria-hidden="true"></span>
 
-            <!-- Mirrors vtonToggle on the opposite corner. Liquid-glass
-                 widget (.pa-glass-sound etc., shared with the demo
-                 band's #demoSound — see pear-atelier.css and block 10's
-                 makeElasticDrag). vtonMuteBtn's aria-label alternates
-                 with mute state like vtonToggle's does, so it skips
-                 data-i18n-aria-label too; the slider's own label is
-                 static, so it keeps one. -->
-            <div id="vtonSound" class="pa-glass-sound">
-              <button id="vtonMuteBtn" type="button" class="pa-glass-btn pa-glass"
-                      aria-label="השתקת הקול" data-pa-hover>
-                <svg id="vtonSoundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M11 5 6 9H3v6h3l5 4z"/>
-                  <path id="vtonSoundWave1" d="M15.2 8.8a5 5 0 0 1 0 6.4"/>
-                  <path id="vtonSoundWave2" d="M18.3 5.7a9.5 9.5 0 0 1 0 12.6"/>
-                  <path id="vtonSoundMuteX" d="m22.5 9-5.5 5.5M17 9l5.5 5.5"/>
-                </svg>
-              </button>
-              <div id="vtonVolumeTrack" class="pa-glass-slider pa-glass" role="slider" tabindex="0"
-                   aria-label="עוצמת קול" data-i18n-aria-label="a11y.vtonVolume"
-                   aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
-                <div class="pa-glass-slider__fill" id="vtonVolumeFill"></div>
-                <div class="pa-glass-slider__thumb pa-glass-knob" id="vtonVolumeThumb">
-                  <span class="pa-glass-knob__shimmer"></span>
-                </div>
-              </div>
+      <div class="pa-cinema__frame">
+        <!-- width/height are pear-ad.mp4's real intrinsic size. They are
+             not a display size — CSS sizes the element — they are what
+             lets the browser reserve the right box before the file's
+             metadata arrives, which is the difference between 0.19 CLS
+             and 0.00 on this page. .pa-cinema__frame states the same
+             ratio; both are deliberate. -->
+        <video id="demoVideoEl" src="pear-ad.mp4" muted loop playsinline preload="metadata" autoplay
+               width="848" height="480"
+               data-i18n-aria-label="a11y.demoVideo"
+               aria-label="סרטון הדגמה מלא של הוידג'ט PEAR AI Virtual Try-On"></video>
+
+        <!-- Liquid-glass mute/volume widget, bottom corner. Shared
+             .pa-glass-sound system (see pear-atelier.css and block 10's
+             makeElasticDrag). demoMuteBtn's aria-label alternates with
+             mute state, so it carries no data-i18n-aria-label; the
+             slider's own label is static, so it keeps one. -->
+        <div id="demoSound" class="pa-glass-sound">
+          <button id="demoMuteBtn" type="button" class="pa-glass-btn pa-glass"
+                  aria-label="השתקת הקול" data-pa-hover>
+            <svg id="demoSoundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 5 6 9H3v6h3l5 4z"/>
+              <path id="demoSoundWave1" d="M15.2 8.8a5 5 0 0 1 0 6.4"/>
+              <path id="demoSoundWave2" d="M18.3 5.7a9.5 9.5 0 0 1 0 12.6"/>
+              <path id="demoSoundMuteX" d="m22.5 9-5.5 5.5M17 9l5.5 5.5"/>
+            </svg>
+          </button>
+          <div id="demoVolumeTrack" class="pa-glass-slider pa-glass" role="slider" tabindex="0"
+               aria-label="עוצמת קול" data-i18n-aria-label="a11y.vtonVolume"
+               aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
+            <div class="pa-glass-slider__fill" id="demoVolumeFill"></div>
+            <div class="pa-glass-slider__thumb pa-glass-knob" id="demoVolumeThumb">
+              <span class="pa-glass-knob__shimmer"></span>
             </div>
           </div>
-
-          <span class="pa-badge tilt-float pa-badge--size" data-i18n-html="hero.badgeSize">מידה מומלצת: <span class="font-mono">M</span></span>
-          <span class="pa-badge tilt-float pa-badge--live">
-            <span class="pa-dot" aria-hidden="true"></span>
-            <span data-i18n="hero.badgeRealtime">התאמה בזמן אמת ✨</span>
-          </span>
         </div>
-      </div>
 
+        <!-- The two badges the phone stage used to float. They keep the
+             same two i18n keys; only their anchor changed. -->
+        <span class="pa-badge pa-badge--size" data-i18n-html="hero.badgeSize">מידה מומלצת: <span class="font-mono">M</span></span>
+        <span class="pa-badge pa-badge--live">
+          <span class="pa-dot" aria-hidden="true"></span>
+          <span data-i18n="hero.badgeRealtime">התאמה בזמן אמת ✨</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- The three pillars in badge form: Conversion, Inventory,
+         Operations, in that order. proof3 is a returns-reduction
+         claim and must stay distinct from the pillar card bodies. -->
+    <div class="pa-proof" data-pa-stagger>
+      <p data-i18n-html="hero.proof1"><span class="font-bold text-slate-700">100% ביטחון בהתאמה</span> ברגע התשלום</p>
+      <p data-i18n-html="hero.proof2"><span class="font-bold text-slate-700">אפס Bracketing</span>, סוף להזמנת שלוש מידות</p>
+      <p data-i18n-html="hero.proof3"><span class="font-bold text-slate-700">עד כ-25% פחות החזרות</span> ופחות עלויות תפעול</p>
     </div>
   </section>
 
@@ -934,57 +916,26 @@
     </div>
   </section>
 
-  <!-- ─────────────────────────── DEMO BAND ─────────────────────────
-       Full-bleed onyx: the one hard tonal break on the page, so the
-       beige either side of it reads as deliberate rather than uniform. -->
-  <section id="demo" data-hud="hud.demo" class="pa-demo pa-pad">
-    <div class="pa-shell">
-      <div class="pa-head" data-pa-seq>
-        <div>
-          <p class="pa-eyebrow" data-pa-reveal data-i18n="demo.eyebrow">17 שניות · לפני/אחרי</p>
-          <h2 class="pa-display pa-d-lg pa-head__title" data-pa-reveal data-i18n="demo.title">כך זה נראה ללקוח שלכם</h2>
-        </div>
-        <p class="pa-lede" data-pa-reveal data-i18n="demo.sub">מהעמוד מוצר ועד תמונת לבוש, חוויה חלקה ישירות בדפדפן, ללא צורך באפליקציה.</p>
-      </div>
+  <!-- The onyx demo band stood here. Its video, its sound widget and
+       every id inside it now live in the hero — one showcase, at the
+       top, instead of two players competing halfway down the page. -->
 
-      <div class="pa-demo__frame" data-pa-reveal data-pa-parallax="-4">
-        <video id="demoVideoEl" src="pear-ad.mp4" muted loop playsinline preload="metadata" autoplay
-               data-i18n-aria-label="a11y.demoVideo"
-               aria-label="סרטון הדגמה מלא של הוידג'ט PEAR AI Virtual Try-On"></video>
+  <!-- ──────────────── BUSINESS IMPACT · THE THREE PILLARS ──────────
+       Glass cards, one per pillar, each doing three things a static
+       panel did not:
 
-        <!-- Liquid-glass mute/volume widget, bottom corner. Same shared
-             .pa-glass-sound system and wiring pattern as the hero
-             phone's #vtonSound (see block 7b/10) — separate IDs because
-             this controls a different <video>. -->
-        <div id="demoSound" class="pa-glass-sound">
-          <button id="demoMuteBtn" type="button" class="pa-glass-btn pa-glass"
-                  aria-label="השתקת הקול" data-pa-hover>
-            <svg id="demoSoundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M11 5 6 9H3v6h3l5 4z"/>
-              <path id="demoSoundWave1" d="M15.2 8.8a5 5 0 0 1 0 6.4"/>
-              <path id="demoSoundWave2" d="M18.3 5.7a9.5 9.5 0 0 1 0 12.6"/>
-              <path id="demoSoundMuteX" d="m22.5 9-5.5 5.5M17 9l5.5 5.5"/>
-            </svg>
-          </button>
-          <div id="demoVolumeTrack" class="pa-glass-slider pa-glass" role="slider" tabindex="0"
-               aria-label="עוצמת קול" data-i18n-aria-label="a11y.vtonVolume"
-               aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
-            <div class="pa-glass-slider__fill" id="demoVolumeFill"></div>
-            <div class="pa-glass-slider__thumb pa-glass-knob" id="demoVolumeThumb">
-              <span class="pa-glass-knob__shimmer"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+         · a metric that counts on first reveal (block 7b2). Every
+           figure is one the page already states — 100% from proof1,
+           3→0 from proof2, ~25% from proof3 — rendered as a numeral.
+         · a cursor-tracked glow and a 6deg lean, from the shared
+           [data-pa-tilt] handler in pear-motion.js. data-pa-touch gives
+           a phone the same glow from its touch point.
+         · the bullet list, which stays collapsed until the card is
+           hovered or focused, so the resting row scans as three
+           headlines rather than three paragraphs.
 
-  <!-- ───────────────────── BUSINESS IMPACT · BENTO ─────────────────
-       The three pillars become tilt panels. The metric cell carries a
-       numeral only — the figure already stated in hero.proof3 — and
-       borrows an existing pillar tag for its label, so no new copy is
-       introduced anywhere on the page. -->
+       tabindex="0" is what makes :focus-within reachable by keyboard —
+       without it the list would open on pointer only. -->
   <section id="value" data-hud="hud.value" data-stage-space="tight" class="pa-section pa-pad pa-shell">
     <div class="pa-head pa-head--major" data-pa-seq>
       <div>
@@ -1011,10 +962,11 @@
          drawn on the same 24-unit grid with the same 1.6 stroke so the
          three read as one set. aria-hidden throughout — the pillar name
          is already stated in the tag directly beside each one. -->
-    <div class="pa-bento">
+    <div class="pa-pillars">
 
-      <article class="pa-cell pa-cell--pillar pa-w2" data-pa-reveal data-pa-tilt data-pa-touch>
+      <article class="pa-cell pa-cell--pillar pa-pillar" data-pa-reveal data-pa-tilt data-pa-touch tabindex="0">
         <span class="pa-cell__glow" aria-hidden="true"></span>
+        <span class="pa-pillar__sheen" aria-hidden="true"></span>
         <div class="pa-cell__head">
           <span class="pa-mark pa-mark--1" aria-hidden="true">
             <!-- CONVERSION · a funnel narrowing to a single confident
@@ -1030,6 +982,18 @@
           </span>
           <p class="pa-cell__tag" data-i18n="value.card1Tag">המרה</p>
         </div>
+
+        <!-- The numeral restates hero.proof1 ("100% ביטחון בהתאמה") in
+             figure form — no claim here that the page does not already
+             make. dir="ltr" because a Hebrew paragraph must not reorder
+             a number and its unit. The element ships its FINAL value as
+             text, so with JS off or reduced-motion on it simply reads
+             100 and never animates. -->
+        <p class="pa-pillar__metric" dir="ltr">
+          <span data-pa-count data-count-from="0" data-count-to="100">100</span><i>%</i>
+        </p>
+        <p class="pa-pillar__metricLabel" data-i18n="value.card1Metric">ביטחון בהתאמה</p>
+
         <h3 class="pa-cell__title" data-i18n="value.card1Title">הגדלת המרות</h3>
         <p class="pa-cell__body" data-i18n="value.card1Body">תנו לקונים 100% ביטחון בהתאמה עוד לפני הרכישה.</p>
         <ul class="pa-cell__list">
@@ -1038,8 +1002,9 @@
         </ul>
       </article>
 
-      <article class="pa-cell pa-cell--pillar pa-w2" data-pa-reveal data-pa-tilt data-pa-touch>
+      <article class="pa-cell pa-cell--pillar pa-pillar" data-pa-reveal data-pa-tilt data-pa-touch tabindex="0">
         <span class="pa-cell__glow" aria-hidden="true"></span>
+        <span class="pa-pillar__sheen" aria-hidden="true"></span>
         <div class="pa-cell__head">
           <span class="pa-mark pa-mark--2" aria-hidden="true">
             <!-- INVENTORY · three folded garments on a shelf, the top one
@@ -1056,6 +1021,16 @@
           </span>
           <p class="pa-cell__tag" data-i18n="value.card2Tag">מלאי</p>
         </div>
+
+        <!-- Counts DOWN 3 → 0: hero.proof2 is "אפס Bracketing, סוף
+             להזמנת שלוש מידות", and the two numbers in that one claim
+             are exactly the from and the to. The resting text is the
+             final 0, same no-JS contract as the other two. -->
+        <p class="pa-pillar__metric" dir="ltr">
+          <span data-pa-count data-count-from="3" data-count-to="0">0</span>
+        </p>
+        <p class="pa-pillar__metricLabel" data-i18n="value.card2Metric">מידות מיותרות בעגלה</p>
+
         <h3 class="pa-cell__title" data-i18n="value.card2Title">הגנה על המלאי</h3>
         <p class="pa-cell__body" data-i18n-html="value.card2Body">עצרו קונים שמזמינים שלוש מידות של אותו פריט רק כדי למדוד בבית.</p>
         <ul class="pa-cell__list">
@@ -1064,8 +1039,9 @@
         </ul>
       </article>
 
-      <article class="pa-cell pa-cell--pillar pa-w2" data-pa-reveal data-pa-tilt data-pa-touch>
+      <article class="pa-cell pa-cell--pillar pa-pillar" data-pa-reveal data-pa-tilt data-pa-touch tabindex="0">
         <span class="pa-cell__glow" aria-hidden="true"></span>
+        <span class="pa-pillar__sheen" aria-hidden="true"></span>
         <div class="pa-cell__head">
           <span class="pa-mark pa-mark--3" aria-hidden="true">
             <!-- OPERATIONS · a closed loop with the return leg cut short.
@@ -1081,6 +1057,15 @@
           </span>
           <p class="pa-cell__tag" data-i18n="value.card3Tag">תפעול</p>
         </div>
+
+        <!-- The ~ is markup, not a translated string: it qualifies the
+             figure identically in both dictionaries, and value.card3Body
+             right below already carries "בעד כ-25%" in words. -->
+        <p class="pa-pillar__metric" dir="ltr">
+          <i>~</i><span data-pa-count data-count-from="0" data-count-to="25">25</span><i>%</i>
+        </p>
+        <p class="pa-pillar__metricLabel" data-i18n="value.card3Metric">פחות החזרות</p>
+
         <h3 class="pa-cell__title" data-i18n="value.card3Title">יעילות תפעולית</h3>
         <p class="pa-cell__body" data-i18n="value.card3Body">צמצמו את שיעור ההחזרות בעד כ-25%.</p>
         <ul class="pa-cell__list">
@@ -1779,49 +1764,62 @@ if (contactForm) {
   });
 }
 
-/* ── 7 · Hero mockup 3D tilt (mouse-driven) ───────────────────── */
-const tiltCard = document.getElementById('tiltCard');
+/* Block 7 drove a mouse-tilt on the hero's phone mockup (#tiltCard) and
+   block 7b ran the silent pear-VTon.mp4 loop inside it. Both left with
+   that stage when the hero became a single cinematic player. REDUCED
+   stays — the GSAP gate at block 8 reads it. */
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (tiltCard && !REDUCED) {
-  const scene = tiltCard.parentElement;
-  scene.addEventListener('mousemove', (e) => {
-    const r = tiltCard.getBoundingClientRect();
-    const dx = (e.clientX - r.left) / r.width - 0.5;   // -0.5 → 0.5
-    const dy = (e.clientY - r.top) / r.height - 0.5;
-    tiltCard.style.setProperty('--ry', (dx * 10).toFixed(2) + 'deg');
-    tiltCard.style.setProperty('--rx', (-dy * 8).toFixed(2) + 'deg');
-  });
-  scene.addEventListener('mouseleave', () => {
-    tiltCard.style.setProperty('--rx', '0deg');
-    tiltCard.style.setProperty('--ry', '0deg');
-  });
-}
 
-/* ── 7b · Hero Try-On loop ────────────────────────────────────────
-   Silent 5s loop, driven from JS rather than the autoplay attribute so
-   reduced-motion visitors land on a still frame instead of catching a
-   flash of movement before we can pause it. Also parks the decoder
-   whenever the hero is off-screen.
+/* ── 7a · Pillar metric counters ──────────────────────────────────
+   Counts each [data-pa-count] from data-count-from to data-count-to the
+   first time its card scrolls into view, then disconnects — a metric
+   that re-runs every time you scroll past it is a distraction, not an
+   accent.
 
-   MOBILE: below 768px the hero stage is display:none and this clip is
-   never fetched. The markup ships the file on data-src rather than src
-   precisely so that decision can be made here — a hidden <video> with a
-   real src and preload="auto" still downloads all 800KB of it, which is
-   the whole cost we are trying not to pay on a phone.
+   The element's existing textContent is already the final value, so
+   this only ever animates TOWARDS what is on screen; with no
+   IntersectionObserver, with JS off, or under reduced-motion, the
+   figure is simply correct and still. Count-down is supported (card 2
+   runs 3 → 0), hence the signed step rather than an increment. */
+document.querySelectorAll('[data-pa-count]').forEach((el) => {
+  const to = Number(el.dataset.countTo);
+  const from = Number(el.dataset.countFrom);
+  if (!Number.isFinite(to) || !Number.isFinite(from)) return;
+  if (REDUCED || !('IntersectionObserver' in window)) return;
 
-   The media query is watched rather than read once: a tablet rotating to
-   landscape, or a desktop window dragged wider, crosses the threshold
-   without a reload, and the stage becoming visible with an empty <video>
-   inside it is a worse bug than the download we avoided. Attachment is
-   one-way — once the file is fetched, narrowing again just pauses it. */
-/* Shared by every mute-button + volume-slider widget on the page
-   (currently the hero phone's and the demo band's — see the two call
-   sites below). video.muted/.volume are the only state that actually
-   matters; everything else here is just keeping a button's icon and a
-   slider's thumb in sync with them. muteXId is optional: the hero
-   phone's icon reads "muted" as a plain speaker with no wave lines,
-   while the demo band's carries an explicit X glyph (wireIds.muteXId),
-   so this only touches that element when a widget actually has one. */
+  const DURATION = 1100;
+  let started = false;
+
+  const run = () => {
+    const t0 = performance.now();
+    const tick = (now) => {
+      const p = Math.min((now - t0) / DURATION, 1);
+      /* easeOutCubic: fast off the mark, settles onto the final
+         figure rather than snapping to it. */
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = String(Math.round(from + (to - from) * eased));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+
+  const io = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting || started) return;
+    started = true;
+    io.disconnect();
+    el.textContent = String(from);
+    run();
+  }, { threshold: 0.6 });
+  io.observe(el);
+});
+
+/* Shared by every mute-button + volume-slider widget on the page (today
+   just the hero player's; the helper stays generic because it costs
+   nothing and the docs view may grow one). video.muted/.volume are the
+   only state that actually matters; everything else here is just
+   keeping a button's icon and a slider's thumb in sync with them.
+   muteXId is optional — a widget whose "muted" glyph is a bare speaker
+   with no wave lines simply omits it. */
 
 /* ── Liquid-glass elastic drag ──────────────────────────────────────
    One drag engine shared by the language switch (below) and both
@@ -1974,84 +1972,26 @@ function wireSoundControl(video, ids) {
   sync();
 }
 
-const vton = document.getElementById('vtonVideo');
-if (vton) {
-  const frame = vton.closest('.vton-frame');
-  const btn   = document.getElementById('vtonToggle');
-  const path  = document.getElementById('vtonPath');
-  const D_PLAY  = 'M8 5v14l11-7z';
-  const D_PAUSE = 'M8 5h3v14H8zM13 5h3v14h-3z';
+/* The hero player autoplays muted (the pair the autoplay policy
+   requires) and is the only video on the landing view now, so it needs
+   no lazy-attach gate — it is the thing the visitor came to see, above
+   the fold, not an asset a phone should be spared. The pause-when-
+   offscreen observer below parks the decoder once it scrolls away. */
+const heroFilm = document.getElementById('demoVideoEl');
 
-  const wideEnough = window.matchMedia('(min-width: 768px)');
-  let attached = false;
-
-  const attachSource = () => {
-    if (attached || !wideEnough.matches) return;
-    attached = true;
-    vton.src = vton.dataset.src;
-    apply();
-  };
-
-  let wantsPlay = !REDUCED;
-  let onScreen  = true;
-
-  /* The label alternates with playback state, so it can't be a static
-     data-i18n attribute — sync() is the single place that owns it, and
-     the language-change listener at block 10 simply calls sync() again. */
-  const sync = () => {
-    const playing = !vton.paused;
-    path.setAttribute('d', playing ? D_PAUSE : D_PLAY);
-    btn.setAttribute('aria-label', t(playing ? 'a11y.vtonPause' : 'a11y.vtonPlay'));
-    frame.classList.toggle('is-paused', !playing);
-  };
-  window.PearI18n?.onChange(sync);
-  /* A blocked autoplay rejects here; the still frame is a fine resting
-     state. With no source attached there is nothing to play — calling
-     play() on an empty <video> throws a decode error into the console
-     for no benefit. */
-  const apply = () => {
-    if (!attached) return;
-    (wantsPlay && onScreen) ? vton.play().catch(() => {}) : vton.pause();
-  };
-
-  vton.addEventListener('play', sync);
-  vton.addEventListener('pause', sync);
-  btn.addEventListener('click', () => { wantsPlay = !wantsPlay; apply(); });
-
-  /* The clip currently ships with no audio track (see a11y.heroVideo —
-     "silent loop"), so today this has nothing to actually make audible;
-     it's wired for real regardless — video.muted/.volume behave
-     normally whether or not a track exists, so this needs no changes
-     the day the clip does carry sound. */
-  wireSoundControl(vton, {
-    btnId: 'vtonMuteBtn', sliderId: 'vtonVolumeTrack',
-    fillId: 'vtonVolumeFill', thumbId: 'vtonVolumeThumb',
-    wave1Id: 'vtonSoundWave1', wave2Id: 'vtonSoundWave2', muteXId: 'vtonSoundMuteX',
-  });
-
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; apply(); },
-                             { threshold: 0.15 }).observe(vton);
-  }
-
-  // addEventListener on a MediaQueryList is the modern form; Safari < 14
-  // only has addListener, and this page still gets those visitors.
-  if (wideEnough.addEventListener) wideEnough.addEventListener('change', attachSource);
-  else if (wideEnough.addListener) wideEnough.addListener(attachSource);
-  attachSource();
-
-  apply();
-  sync();
-}
-
-/* Demo band's video autoplays unconditionally (no lazy-attach gate like
-   the hero phone's — it's a single onyx-band video, not a per-viewport
-   asset) and starts muted for autoplay compliance, same as vton. */
-wireSoundControl(document.getElementById('demoVideoEl'), {
+wireSoundControl(heroFilm, {
   btnId: 'demoMuteBtn', sliderId: 'demoVolumeTrack',
   fillId: 'demoVolumeFill', thumbId: 'demoVolumeThumb',
   wave1Id: 'demoSoundWave1', wave2Id: 'demoSoundWave2', muteXId: 'demoSoundMuteX',
 });
+
+if (heroFilm && 'IntersectionObserver' in window) {
+  new IntersectionObserver(([e]) => {
+    /* A blocked autoplay rejects here and the poster frame is a fine
+       resting state, so the rejection is swallowed deliberately. */
+    e.isIntersecting ? heroFilm.play().catch(() => {}) : heroFilm.pause();
+  }, { threshold: 0.15 }).observe(heroFilm);
+}
 
 /* ── 8 · Scroll HUD (ring gauge + % + chapter) + navbar elevation ─
    One passive, rAF-throttled scroll listener drives everything. */
@@ -2207,14 +2147,19 @@ try {
                          start: 'top bottom', end: 'bottom top', scrub: true } });
     });
 
-    /* Cinematic pin: the demo band holds while the video scales to full size. */
-    const demoSec = document.getElementById('demo');
-    if (demoSec && matchMedia('(min-width: 1024px)').matches) {
-      gsap.fromTo(demoSec.querySelector('video'),
-        { scale: .9, transformOrigin: 'center' },
+    /* A cinematic PIN stood here: it held the old onyx demo band at the
+       top of the viewport while its video scaled .9 → 1. That band is
+       gone — the video is the hero's now — and pinning a section that
+       already sits at the top of the page only buys scroll distance
+       before the visitor reaches anything new. Same scale-in, as an
+       ordinary scrub, with nothing pinned and no layout shift. */
+    const film = document.querySelector('#film .pa-cinema__frame');
+    if (film && matchMedia('(min-width: 1024px)').matches) {
+      gsap.fromTo(film,
+        { scale: .95, transformOrigin: 'center top' },
         { scale: 1, ease: 'none',
-          scrollTrigger: { trigger: demoSec, start: 'top top', end: '+=55%',
-                           scrub: .4, pin: true } });
+          scrollTrigger: { trigger: '#film', start: 'top 92%', end: 'top 45%',
+                           scrub: .4 } });
     }
 
     /* HUD chapter label follows the section under the viewport center.
