@@ -56,26 +56,12 @@
   --pa-radius-lg: 34px;
   --pa-pill: 999px;
 
-  /* Published height of the fixed nav capsule, for anything that has to
-     sit clear of it — currently the hero's badge row, which overlays a
-     full-bleed film and has no layout relationship to the bar at all.
-     The bar is slimmed at 860px and re-declares this there; nothing that
-     reads it should hard-code a figure of its own.
-
-     MEASURED, not guessed, because a figure that is too small silently
-     reinstates the overlap it exists to prevent. Desktop, at 16px root
-     and the body's 1.625 line-height:
-
-       tallest child is the CTA  .pa-btn--sm
-         .8rem x 1.625 + .62rem x 2      = 40.6px
-       + .pa-nav__bar padding .5rem x 2  =  16.0px
-       + its 1px border, top and bottom  =   2.0px
-       + .pa-nav padding 1.35rem x 2     =  43.2px
-                                           ------
-                                          101.8px = 6.36rem
-
-     Rounded up. Re-derive this if any of those five declarations move. */
-  --pa-nav-h: 6.4rem;
+  /* --pa-nav-h stood here, a measured publication of the fixed nav
+     capsule's height. Its only consumer was the hero's badge row, which
+     had to sit clear of the bar; both badges are gone, so the token and
+     its two media-query re-declarations are gone with them. Nothing on
+     the page needs to know how tall the navbar is any more, which is
+     also what frees the bar below to be sized purely by eye. */
 
   --pa-ease-out: cubic-bezier(.16, 1, .3, 1);
   --pa-ease-io:  cubic-bezier(.65, .05, .36, 1);
@@ -371,9 +357,15 @@ body.pa .pa-gate__card .brand-pear {
 @media (hover: none), (pointer: coarse) { .pa-cursor { display: none; } }
 
 /* ──────────────────────── 5 · NAVIGATION ────────────────────────── */
+/* The capsule is cut tight at every width. It used to stand 114px tall
+   on a desktop and 69px on a phone, most of which was padding around a
+   bar carrying a lockup, two links and one button. Nothing reads its
+   height any more (--pa-nav-h and its only consumer, the hero's badge
+   row, are both gone), so the figures below are chosen for how the bar
+   looks rather than to keep a published token honest. */
 body.pa .pa-nav {
   position: fixed; inset-inline: 0; top: 0; z-index: 200;
-  padding: clamp(.7rem, 1.6vw, 1.35rem) var(--pa-gutter);
+  padding: clamp(.3rem, .7vw, .55rem) var(--pa-gutter);
   display: flex; justify-content: center;
   pointer-events: none;
   background: none; box-shadow: none; border: 0;
@@ -381,9 +373,9 @@ body.pa .pa-nav {
 .pa-nav__bar {
   pointer-events: auto;
   width: 100%; max-width: var(--pa-measure);
-  display: flex; align-items: center; gap: clamp(.4rem, 1.2vw, 1rem);
-  padding: .5rem .5rem .5rem 1rem;
-  padding-inline-start: 1rem; padding-inline-end: .5rem;
+  display: flex; align-items: center; gap: clamp(.3rem, 1vw, .8rem);
+  padding-block: .2rem;
+  padding-inline-start: .75rem; padding-inline-end: .2rem;
   background: rgba(255,255,255,.72);
   border: 1px solid var(--pa-hair);
   border-radius: var(--pa-pill);
@@ -396,21 +388,21 @@ body.pa .pa-nav {
   background: rgba(255,255,255,.88);
   box-shadow: var(--pa-lift-2);
 }
-.pa-nav__brand { display: flex; align-items: center; gap: .65rem; flex: none; }
-.pa-nav__brand img { width: 22px; height: auto; }
+.pa-nav__brand { display: flex; align-items: center; gap: .45rem; flex: none; }
+.pa-nav__brand img { width: 17px; height: auto; }
 /* The lockup beside the logo mark: same face and weight as every other
    "PEAR" on the page (it carries .brand-pear--ink), sized for the bar. */
-.pa-nav__word { font-size: 1.02rem; }
+.pa-nav__word { font-size: .88rem; }
 .pa-nav__links { display: flex; align-items: center; gap: clamp(.15rem, .8vw, .75rem); margin-inline: auto; }
 .pa-nav__link {
-  position: relative; padding: .55rem .85rem;
-  font-size: .86rem; font-weight: 500; letter-spacing: -0.01em;
+  position: relative; padding: .28rem .7rem;
+  font-size: .78rem; font-weight: 500; letter-spacing: -0.01em;
   color: var(--pa-ink-70); border-radius: var(--pa-pill);
   transition: color .3s var(--pa-ease-out);
   white-space: nowrap;
 }
 .pa-nav__link::after {
-  content: ''; position: absolute; inset-inline: .85rem; bottom: .38rem;
+  content: ''; position: absolute; inset-inline: .7rem; bottom: .12rem;
   height: 1px; background: var(--pa-onyx);
   transform: scaleX(0); transform-origin: inline-start;
   transition: transform .45s var(--pa-ease-out);
@@ -420,7 +412,19 @@ body.pa .pa-nav {
 .pa-nav__link.is-active { color: var(--pa-ink); }
 .pa-nav__link.is-active::after { transform: scaleX(1); background: var(--pa-pear-deep); }
 
-.pa-nav__tools { display: flex; align-items: center; gap: .45rem; flex: none; }
+.pa-nav__tools { display: flex; align-items: center; gap: .35rem; flex: none; }
+
+/* The bar's tallest child, and therefore what actually sets the
+   capsule's height. body.pa-scoped because the base is `body.pa .pa-btn`
+   at (0,2,1): a bare `.pa-nav__tools .pa-btn--sm` scores (0,2,0), loses,
+   and silently leaves the CTA at its full desktop box - which is exactly
+   how this bar got thick in the first place. */
+body.pa .pa-nav__tools .pa-btn--sm { padding: .34rem .85rem; font-size: .74rem; }
+/* The language switch, trimmed to sit level with the CTA rather than
+   setting its own taller rhythm. */
+.pa-nav__tools .pa-lang { padding: 2px; }
+.pa-nav__tools .pa-lang__thumb { top: 2px; bottom: 2px; }
+.pa-nav__tools .pa-lang button { font-size: .58rem; padding: .2rem .5rem; }
 
 /* ═════════════════ LIQUID GLASS component system ══════════════════
    One translucent, blurred material recipe plus one drag-physics engine
@@ -777,18 +781,10 @@ html[dir="ltr"] .pa-skyline__veil {
    in the project, so both rulesets are deleted rather than orphaned. */
 
 /* ── the badges ──
-   Both kept their i18n keys from the framed player; only the anchor
-   moved. They sit in a row under the navbar rather than in the frame's
-   corners, which is the one band of the stage the fixed nav does not
-   cross at any width. They leave with the copy. */
-.pa-skyline__badges {
-  z-index: 4;
-  align-self: start;
-  display: flex; align-items: flex-start; flex-wrap: wrap; gap: .5rem;
-  padding-block-start: clamp(5.2rem, 13vh, 7.4rem);
-  pointer-events: none;
-}
-.pa-skyline__badges .pa-badge { position: static; }
+   .pa-skyline__badges and its two pills are REMOVED at every width,
+   with their markup and their hero.badgeSize / hero.badgeRealtime keys.
+   The --pa-nav-h token went with them: this row was its only consumer,
+   so all three of its declarations were left describing nothing. */
 
 /* The .is-playing block that stood here (copy hidden, badges hidden,
    with an !important to beat the scrub's inline opacity) went with the
@@ -822,14 +818,6 @@ html[dir="ltr"] .pa-skyline__veil {
   }
 }
 
-/* Short viewports run out of vertical room before they run out of
-   content: the badge row and the copy converge on a 100svh stage. The
-   badges go first — they restate what the headline underneath already
-   says, and the headline is the thing that has to survive. */
-@media (max-height: 620px) {
-  .pa-skyline__badges { display: none; }
-}
-
 .pa-badge {
   position: absolute; z-index: 4;
   display: inline-flex; align-items: center; gap: .45rem;
@@ -842,20 +830,10 @@ html[dir="ltr"] .pa-skyline__veil {
   backdrop-filter: blur(10px);
   white-space: nowrap;
 }
-/* .pa-badge--size / --live carried corner insets here (and narrower
-   ones in the phone media queries) from the days when both badges hung
-   off a phone card, then sat in the framed player's corners. Every one
-   of those declarations is DELETED rather than kept.
-
-   An earlier note in this file claimed they were "kept for the badge
-   pattern's other callers". That was wrong, and checking is what found
-   it: --size and --live appear exactly once each in the project, both
-   inside .pa-skyline__badges, which sets position:static at (0,2,0) and
-   beats a (0,1,0) modifier every time. Inset properties do nothing on a
-   static box, so the rules could not fire anywhere.
-
-   position:absolute stays on the .pa-badge BASE above — .pa-flip__badge
-   in the playground is a third caller and does rely on it. */
+/* .pa-badge and .pa-badge .font-mono are KEPT, and are not orphans:
+   .pa-flip__badge in the playground is their remaining caller and does
+   rely on the base's position:absolute. The --size and --live modifiers
+   that the hero's two pills used are gone with those pills. */
 .pa-badge .font-mono, .pa-badge span[class*="mono"] { color: var(--pa-pear-deep); font-family: var(--pa-mono); }
 
 .pa-dot {
@@ -1516,81 +1494,36 @@ body.pa #hudLabel {
   .pa-nav__tools { margin-inline-start: auto; }
   .pa-cell { min-height: 180px; }
 
-  /* ── the floating nav capsule, slimmed for small screens ──
-     With the links gone the bar carries only a lockup, a language
-     toggle and one button, but it kept a desktop bar's vertical
-     padding — on a phone that is a thick capsule over the top of the
-     hero for no content.
-
-     --pa-nav-h is published here because the hero's badge row has to
-     clear this bar and cannot guess its height; everything below that
-     needs the figure reads the variable rather than repeating a magic
-     number that drifts the moment any of this changes. */
-  body.pa .pa-nav { padding-block: .5rem; }
-  .pa-nav__bar {
-    padding-block: .3rem;
-    padding-inline-end: .3rem;
-    gap: .4rem;
-  }
-  .pa-nav__brand img { width: 18px; }
-  .pa-nav__word { font-size: .92rem; }
-  .pa-lang button { font-size: .72rem; padding: .28rem .5rem; }
-  /* body.pa-scoped, and it has to be: the base rule is `body.pa .pa-btn`
-     at (0,2,1), so a bare `.pa-nav__tools .pa-btn--sm` scores (0,2,0)
-     and LOSES however late it comes in the file. Written that way this
-     rule silently did nothing, the CTA kept its full .95rem/.88rem
-     desktop box, and the measured token below — which the hero's badge
-     row trusts to clear the bar — was ~20px short of the real height.
-     That was the badge/nav overlap. */
-  body.pa .pa-nav__tools .pa-btn--sm { padding: .42rem .8rem; font-size: .78rem; }
-  /* Same arithmetic as the base token, against the slimmed figures
-     above: the CTA is still the tallest child at .78rem x 1.625 +
-     .42rem x 2 = 33.7px, + .3rem x 2 bar padding + 2px border = 45.3px,
-     + .5rem x 2 nav padding = 61.3px = 3.83rem. Rounded up. */
-  :root { --pa-nav-h: 3.9rem; }
+  /* With the links gone the bar carries only a lockup, a language
+     toggle and one button, so it sheds another step of padding here.
+     The base is already tight; this is the tablet increment between it
+     and the phone rules below. */
+  body.pa .pa-nav { padding-block: .26rem; }
+  .pa-nav__bar { padding-block: .18rem; padding-inline-end: .18rem; gap: .35rem; }
+  .pa-nav__brand img { width: 16px; }
+  .pa-nav__word { font-size: .84rem; }
+  body.pa .pa-nav__tools .pa-btn--sm { padding: .3rem .72rem; font-size: .7rem; }
 }
 @media (max-width: 767.98px) {
   /* ══ THE NAV CAPSULE, CUT TO THE BONE ══════════════════════════════
-     The bar was slimmed once already at 860px. On a phone it is slimmed
-     again, hard: it carries a lockup, a two-word language toggle and
-     one button, and it floats over a FULL-BLEED film — so every pixel
-     of vertical padding it keeps is a pixel of the hero it hides.
-
-     --pa-nav-h is re-published here for the same reason it is published
-     at 860px: the hero's badge row clears the bar by reading this
-     token, and a stale figure silently reinstates the overlap it exists
-     to prevent. MEASURED, not guessed, at 16px root / 1.625 leading.
-
-     The two tallest children are deliberately matched, so neither one
-     alone sets the height:
-       .pa-btn--sm  .66rem x 1.625 + .28rem x 2        = 17.2 + 9.0 = 26.2px
-       .pa-lang     .58rem x 1.625 + .16rem x 2
-                      + 2px track padding x 2 + 2px border           = 26.2px
-       + .pa-nav__bar padding .16rem x 2                             =  5.1px
-       + its 1px border, top and bottom                              =  2.0px
-       + .pa-nav padding .26rem x 2                                  =  8.3px
-                                                                       ------
-                                                                       41.6px
-     = 2.60rem, rounded to 2.7rem for the tolerance a fallback face or
-     a bumped user font-size needs. Down from 3.9rem at 860px. */
-  body.pa .pa-nav { padding-block: .26rem; }
+     The last step down. The bar floats over a FULL-BLEED film here, so
+     every pixel of vertical padding it keeps is a pixel of the hero it
+     hides. Nothing measures this any more - the token that used to be
+     published from this block, and the badge row that read it, are both
+     gone - so these are simply the smallest figures the bar still reads
+     as a capsule at. */
+  body.pa .pa-nav { padding-block: .2rem; }
   .pa-nav__bar {
-    padding-block: .16rem;
-    padding-inline-start: .55rem;
-    padding-inline-end: .16rem;
-    gap: .35rem;
+    padding-block: .1rem;
+    padding-inline-start: .5rem;
+    padding-inline-end: .1rem;
+    gap: .3rem;
   }
-  .pa-nav__brand { gap: .4rem; }
-  .pa-nav__brand img { width: 16px; }
-  .pa-nav__word { font-size: .82rem; }
-  .pa-lang { padding: 2px; }
-  .pa-lang__thumb { top: 2px; bottom: 2px; }
-  .pa-lang button { font-size: .58rem; padding: .16rem .38rem; }
-  /* body.pa-scoped for the same reason as the 860px rule above: the
-     base is `body.pa .pa-btn` at (0,2,1) and out-specifies a bare
-     `.pa-nav__tools .pa-btn--sm`. */
-  body.pa .pa-nav__tools .pa-btn--sm { padding: .28rem .66rem; font-size: .66rem; }
-  :root { --pa-nav-h: 2.7rem; }
+  .pa-nav__brand { gap: .35rem; }
+  .pa-nav__brand img { width: 15px; }
+  .pa-nav__word { font-size: .78rem; }
+  .pa-nav__tools .pa-lang button { font-size: .54rem; padding: .14rem .34rem; }
+  body.pa .pa-nav__tools .pa-btn--sm { padding: .24rem .58rem; font-size: .62rem; }
 
   /* ══ THE HERO — FULL-BLEED FILM, COPY ON TOP ═══════════════════════
      The phone used to get a different hero entirely: the stage SPLIT
@@ -1644,20 +1577,6 @@ body.pa #hudLabel {
       linear-gradient(to top,    rgba(var(--sk-shade), .92) 0%, rgba(var(--sk-shade), .68) 34%, rgba(var(--sk-shade), .18) 66%, rgba(var(--sk-shade), 0) 100%);
   }
 
-  /* The badge row sits on the film and still has to clear the fixed
-     nav. It is measured off --pa-nav-h — re-declared above, much
-     smaller — plus a gap, rather than a guessed clamp that overlaps
-     whenever the bar runs taller than the guess.
-
-     .75rem of real air below the capsule, not a hairline: the token is
-     a computed figure and a phone can still render the bar a little
-     taller than the arithmetic (a fallback face with different metrics,
-     a user font-size bump). The gap is that tolerance. */
-  .pa-skyline__badges {
-    padding-block-start: calc(var(--pa-nav-h) + .75rem);
-    padding-inline: var(--pa-gutter);
-  }
-
   /* The copy, overlaid. It keeps the base paper colour, the base accent,
      the base text shadows and the base bottom anchor — all four exist
      for exactly this case — and only two figures change: the pad under
@@ -1699,12 +1618,6 @@ body.pa #hudLabel {
 }
 @media (max-width: 560px) {
   .pa-skyline__actions .pa-btn { flex: 1 1 100%; justify-content: center; }
-  /* `.pa-badge--live { bottom: 4.2rem }` stood here to step the live
-     badge above the volume slider of a sound widget that no longer
-     exists. It never did step anything: the badge is position:static
-     inside .pa-skyline__badges, so `bottom` was ignored. Deleted with
-     the other inset rules. */
-
   /* The compatibility line is a single unbreakable-looking string
      ("Shopify · WooCommerce · Magento · custom builds"), and inside its
      own pill it wraps to two lines on a 375px screen — a two-line pill

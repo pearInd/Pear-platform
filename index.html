@@ -755,15 +755,16 @@
 
       <span class="pa-skyline__veil" aria-hidden="true"></span>
 
-      <!-- The two badges the framed player floated in its corners. Same
-           two i18n keys, laid out as a row clear of the fixed navbar. -->
-      <div class="pa-skyline__badges">
-        <span class="pa-badge pa-badge--size" data-i18n-html="hero.badgeSize">מידה מומלצת: <span class="font-mono text-pear-600">M</span></span>
-        <span class="pa-badge pa-badge--live">
-          <span class="pa-dot" aria-hidden="true"></span>
-          <span data-i18n="hero.badgeRealtime">התאמה בזמן אמת</span>
-        </span>
-      </div>
+      <!-- The two floating badge pills (.pa-skyline__badges, carrying
+           .pa-badge--size and .pa-badge--live) stood here and are
+           REMOVED at every width, along with their rulesets, the
+           hero.badgeSize / hero.badgeRealtime dictionary keys, and the
+           --pa-nav-h token whose only job was letting this row clear
+           the fixed navbar. The film carries the hero on its own now.
+
+           .pa-badge itself survives in the stylesheet: .pa-flip__badge
+           in the playground is its other caller. So does .pa-dot, which
+           the footer clock uses. -->
 
       <!-- The overlay copy. initSkyline animates THIS wrapper as the
            hero scrolls away, while data-pa-reveal inside it is the

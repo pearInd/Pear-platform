@@ -211,8 +211,6 @@
       'hero.proof1':        '<span class="font-bold text-slate-700">100% ביטחון בהתאמה</span> ברגע התשלום',
       'hero.proof2':        '<span class="font-bold text-slate-700">אפס Bracketing</span>, סוף להזמנת שלוש מידות',
       'hero.proof3':        '<span class="font-bold text-slate-700">עד כ-25% פחות החזרות</span> ופחות עלויות תפעול',
-      'hero.badgeSize':     'מידה מומלצת: <span class="font-mono text-pear-600">M</span>',
-      'hero.badgeRealtime': 'התאמה בזמן אמת',
 
       /* — live widget playground —
          The old title claimed the widget was "real" and "right here",
@@ -442,8 +440,6 @@
       'hero.proof1':        '<span class="font-bold text-slate-700">100% fit confidence</span> at checkout',
       'hero.proof2':        '<span class="font-bold text-slate-700">Zero bracketing</span>, no more 3-size orders',
       'hero.proof3':        '<span class="font-bold text-slate-700">~25% fewer returns</span> and lower OPEX',
-      'hero.badgeSize':     'Recommended size: <span class="font-mono text-pear-600">M</span>',
-      'hero.badgeRealtime': 'Real-time try-on',
 
       /* — live widget playground —
          Same reasoning as the Hebrew: the title answers the "is this a
