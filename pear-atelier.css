@@ -8,7 +8,7 @@
    BIDI · this site is Hebrew-first with an English alternate, and the
    two share one stylesheet. Every directional value below is a logical
    property (inline-start / inline-end / margin-inline), never left or
-   right — the layout mirrors itself when i18n.js flips dir="rtl" and
+   right - the layout mirrors itself when i18n.js flips dir="rtl" and
    nothing needs a second rule.
    ══════════════════════════════════════════════════════════════════ */
 
@@ -43,7 +43,7 @@
      Metric-override fallback faces (ascent/descent/size-adjust on a
      local Arial) were tried here to absorb the font-swap reflow and
      were REVERTED: measured against this page they made it worse, not
-     better — mobile CLS went 0.0001 → 0.134, because the overrides
+     better - mobile CLS went 0.0001 → 0.134, because the overrides
      moved first paint further from the system metrics the swap was
      already close to. Do not re-add them without measuring. */
   --pa-sans:  'Inter Tight', 'Heebo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
@@ -94,7 +94,7 @@ body.pa :focus-visible {
 }
 
 .pa-section { position: relative; z-index: 2; }
-/* Was clamp(5.5rem, 12vw, 11rem) — 176px of air above AND below every
+/* Was clamp(5.5rem, 12vw, 11rem) - 176px of air above AND below every
    section on a desktop, so any two neighbours were pushed 352px apart
    and the page read as four unrelated screens. At this scale a section
    break is still unmistakable and the whole landing view fits into
@@ -188,9 +188,9 @@ body.pa :focus-visible {
   color: transparent;
 }
 /* ─────────── 2a · THE BRAND NAME · one rule, every occurrence ──────
-   Every visible "PEAR" on the site — headings, body copy, badges,
+   Every visible "PEAR" on the site - headings, body copy, badges,
    buttons, the nav and footer wordmarks, the guide, the contact view,
-   Hebrew and English alike — is wrapped in <span class="brand-pear">
+   Hebrew and English alike - is wrapped in <span class="brand-pear">
    and styled from here. i18n copy already ships that class inside its
    markup keys, so the dictionary needs no second class name.
 
@@ -200,13 +200,13 @@ body.pa :focus-visible {
    fails on the two pages a developer actually reads.
 
    What is enforced here: family, weight, case and tracking. COLOUR is
-   not — it is layered on below, per surface, so the name can sit on
+   not - it is layered on below, per surface, so the name can sit on
    cream, on onyx and inside a filled button without a second wrapper
    class.
 
    Playfair Display is Latin-only with no Hebrew coverage, which is
    exactly why this is safe where the old Didot rule was not: the span
-   this class lands on NEVER contains Hebrew — every occurrence wraps
+   this class lands on NEVER contains Hebrew - every occurrence wraps
    only the four Latin letters "PEAR", even mid-sentence in the Hebrew
    UI, so there is no glyph for the font to fail to draw and nothing to
    fall back out of. text-transform:uppercase is redundant on top of
@@ -219,7 +219,7 @@ body.pa :focus-visible {
   text-transform: uppercase;
   /* display:inline-block is what the brief specifies, and it is safe
      here specifically because every .brand-pear span is a single
-     no-wrap word (white-space below) sitting inline in a text run —
+     no-wrap word (white-space below) sitting inline in a text run -
      never a multi-word phrase. An inline-block that could line-wrap
      mid-content is what breaks vertical rhythm; a single atomic word
      does not. */
@@ -241,7 +241,7 @@ body.pa .brand-pear:not(.brand-pear--ink) {
 .brand-pear--ink { color: inherit; }
 
 /* ───────────── 2b · LEGACY CLASS COMPATIBILITY LAYER ─────────────
-   The dictionary does not ship plain strings — several entries carry
+   The dictionary does not ship plain strings - several entries carry
    markup, and that markup carries the OLD Tailwind utilities baked in
    (text-pear-600, brand-pear, text-slate-700 …). Those classes arrive
    through innerHTML at translation time, so they cannot be edited out
@@ -249,7 +249,7 @@ body.pa .brand-pear:not(.brand-pear--ink) {
    languages. They are re-skinned here instead: same class names, new
    palette. Remove this block only if the dictionary is ever rewritten.
 
-   .text-pear-600 in pear-tailwind.css is rgb(5 150 105) — the previous
+   .text-pear-600 in pear-tailwind.css is rgb(5 150 105) - the previous
    emerald brand colour. Left alone it repaints every headline accent
    on the page in the palette this redesign replaced. */
 body.pa .text-pear-600,
@@ -434,7 +434,7 @@ body.pa .pa-nav__tools .pa-btn--sm { padding: .34rem .85rem; font-size: .74rem; 
    circular handle that rides on top of it.
 
    The language switch is the only caller left. The system was built for
-   three — the switch and the two video sound widgets — and the sound
+   three - the switch and the two video sound widgets - and the sound
    widgets are gone; the material rules below are kept as a system
    rather than folded into .pa-lang because they are still the recipe
    any future glass control should be cut from. ═══════════════════ */
@@ -479,11 +479,11 @@ body.pa .pa-nav__tools .pa-btn--sm { padding: .34rem .85rem; font-size: .74rem; 
   100% { opacity: 0;   transform: scale(2.4); }
 }
 
-/* language switch — a glass track (.pa-glass, added in the markup)
+/* language switch - a glass track (.pa-glass, added in the markup)
    with a frosted knob (.pa-glass-knob) sliding under whichever button
-   is active. JS (block 10) drives both position/width — measured off
+   is active. JS (block 10) drives both position/width - measured off
    the active button's own box, so it works for two differently-sized
-   labels in either language/direction — and the elastic drag. */
+   labels in either language/direction - and the elastic drag. */
 .pa-lang {
   position: relative;
   display: inline-flex; align-items: center; gap: 2px;
@@ -509,7 +509,7 @@ body.pa .pa-nav__tools .pa-btn--sm { padding: .34rem .85rem; font-size: .74rem; 
 .pa-lang button[aria-pressed="true"] { color: var(--pa-ink); font-weight: 700; }
 
 /* The video sound widgets (.pa-glass-sound, .pa-glass-btn and the whole
-   custom .pa-glass-slider — track, fill, thumb and its hover/touch
+   custom .pa-glass-slider - track, fill, thumb and its hover/touch
    reveal) stood here and are REMOVED. The hero film is silent and has
    no controls; nothing else on the site ever used them.
 
@@ -528,7 +528,7 @@ body.pa .pa-btn {
   border: 0;
   transition: color .4s var(--pa-ease-out), border-color .4s var(--pa-ease-out);
 }
-/* the fill wipes up from the bottom edge rather than fading — the
+/* the fill wipes up from the bottom edge rather than fading - the
    direction is what makes the hover read as physical */
 body.pa .pa-btn::before {
   content: ''; position: absolute; inset: 0; z-index: -1;
@@ -555,7 +555,7 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
 .pa-btn--sm { padding: .62rem 1.05rem; font-size: .8rem; }
 
 /* .pa-btn--pulse was REMOVED: the halo it drew existed for exactly one
-   element — the closing CTA's "try the widget" button — and that button
+   element - the closing CTA's "try the widget" button - and that button
    is gone, because it scrolled the visitor back up to a playground they
    had already passed. The class has no other caller in the project.
 
@@ -583,7 +583,7 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
 /* ────────────────────── 8 · SKYLINE HERO ────────────────────────── */
 /* The landing view opens on the film itself: pear-ad.mp4 at full bleed
    behind the copy. The old hero (centred copy on beige, the clip framed
-   underneath) is gone — its markup and its i18n keys are not. Every key
+   underneath) is gone - its markup and its i18n keys are not. Every key
    the copy block uses is the same one it always used.
 
    ONE VIEWPORT TALL, IN NORMAL FLOW. The section was briefly a ~275vh
@@ -602,7 +602,7 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
   position: relative; z-index: 3;
   height: 100svh;
   /* Overlay ink. The page's own ground colour, used as type colour over
-     the film — which ties the overlay to the palette instead of
+     the film - which ties the overlay to the palette instead of
      dropping a generic white on top of it. */
   --sk-paper: #F4F1EA;
   /* --pa-pear-deep is a 4.2:1 accent ON BEIGE. Over a dark film it
@@ -617,8 +617,8 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
   overflow: hidden;
   background: var(--pa-onyx);
   isolation: isolate;
-  /* One named cell, so every layer — film, veil, copy, badges, sound
-     widget — stacks in the same area without a single position:absolute
+  /* One named cell, so every layer - film, veil, copy, badges, sound
+     widget - stacks in the same area without a single position:absolute
      inset chain. z-index alone orders them. */
   display: grid;
   grid-template-areas: 'stage';
@@ -631,7 +631,7 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
    framed player again, which is the thing this section replaced.
    object-position sits at 32% rather than centre because the clip's
    subject is a person and the crop has to take the floor, not the
-   head — the same concern the old framed player solved with contain.
+   head - the same concern the old framed player solved with contain.
    Portrait viewports are the case cover cannot save (a 16:9 clip in a
    9:19 hole crops to a sliver), so those letterbox instead; the onyx
    stage behind reads as a deliberate frame there. */
@@ -647,8 +647,8 @@ body.pa .pa-btn--ghost:hover { color: var(--pa-beige); border-color: var(--pa-on
    768px the hero is a PHONE-shaped full-bleed film with the copy
    overlaid on it (see the 767.98px block), and letterboxing a 9:19
    viewport leaves the copy sitting on black bars instead of on the
-   picture. So `contain` is confined to the one band — a portrait
-   tablet — where the frame is close enough to 16:9 that the bars are
+   picture. So `contain` is confined to the one band - a portrait
+   tablet - where the frame is close enough to 16:9 that the bars are
    thin and the crop would otherwise take most of the width. */
 @media (orientation: portrait) and (min-width: 768px) and (max-width: 860px) {
   .pa-skyline__film { object-fit: contain; }
@@ -686,16 +686,16 @@ html[dir="ltr"] .pa-skyline__veil {
   padding-block-end: clamp(4.5rem, 11vh, 8rem);
   pointer-events: none;
   /* `filter` was the third name here, because initSkyline used to blur
-     this block as the hero left. That blur is REMOVED — a copy block
+     this block as the hero left. That blur is REMOVED - a copy block
      softening over a sharp full-bleed film read as the video itself
-     going out of focus — so the hint is trimmed to what is actually
+     going out of focus - so the hint is trimmed to what is actually
      animated. That is the point of will-change: naming a property the
      page never animates asks the compositor to keep a layer ready for
      nothing, which costs memory and buys no frames. */
   will-change: transform, opacity;
 }
 .pa-skyline__copy > .pa-shell { pointer-events: auto; text-align: start; }
-/* The headline and the lede take their own measures, in their OWN ch —
+/* The headline and the lede take their own measures, in their OWN ch -
    which tracks each one's font-size, so both hold a sensible line length
    from 360px to 1920px. A single max-width on the parent cannot do this:
    its ch is the 1rem body figure, and at 58ch that capped the container
@@ -716,7 +716,7 @@ html[dir="ltr"] .pa-skyline__veil {
   text-shadow: 0 1px 2px rgba(0,0,0,.42), 0 14px 44px rgba(0,0,0,.5);
 }
 /* hero.title's second line ships class="text-pear-600", which block 4
-   maps to --pa-pear-deep — an accent picked against beige. Over the
+   maps to --pa-pear-deep - an accent picked against beige. Over the
    film it has to be the lifted pear instead. The dictionary string is
    byte-locked to the inline copy in index.html, so this is corrected
    here in CSS rather than by editing the key. */
@@ -726,7 +726,7 @@ html[dir="ltr"] .pa-skyline__veil {
    language flip and REVERTED after measurement: the lede is TALLER in
    English while the headline is taller in Hebrew, so reserving the
    lede's three-line English case added height on top of a delta that
-   already pointed the other way — 1280px CLS went 0.086 → 0.155. The
+   already pointed the other way - 1280px CLS went 0.086 → 0.155. The
    flip has to be fixed where it happens (i18n.js paints DEFAULT_LANG
    first), not absorbed downstream. Measure before re-adding anything.
 
@@ -751,7 +751,7 @@ html[dir="ltr"] .pa-skyline__veil {
 }
 /* The primary CTA, INVERTED for the film. .pa-btn--primary is cut for
    beige: an onyx pill with paper type. The veil that carries the copy
-   bottoms out near black, so on the film that pill was onyx on onyx —
+   bottoms out near black, so on the film that pill was onyx on onyx -
    the button was genuinely invisible, at every width, and only the
    label could be read. Swapping the two colours is the whole fix: a
    paper pill with onyx type, which is also the treatment the headline
@@ -762,7 +762,7 @@ html[dir="ltr"] .pa-skyline__veil {
    so paper → pear is a hover that lands correctly on the first try.
 
    (0,2,0), which beats .pa-btn--primary's own (0,1,0) and leaves the
-   button on beige — the closing CTA's — exactly as it was. */
+   button on beige - the closing CTA's - exactly as it was. */
 .pa-skyline__actions .pa-btn--primary {
   background: var(--sk-paper);
   color: var(--pa-onyx);
@@ -801,7 +801,7 @@ html[dir="ltr"] .pa-skyline__veil {
 /* ── reduced motion ──
    The .is-static fallback class that stood here is gone with the rest
    of the scrub machinery: it existed to collapse a scroll runway and
-   un-stick a sticky stage, and the hero now has neither — it is a plain
+   un-stick a sticky stage, and the hero now has neither - it is a plain
    100svh section whether or not any script runs. What still has to be
    handled is the copy's fade-and-lift exit, which initSkyline skips
    entirely under reduced motion; these rules are the belt to that
@@ -864,7 +864,7 @@ html[dir="ltr"] .pa-skyline__veil {
 
    Set as its own step rather than by raising .pa-d-lg, which is shared
    with four other sections that are already correctly sized. The
-   leading is opened alongside the size — a display line-height of .92
+   leading is opened alongside the size - a display line-height of .92
    is tuned for two words, not seven, and the Hebrew ascenders collide
    at that value. */
 .pa-head--major { align-items: end; }
@@ -892,7 +892,7 @@ html[dir="ltr"] .pa-skyline__veil {
 /* ───────────────────── 10 · PILLAR CARDS ────────────────────────── */
 /* .pa-bento (a 6-column grid) stood here with .pa-w2/3/4/6 span helpers
    and a .pa-cell--onyx variant. The only thing that ever used them was
-   the three-pillar row, which is now .pa-pillars — repeat(3) with no
+   the three-pillar row, which is now .pa-pillars - repeat(3) with no
    spans to keep in sync. .pa-cell and its parts stay: .pa-pillar is
    built on them. */
 .pa-cell {
@@ -932,14 +932,14 @@ html[dir="ltr"] .pa-skyline__veil {
   font-size: .68rem; font-weight: 600;
 }
 /* .pa-status / @keyframes pa-blip lived here: a pulsing dot in the head
-   of each pillar card. Removed with the markup that carried it — three
+   of each pillar card. Removed with the markup that carried it - three
    identical blinking dots labelled nothing, distinguished nothing, and
    ran an infinite animation beside body copy. The drawn marks below
    replace them. */
 
 /* ── the pillar marks ──
    One 24-unit grid, one 1.6 stroke, three drawings. The tile is drawn
-   here so the SVGs stay pure geometry: no fills, no colours, no size —
+   here so the SVGs stay pure geometry: no fills, no colours, no size -
    they inherit all three, which is what lets the same three files sit on
    cream, on glass and on onyx without a variant each. */
 .pa-mark {
@@ -967,7 +967,7 @@ html[dir="ltr"] .pa-skyline__veil {
 .pa-mark__hair { opacity: .42; }
 .pa-mark__tick { color: var(--pa-pear); opacity: .9; stroke: currentColor; }
 
-/* On hover the mark lifts and its accent completes — the drawn
+/* On hover the mark lifts and its accent completes - the drawn
    equivalent of the state the blinking dot was gesturing at, except it
    fires on intent instead of forever. */
 .pa-cell:hover .pa-mark,
@@ -1004,7 +1004,7 @@ html[dir="ltr"] .pa-skyline__veil {
 
    backdrop-filter is the expensive part. It is confined to these three
    cards and gated on @supports, because where it is unsupported the
-   fallback must be the OPAQUE panel — a semi-transparent card with no
+   fallback must be the OPAQUE panel - a semi-transparent card with no
    blur puts the 3D scene straight through the body copy, which is the
    exact failure this section is being redesigned away from. */
 .pa-cell--pillar {
@@ -1051,7 +1051,7 @@ html[dir="ltr"] .pa-skyline__veil {
 
 /* The tilt writes rotationX/rotationY into the same transform this rule
    animates, so on a fine pointer the lift is handed to the highlight
-   instead — two writers on one property is a card that snaps flat the
+   instead - two writers on one property is a card that snaps flat the
    moment the cursor enters it. */
 @media (hover: hover) and (pointer: fine) {
   .pa-cell--pillar:hover { transform: none; }
@@ -1086,7 +1086,7 @@ html[dir="ltr"] .pa-skyline__veil {
 /* ── the metric ──
    Set in the display face at a size that carries across the row, with
    tabular figures so a counting number does not shuffle the glyphs
-   beside it on every frame. dir=ltr is on the element in the markup —
+   beside it on every frame. dir=ltr is on the element in the markup -
    a Hebrew paragraph must not reorder a figure and its unit. */
 .pa-pillar__metric {
   margin: clamp(1rem, 1.8vw, 1.5rem) 0 0;
@@ -1117,7 +1117,7 @@ html[dir="ltr"] .pa-skyline__veil {
 /* ── the bullet reveal ──
    The list keeps its space at ALL times and only fades in. It used to
    collapse to grid-template-rows:0fr at rest and animate open, which
-   read well on its own but grew the card by ~51px on hover — and
+   read well on its own but grew the card by ~51px on hover - and
    because the three cards share a grid row, ALL THREE grew and the
    closing CTA below them jumped 52px up the page every time the cursor
    crossed a card. A hover that reflows the page is worse than a hover
@@ -1145,7 +1145,7 @@ html[dir="ltr"] .pa-skyline__veil {
 }
 
 /* A slow diagonal sheen that only crosses the card while it is engaged
-   — the glass cue that separates "this responds" from "this is a
+   - the glass cue that separates "this responds" from "this is a
    picture of a card". Purely decorative and pointer-events:none, so it
    never intercepts the hover it is reacting to. */
 .pa-pillar__sheen {
@@ -1255,7 +1255,7 @@ html[dir="ltr"] .pa-skyline__veil {
 }
 .pa-flip__face--back { transform: rotateY(180deg); }
 
-/* shine sweep — armed only while the back face actually faces the
+/* shine sweep - armed only while the back face actually faces the
    viewer, so the animation never plays behind the front face unseen */
 .pa-flip__shine {
   position: absolute; inset: 0; z-index: 3; pointer-events: none;
@@ -1274,7 +1274,7 @@ html[dir="ltr"] .pa-skyline__veil {
   to   { transform: translateX(120%); }
 }
 
-/* glassmorphic "On Model Preview" badge — sibling of .pa-flip__inner so
+/* glassmorphic "On Model Preview" badge - sibling of .pa-flip__inner so
    it stays upright through the rotation instead of mirroring with it */
 .pa-flip__badge {
   z-index: 4;
@@ -1289,7 +1289,7 @@ html[dir="ltr"] .pa-skyline__veil {
   opacity: 1; transform: translateY(0) scale(1);
 }
 
-/* front/back garment angle — both images are in the DOM and decoded from
+/* front/back garment angle - both images are in the DOM and decoded from
    first paint; toggling only flips which one is opacity:1, so there is
    never a decode stall or a broken src mid-switch */
 .pa-angle__img {
@@ -1354,8 +1354,8 @@ html[dir="ltr"] .pa-skyline__veil {
 /* ────────────────────── 13 · CLOSING CTA ────────────────────────── */
 /* .pa-solution stood here: a floating glass panel between the bento and
    this CTA that restated the hero and the pillars in a third voice. It
-   is gone, and the one fact it owned — which platforms the widget drops
-   into — is now the trust line at the foot of .pa-close. Which is why
+   is gone, and the one fact it owned - which platforms the widget drops
+   into - is now the trust line at the foot of .pa-close. Which is why
    .pa-tags is styled for onyx rather than for glass. */
 .pa-tags {
   display: flex; flex-wrap: wrap; gap: .4rem;
@@ -1389,7 +1389,7 @@ html[dir="ltr"] .pa-skyline__veil {
   pointer-events: none;
 }
 /* :not(.pa-cell__glow) or this rule flattens the absolutely-positioned
-   highlight into the flow — the same carve-out .pa-cell makes. */
+   highlight into the flow - the same carve-out .pa-cell makes. */
 .pa-close > *:not(.pa-cell__glow) { position: relative; }
 
 /* The cursor-tracked highlight, borrowed from the bento cards. The
@@ -1409,7 +1409,7 @@ html[dir="ltr"] .pa-skyline__veil {
 .pa-close__actions { display: flex; flex-wrap: wrap; gap: .7rem; justify-content: center; margin-top: clamp(2rem, 4vw, 3rem); }
 /* body.pa-scoped to match the base ghost rule's specificity (0,2,1).
    Written as `.pa-close .pa-btn--ghost` it scores (0,2,0) and LOSES,
-   which paints these two buttons onyx-on-onyx — invisible. */
+   which paints these two buttons onyx-on-onyx - invisible. */
 body.pa .pa-close .pa-btn--ghost { border-color: rgba(244,241,234,.28); color: var(--pa-beige); }
 body.pa .pa-close .pa-btn--ghost::before { background: var(--pa-beige); }
 body.pa .pa-close .pa-btn--ghost:hover { color: var(--pa-onyx); border-color: var(--pa-beige); }
@@ -1436,7 +1436,7 @@ body.pa .pa-foot {
 .pa-clock b { font-weight: 500; color: var(--pa-ink); font-variant-numeric: tabular-nums; }
 
 /* ────────────────────── 15 · SCROLL HUD ─────────────────────────── */
-/* Stays in the bottom corner where the original put it — the bento and
+/* Stays in the bottom corner where the original put it - the bento and
    the demo band both run the full width of the shell, so a rail parked
    at the vertical middle lands on top of a card. Only the skin changes:
    the emerald glow goes, the ring turns pear. */
@@ -1483,7 +1483,7 @@ body.pa #hudLabel {
      across three lines. One column, full width, in the same order. */
   .pa-pillars { grid-template-columns: minmax(0, 1fr); }
   /* With one card on screen at a time there is nothing to scan past, so
-     the bullets are simply always visible — a hover reveal on a
+     the bullets are simply always visible - a hover reveal on a
      full-width card on a touch device is a list most visitors never
      find. The space was already reserved, so this changes no geometry. */
   .pa-pillar .pa-cell__list { opacity: 1; transform: none; }
@@ -1525,11 +1525,11 @@ body.pa #hudLabel {
   .pa-nav__tools .pa-lang button { font-size: .54rem; padding: .14rem .34rem; }
   body.pa .pa-nav__tools .pa-btn--sm { padding: .24rem .58rem; font-size: .62rem; }
 
-  /* ══ THE HERO — FULL-BLEED FILM, COPY ON TOP ═══════════════════════
+  /* ══ THE HERO - FULL-BLEED FILM, COPY ON TOP ═══════════════════════
      The phone used to get a different hero entirely: the stage SPLIT
      into a 4:5 film panel on top and the copy below it on beige, in
      ordinary ink. That is gone. The phone now gets the same hero as
-     every other width — one film filling the whole stage with the
+     every other width - one film filling the whole stage with the
      headline, the lede and the CTA overlaid on it in paper-coloured
      type, carried by the veil.
 
@@ -1539,7 +1539,7 @@ body.pa #hudLabel {
      desktop one because a phone gives the copy a much larger share of
      the frame to stay legible over, and (c) the copy re-fitted to a
      narrow column. Every ink/beige override the split layout needed is
-     DELETED rather than overridden — the base paper treatment is the
+     DELETED rather than overridden - the base paper treatment is the
      one that applies now.
 
      Height stays the base 100svh: svh, not vh, so the stage is the
@@ -1565,7 +1565,7 @@ body.pa #hudLabel {
   /* A deeper bottom wash than the desktop veil, and no side wash. On a
      phone the copy occupies most of the lower half of the frame instead
      of an inline-start third, so the gradient that carries it has to
-     start higher and land darker — this is what keeps white type at
+     start higher and land darker - this is what keeps white type at
      100% legibility over whatever the film is doing underneath. The
      top wash is unchanged: it is what the glass navbar and the badges
      read against. No direction-dependent layer is left, so the [dir]
@@ -1578,8 +1578,8 @@ body.pa #hudLabel {
   }
 
   /* The copy, overlaid. It keeps the base paper colour, the base accent,
-     the base text shadows and the base bottom anchor — all four exist
-     for exactly this case — and only two figures change: the pad under
+     the base text shadows and the base bottom anchor - all four exist
+     for exactly this case - and only two figures change: the pad under
      it, so the CTA never sits on the very edge of a short phone, and
      the two measures, so the lines break for a narrow column. */
   .pa-skyline__copy { padding-block-end: clamp(2.6rem, 9vh, 4.2rem); }
@@ -1588,7 +1588,7 @@ body.pa #hudLabel {
 
   /* ══ THE FOOTER BAR, HORIZONTAL ════════════════════════════════════
      One line, same reading order as desktop: lockup · rights · clock.
-     The row was never told to stack — it is `flex-wrap: wrap` (§14) and
+     The row was never told to stack - it is `flex-wrap: wrap` (§14) and
      the three children simply outgrew a phone, so it wrapped itself
      into three stacked lines. nowrap is what stops that, and it only
      works if the one flexible child is allowed to shrink: `min-width:
@@ -1609,7 +1609,7 @@ body.pa #hudLabel {
   .pa-foot__brand .pa-nav__word { font-size: .8rem; }
   .pa-foot__row p { flex: 1 1 auto; min-width: 0; font-size: .56rem; line-height: 1.45; }
   /* .pa-clock is a <p> too, so it is caught by the rule above at
-     (0,1,1) — which is also why the base sheet's own `.pa-clock`
+     (0,1,1) - which is also why the base sheet's own `.pa-clock`
      font-size never applied. Scoped to (0,2,1) here so the clock keeps
      its own size and, more importantly, stays `flex: none`: as a
      shrinkable child it would have been squeezed until the time itself
@@ -1620,7 +1620,7 @@ body.pa #hudLabel {
   .pa-skyline__actions .pa-btn { flex: 1 1 100%; justify-content: center; }
   /* The compatibility line is a single unbreakable-looking string
      ("Shopify · WooCommerce · Magento · custom builds"), and inside its
-     own pill it wraps to two lines on a 375px screen — a two-line pill
+     own pill it wraps to two lines on a 375px screen - a two-line pill
      reads as a mistake. Below this width it sheds the pill and sets as
      a plain caption instead, which fits on one line without dropping to
      a font size nobody can read. */
@@ -1634,7 +1634,7 @@ body.pa #hudLabel {
 
 /* ───────────────── 16b · TOUCH · TACTILE FEEDBACK ────────────────
    Coarse-pointer visitors get none of the hover affordances the rest of
-   this sheet is built on — no tilt, no cursor highlight, no magnetic
+   this sheet is built on - no tilt, no cursor highlight, no magnetic
    lean. What replaces them is direct manipulation: pressing a card
    pushes it in, dragging it lets it lean and rubber-band, releasing it
    springs back. The transforms are written by initTouch() in
@@ -1694,7 +1694,7 @@ body.pa #hudLabel {
    WHERE THIS MARKUP LIVES: not in index.html. The guide is served from
    api/get-docs.js and injected into #docs-secure-viewport after the
    passcode check. pear-tailwind.css is a static build with
-   content:["index.html"], so it never sees these class names — which is
+   content:["index.html"], so it never sees these class names - which is
    exactly why the guide is styled from here, in hand-written CSS, and
    not in utilities. Adding a class over there means adding a rule here.
    ═══════════════════════════════════════════════════════════════════ */
@@ -1770,7 +1770,7 @@ body.pa #hudLabel {
    Rail on the inline-start edge, card beside it. The rail is a grid
    column rather than an absolutely positioned line, so the connector
    between two steps is simply a flex child that fills whatever height
-   the card beside it turned out to be — no magic offsets to re-tune
+   the card beside it turned out to be - no magic offsets to re-tune
    when the copy or the language changes. */
 .pa-steps { display: grid; gap: 0; }
 .pa-step { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); gap: 1.15rem; }
@@ -1791,7 +1791,7 @@ body.pa #hudLabel {
   background: linear-gradient(to bottom, rgba(155,181,58,.5), transparent);
 }
 /* The step card. It is a .pa-panel too, so it takes the same glass as
-   the requirements card above it and the same opaque fallback — one
+   the requirements card above it and the same opaque fallback - one
    material for the whole guide.
 
    The code block inside is deliberately allowed to run to the panel's
@@ -1868,7 +1868,7 @@ body.pa #hudLabel {
    Three things move on a successful copy and they are staged, not
    simultaneous: the icon swaps to a tick, the label changes, and a ring
    expands out of the button and dissolves. The ring is what carries the
-   confirmation at a glance — the tick is 14px and lands where the finger
+   confirmation at a glance - the tick is 14px and lands where the finger
    or cursor already is, so on its own it is easy to miss entirely. */
 .pa-guide__copy {
   position: relative;
@@ -1958,7 +1958,7 @@ body.pa #hudLabel {
   /* Turned on its side: the connector runs from the number out toward
      the far edge instead of down to the next step.
 
-     linear-gradient takes no logical direction keyword — `to inline-end`
+     linear-gradient takes no logical direction keyword - `to inline-end`
      is not a thing, and a gradient with an invalid direction drops the
      whole background declaration, which is a connector that silently
      does not render. Hence the explicit angle and the RTL mirror. */
@@ -2126,7 +2126,7 @@ textarea.pa-field__input { resize: vertical; min-height: 7.5rem; line-height: 1.
 }
 .pa-field__input.is-tapped { transform: scale(.995); }
 
-/* Invalid only AFTER the field has been left or the form submitted —
+/* Invalid only AFTER the field has been left or the form submitted -
    :invalid alone paints every required field red on first paint, which
    is the single most common way a nice form turns hostile. index.html
    adds .was-touched on blur and .was-submitted on a failed submit. */
@@ -2292,7 +2292,7 @@ textarea.pa-field__input { resize: vertical; min-height: 7.5rem; line-height: 1.
   .pa-play__scan { display: none; }
   /* The blanket rule above collapses the sheen's duration to nothing,
      which turns a 1.15s sweep into a white flash across the card on
-     every hover — worse than the motion it is standing in for. The
+     every hover - worse than the motion it is standing in for. The
      pillars keep their glow and their lift; they lose only this. */
   .pa-pillar__sheen { display: none; }
   html.pa-cursor-on, html.pa-cursor-on * { cursor: auto !important; }

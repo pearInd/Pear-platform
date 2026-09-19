@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════════
-   POST /api/get-docs — server-gated implementation guide.
+   POST /api/get-docs - server-gated implementation guide.
 
    The guide's markup lives here, on the server, and is only ever sent
    over the wire after the passcode checks out. Nothing about it is in
@@ -8,20 +8,20 @@
 
    Scope of the protection, stated plainly: this stops UNAUTHORIZED
    people from getting the guide. It cannot stop an AUTHORIZED reader
-   from copying what they were just handed — once the passcode is
+   from copying what they were just handed - once the passcode is
    correct, the HTML is in their browser and it's theirs to read. That
    is the ceiling for any web-delivered content, and no client-side
    trick raises it.
 
    Setup: set DOCS_PASSCODE in Vercel → Project → Settings →
    Environment Variables (all environments), then redeploy. Rotating
-   the code is a one-value change here — no frontend deploy needed.
+   the code is a one-value change here - no frontend deploy needed.
    ════════════════════════════════════════════════════════════════════ */
 
 const crypto = require('crypto');
 
 /* ── Constant-time compare ────────────────────────────────────────
-   timingSafeEqual throws on length mismatch — and the lengths alone
+   timingSafeEqual throws on length mismatch - and the lengths alone
    would leak the passcode's length. Hashing both sides to a fixed
    32 bytes first sidesteps both problems. */
 function safeEqual(a, b) {
@@ -34,13 +34,13 @@ function safeEqual(a, b) {
    IMPORTANT / read before trusting this: serverless instances are
    ephemeral and scale horizontally, so this in-memory Map is NOT a
    reliable limiter. It resets on cold start and is not shared between
-   concurrent instances — a determined attacker spraying requests can
+   concurrent instances - a determined attacker spraying requests can
    land on fresh instances and skate past it. It raises the cost of
    casual guessing; it is not a real control.
 
    For an actual limiter, back it with shared state (Vercel KV /
    Upstash Redis, keyed the same way) or put Vercel's WAF in front of
-   this route. vercel.json cannot rate-limit — it only sets headers/
+   this route. vercel.json cannot rate-limit - it only sets headers/
    routes, so there is no config-only version of this. */
 const attempts = new Map();
 const MAX_ATTEMPTS = 5;
@@ -61,7 +61,7 @@ function checkRate(ip) {
     return { blocked: true, retryAfter: Math.ceil((rec.blockedUntil - now) / 1000) };
   }
   if (rec.blockedUntil && rec.blockedUntil <= now) {
-    attempts.delete(ip);                       // block expired — clean slate
+    attempts.delete(ip);                       // block expired - clean slate
     return { blocked: false };
   }
   if (now - rec.firstAt > WINDOW_MS) {
@@ -93,13 +93,13 @@ function sweep() {
 /* ── Origin / Fetch-Metadata check ────────────────────────────────
    Read this before trusting it: Origin, Referer, and Sec-Fetch-* are
    all just request headers. A real browser making a same-origin
-   fetch() cannot forge them — Sec-Fetch-Site in particular is set by
+   fetch() cannot forge them - Sec-Fetch-Site in particular is set by
    the browser itself and page JS has no way to override it, which is
    what makes it a meaningful signal against a malicious THIRD-PARTY
    WEBSITE trying to call this endpoint from a visitor's browser.
 
    It does NOT stop curl or Postman, and the ask to reject those
-   outright can't be met by header inspection — curl sets whatever
+   outright can't be met by header inspection - curl sets whatever
    headers you tell it to (`curl -H "Sec-Fetch-Site: same-origin"`
    defeats this completely). Distinguishing "a script pretending to be
    a browser" from "a browser" is not a solvable problem at the HTTP
@@ -124,25 +124,25 @@ function passesOriginCheck(req) {
   // Strong signal, browser-enforced: trust it when present.
   if (secFetchSite) return secFetchSite === 'same-origin';
 
-  // No Sec-Fetch-Site — an older browser, or an extension stripped it.
+  // No Sec-Fetch-Site - an older browser, or an extension stripped it.
   // Fall back to Origin, then Referer. Both are attacker-controlled for
   // a non-browser client, so this branch is soft, not a real barrier.
   const allowed = allowedOrigins();
   if (origin) return allowed.includes(origin);
   if (referer) return allowed.some((o) => referer.startsWith(o));
 
-  // No signal at all is what a bare curl/Postman request looks like —
+  // No signal at all is what a bare curl/Postman request looks like -
   // reject it, understanding a spoofed header sails right past this.
   return false;
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   THE GUIDE — everything below is what gets sent on success.
+   THE GUIDE - everything below is what gets sent on success.
 
    LOCALISATION: the guide ships ONE copy of the markup carrying Hebrew
    defaults plus data-i18n / data-i18n-html keys. The client translates
-   it on arrival — index.html's mountDocs() calls PearI18n.apply() on the
-   injected subtree — so this endpoint stays language-agnostic and its
+   it on arrival - index.html's mountDocs() calls PearI18n.apply() on the
+   injected subtree - so this endpoint stays language-agnostic and its
    response contract does not change. The English copy for every key
    below lives in i18n.js under the `guide.*` namespace; adding a string
    here means adding the same key there, in both languages.
@@ -150,7 +150,7 @@ function passesOriginCheck(req) {
    Deliberately NOT done here: reading Accept-Language or a ?lang= param
    and returning pre-translated HTML. That would make the response vary
    by request while the route sends `Cache-Control: no-store` and is
-   gated on a passcode — extra server-side surface for something the
+   gated on a passcode - extra server-side surface for something the
    client already does correctly for the rest of the page.
    ════════════════════════════════════════════════════════════════════ */
 const GUIDE_HTML = `
@@ -180,7 +180,7 @@ const GUIDE_HTML = `
 
   <!-- ── 02 · Steps + code blocks ──
        Each step is rail + card. The rail's connector is a flex child, so
-       it fills whatever height the card beside it ends up being — the
+       it fills whatever height the card beside it ends up being - the
        three cards are different heights in every language and there is
        nothing here to re-tune when the copy changes. -->
   <section>
@@ -320,7 +320,7 @@ module.exports = (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
   if (!passesOriginCheck(req)) {
-    // Doesn't touch the rate limiter — that budget is reserved for actual
+    // Doesn't touch the rate limiter - that budget is reserved for actual
     // passcode guesses, not "wrong client type" rejections.
     return res.status(403).json({ error: 'forbidden' });
   }
@@ -328,7 +328,7 @@ module.exports = (req, res) => {
   const expected = process.env.DOCS_PASSCODE;
   if (!expected) {
     // Fail closed. A missing env var must never mean "let everyone in".
-    console.error('[get-docs] DOCS_PASSCODE is not set — refusing all requests.');
+    console.error('[get-docs] DOCS_PASSCODE is not set - refusing all requests.');
     return res.status(500).json({ error: 'server_misconfigured' });
   }
 

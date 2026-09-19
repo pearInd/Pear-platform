@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════════
-   PEAR · i18n — automatic Hebrew / English localisation
+   PEAR · i18n - automatic Hebrew / English localisation
    ════════════════════════════════════════════════════════════════════
 
    LOADING: this file is a CLASSIC, RENDER-BLOCKING <script> in <head>,
@@ -8,31 +8,31 @@
    document title + meta description.
 שגשגשג
    STRICT RESOLUTION ORDER (first hit wins):
-     1. ?lang=he|en in the URL — what the hreflang alternates point at,
+     1. ?lang=he|en in the URL - what the hreflang alternates point at,
         so a search engine landing on /?lang=en gets English markup with
         no guessing at all. Governs ONLY this page load; it is
-        deliberately NOT written to localStorage — see setLanguage()'s
+        deliberately NOT written to localStorage - see setLanguage()'s
         callers for why a shared link must never permanently pin a
         visitor's language.
      2. localStorage['app_lang'], but ONLY if localStorage['app_lang_explicit']
-        is '1' — meaning it was written by an actual click on the navbar
+        is '1' - meaning it was written by an actual click on the navbar
         [data-set-lang] toggle (see setLanguage). This is the ONLY thing
         that ever beats geo-IP: a deliberate choice is respected across
         reloads until the visitor toggles again.
-     3. Geo-IP. Anything else — no explicit choice on file, or the flag
-        without a usable value — runs a FRESH geo-IP lookup on every
+     3. Geo-IP. Anything else - no explicit choice on file, or the flag
+        without a usable value - runs a FRESH geo-IP lookup on every
         single boot, no cache, no stale reuse. GEO_SOURCES are tried in
-        order (ipapi.co, then ip-api.com, then ipinfo.io — see the block
+        order (ipapi.co, then ip-api.com, then ipinfo.io - see the block
         below for why three) until one answers; only an exact 'IL' match
         resolves to Hebrew, everything else (US via VPN included)
         resolves to DEFAULT_LANG. This is what makes the boot "strict":
         a stale or pre-existing app_lang value that was never confirmed
-        by a real click is never trusted — it is overwritten with
+        by a real click is never trusted - it is overwritten with
         whatever geo-IP says, live, no reload required.
 
    NO CLOAK: the page always paints DEFAULT_LANG ('en') immediately for
    case 3, then swaps to Hebrew live if geo-IP confirms 'IL'. There is
-   nothing to hide behind a cloak for — Hebrew is only ever reached
+   nothing to hide behind a cloak for - Hebrew is only ever reached
    through a confirmed 'IL' match or a real toggle click, so the async
    window can only ever produce a possible EN→HE flip, never the
    HE→EN "wrong language for a VPN visitor" flicker this used to guard
@@ -43,7 +43,7 @@
 
    SECURITY NOTE: values under the `html:` namespace are injected with
    innerHTML. Everything in DICT below is an author-written literal that
-   ships with this file — never route visitor input or an API response
+   ships with this file - never route visitor input or an API response
    through a `.html` key.
    ════════════════════════════════════════════════════════════════════ */
 (function (window, document) {
@@ -65,7 +65,7 @@
      answers. Each has its own response shape, hence its own `extract`.
      A provider that 400s, times out, CORS-blocks, or returns a body that
      `extract` can't make sense of is treated as a failure and the next
-     one is tried immediately — see fromIpLookup().
+     one is tried immediately - see fromIpLookup().
 
      ip-api.com's free-tier JSON endpoint has historically not sent CORS
      headers for direct browser calls, so it may fail every time with an
@@ -104,7 +104,7 @@
     }
   ];
 
-  /* Fixed per-provider timeout, tried one at a time — see fromIpLookup().
+  /* Fixed per-provider timeout, tried one at a time - see fromIpLookup().
      700ms was diagnosed in production as too aggressive: every one of
      the three providers was failing with "signal is aborted without
      reason", the fetches being aborted before a real, working response
@@ -120,7 +120,7 @@
   /* ════════════════════════════════════════════════════════════════
      DICTIONARY · one entry per language, flat dotted keys.
 
-     Markup keys live under `html:` and are applied with innerHTML —
+     Markup keys live under `html:` and are applied with innerHTML -
      that is what lets a sentence keep its inline <span class="brand-pear">
      or coloured emphasis while still being one translatable unit.
      Plain keys under `text:` are applied with textContent.
@@ -129,10 +129,10 @@
 
     /* ──────────────────────────── HEBREW ──────────────────────────── */
     he: {
-      /* — head / SEO — */
+      /* - head / SEO - */
       /* Hebrew stays Hebrew. Dropping the English strings in here would
-         collapse the hreflang set — two "languages" serving identical
-         copy — and throw away every Hebrew query the site ranks for, so
+         collapse the hreflang set - two "languages" serving identical
+         copy - and throw away every Hebrew query the site ranks for, so
          the B2B keyword strategy is carried IN Hebrew rather than
          translated away: הפחתת החזרות = reduce return rates,
          הגדלת המרות = boost conversion, הזמנת כמה מידות = bracketing. */
@@ -147,7 +147,7 @@
       'meta.orgDescription':     'PEAR מפתחת טכנולוגיית Virtual Try-On ומדידה וירטואלית מבוססת AI בזמן אמת לאיקומרס אופנה.',
       'meta.imageAlt':           'הוידג\'ט PEAR AI Virtual Try-On',
 
-      /* — accessibility labels — */
+      /* - accessibility labels - */
       'a11y.mainNav':       'ניווט ראשי',
       'a11y.langSwitch':    'בחירת שפה',
       'a11y.viewOverview':  'אודות המיזם והפתרון',
@@ -157,7 +157,7 @@
          loop and its play toggle; vtonMute/vtonUnmute/vtonVolume
          labelled the mute button and volume slider that later sat on
          the cinematic player. All six are gone with the controls they
-         named — the hero film is silent and has no controls at all.
+         named - the hero film is silent and has no controls at all.
          demoVideo is the one survivor: it labels the <video> itself. */
       'a11y.demoVideo':     'סרטון הדגמה מלא של הוידג\'ט PEAR AI Virtual Try-On',
       'a11y.directMeasure': 'מדידה וירטואלית חד-פעמית, ללא שלב הרשמה, פעם אחת בביקור',
@@ -166,12 +166,12 @@
       'a11y.modelPreviewToggle': 'הצגת התמונה על דוגמן/ית',
       'a11y.angleToggleGroup':   'תצוגת חזית / גב',
 
-      /* — navbar — */
+      /* - navbar - */
       'nav.about':   'על המיזם',
       'nav.docs':    'מדריך הטמעה',
       'nav.contact': 'דברו איתנו',
 
-      /* — scroll HUD chapters —
+      /* - scroll HUD chapters -
          hud.demo went with the onyx demo band; the clip it labelled is
          the hero's now and hud.intro covers it. */
       'hud.intro':      'פתיחה',
@@ -179,7 +179,7 @@
       'hud.value':      'השפעה עסקית',
       'hud.cta':        'סיום',
 
-      /* — hero —
+      /* - hero -
          Two sentences replaced five. "הלקוחות שלכם מודדים בלי להגיע
          לחנות" described the mechanism; this states the outcome the
          buyer is actually shopping for and names the cost it removes.
@@ -187,14 +187,14 @@
       /* The LTR product-name kicker that opened this headline was
          REMOVED, here and from the matching inline paint in index.html.
          The two must still mirror each other exactly; see the note at
-         that <h1>. The old wording is not quoted here on purpose — this
+         that <h1>. The old wording is not quoted here on purpose - this
          file is served to the browser, so a comment repeating it would
          ship the very string the removal was meant to retire. */
       /* hero.title is KEPT as it stands, and that is a decision, not an
          oversight. Two things pin it: .pa-skyline__title is capped at
          max-width 15ch, so a longer line wraps to three rows and starts
          pushing the CTA down a 100svh stage; and the existing pair is
-         already the strongest construction available in that width — a
+         already the strongest construction available in that width - a
          concrete promise and the differentiator, in parallel fragments.
          Every longer rewrite tried here traded the rhyme and the fit for
          nothing. If it is to change, the CSS measure changes with it. */
@@ -212,11 +212,11 @@
       'hero.proof2':        '<span class="font-bold text-slate-700">אפס Bracketing</span>, סוף להזמנת שלוש מידות',
       'hero.proof3':        '<span class="font-bold text-slate-700">עד כ-25% פחות החזרות</span> ופחות עלויות תפעול',
 
-      /* — live widget playground —
+      /* - live widget playground -
          The old title claimed the widget was "real" and "right here",
          which is two ways of saying the same thing. The new one answers
-         the objection a visitor actually arrives with — that this is a
-         canned demo — and the sub stops instructing (the button below it
+         the objection a visitor actually arrives with - that this is a
+         canned demo - and the sub stops instructing (the button below it
          already says what to do) and just states what they are seeing. */
       'play.eyebrow':      'Live Widget · בלי הרשמה',
       'play.title':        'זה הוויג\'ט. לא הדגמה.',
@@ -245,19 +245,19 @@
       /* demo.eyebrow/title/sub belonged to the onyx band. The clip they
          introduced is the hero's now, under the hero's own headline. */
 
-      /* — business impact · the three pillars —
+      /* - business impact · the three pillars -
          *Metric are the labels under the counting numerals. Each one
          names the figure its card animates, and each figure is one the
          page already states: 100% from hero.proof1, 3→0 from proof2,
          ~25% from proof3 and value.card3Body. */
-      /* Title and sub used to say the same thing twice — "pillars of
+      /* Title and sub used to say the same thing twice - "pillars of
          profitability" over "what changes in the bottom line". The title
          now makes the claim and the sub previews the three cards under
          it, so the pair does two jobs instead of one. "עמודי תווך" also
          went: it is consultancy language, not a promise. */
       'value.eyebrow':       'השפעה עסקית',
       'value.title':         'שלוש דרכים שמידה מדויקת מחזירה כסף',
-      'value.sub':           'המרה, מלאי ותפעול — מה משתנה בכל אחד מהם.',
+      'value.sub':           'המרה, מלאי ותפעול - מה משתנה בכל אחד מהם.',
       'value.card1Tag':      'המרה',
       'value.card1Title':    'הגדלת המרות',
       'value.card1Metric':   'ביטחון בהתאמה',
@@ -277,7 +277,7 @@
       'value.card3Bullet1':  'פחות סחורה נכנסת למיון',
       'value.card3Bullet2':  'מחזור מזומנים קצר יותר',
 
-      /* — final CTA —
+      /* - final CTA -
          The closing headline was a yes/no question, which invites "not
          today". It states the action instead, and keeps the returns
          number that is the whole reason to take it. */
@@ -290,9 +290,9 @@
       'cta.contact':   'דברו איתנו',
       'cta.platforms': 'Shopify · WooCommerce · Magento · פיתוח מותאם',
 
-      /* — docs view + access gate — */
+      /* - docs view + access gate - */
       'docs.title':             'מדריך הטמעת הוויג\'ט',
-      /* Was two sentences making the same promise twice — "under five
+      /* Was two sentences making the same promise twice - "under five
          minutes, no architecture changes" and then "three steps". One
          sentence, both facts, no repetition. */
       'docs.sub':               'הטמעה של <span class="font-semibold text-slate-700">פחות מ-5 דקות</span>, בשלושה שלבים, בלי שינוי בארכיטקטורת האתר.',
@@ -307,9 +307,9 @@
       'docs.errNoPasscode':     'תקלת הגדרה בשרת: DOCS_PASSCODE אינו מוגדר.',
       'docs.errRateLimit':      'יותר מדי ניסיונות. נסו שוב בעוד 15 דקות.',
 
-      /* — contact — */
+      /* - contact - */
       'contact.title':          'בואו נדבר',
-      'contact.sub':            'שאלה על הטמעה או דמו למותג שלכם — מלאו את הטופס או פנו אלינו ישירות.',
+      'contact.sub':            'שאלה על הטמעה או דמו למותג שלכם - מלאו את הטופס או פנו אלינו ישירות.',
       'contact.fieldName':      'שם מלא',
       'contact.phName':         'ישראל ישראלי',
       'contact.fieldEmail':     'אימייל',
@@ -334,21 +334,21 @@
       'contact.directSub':      'מעדיפים לדבר ישירות? אנחנו זמינים באימייל.',
       'contact.teamNote':       'צוות <span class="brand-pear">PEAR</span> זמין לשאלות טכניות, הדגמות למותגים ותמיכה בהטמעה.',
 
-      /* — footer — */
+      /* - footer - */
       'footer.rights': '© 2026 <span class="brand-pear">PEAR</span> Platform (pearvton), Virtual Try-On · כל הזכויות שמורות',
 
-      /* — toasts — */
+      /* - toasts - */
       'toast.copied':     'הקוד הועתק ללוח ✓',
       'toast.copyFailed': 'ההעתקה נכשלה, העתיקו ידנית',
 
-      /* — contact-form prefills (set by tagged CTAs) — */
+      /* - contact-form prefills (set by tagged CTAs) - */
       'prefill.integration.subject': 'עזרה בהטמעת PEAR באתר',
       'prefill.integration.message': 'היי, אני מנסה להטמיע את PEAR באתר שלי ואשמח לקבל עזרה קלה מהצוות הטכני שלכם.',
       'prefill.docsAccess.subject':  'בקשת גישה למדריך ההטמעה',
       'prefill.docsAccess.message':  'בקשת גישה למדריך ההטמעה\n\nהיי, אשמח לקבל קוד גישה למדריך ההטמעה הטכני של PEAR.\n\n(לאישור: השיבו לכתובת המייל הזו עם קוד הגישה)',
       'prefill.docsAccess.type':     'בקשת גישה למדריך ההטמעה',
 
-      /* — the gated implementation guide (markup lives in api/get-docs.js) — */
+      /* - the gated implementation guide (markup lives in api/get-docs.js) - */
       'guide.reqTitle':    'הקדמה ודרישות מערכת',
       'guide.reqBody':     'הוויג\'ט הוא סקריפט JavaScript קל-משקל שנטען אסינכרונית ואינו משפיע על מהירות האתר.\n        אין תלות בפלטפורמה, הוא עובד עם כל פלטפורמות האיקומרס:',
       'guide.reqCustom':   'Custom / פיתוח מותאם',
@@ -372,7 +372,7 @@
 
     /* ──────────────────────────── ENGLISH ─────────────────────────── */
     en: {
-      /* — head / SEO — */
+      /* - head / SEO - */
       /* These must stay byte-identical to the literals in index.html's
          <head>: the static tag is what a crawler reads pre-JS, this is
          what it reads post-JS, and the two disagreeing is a needless
@@ -388,7 +388,7 @@
       'meta.orgDescription':     'PEAR builds real-time AI Virtual Try-On and virtual measurement technology for fashion e-commerce.',
       'meta.imageAlt':           'PEAR AI Virtual Try-On Widget',
 
-      /* — accessibility labels — */
+      /* - accessibility labels - */
       'a11y.mainNav':       'Main navigation',
       'a11y.langSwitch':    'Choose language',
       'a11y.viewOverview':  'About the product and the solution',
@@ -398,7 +398,7 @@
          loop and its play toggle; vtonMute/vtonUnmute/vtonVolume
          labelled the mute button and volume slider that later sat on
          the cinematic player. All six are gone with the controls they
-         named — the hero film is silent and has no controls at all.
+         named - the hero film is silent and has no controls at all.
          demoVideo is the one survivor: it labels the <video> itself. */
       'a11y.demoVideo':     'PEAR AI Virtual Try-On Widget, full demo video',
       'a11y.directMeasure': 'One-time virtual try-on, no signup step, once per visit',
@@ -407,12 +407,12 @@
       'a11y.modelPreviewToggle': 'Show on-model preview',
       'a11y.angleToggleGroup':   'Front / Back view',
 
-      /* — navbar — */
+      /* - navbar - */
       'nav.about':   'About',
       'nav.docs':    'Integration guide',
       'nav.contact': 'Talk to us',
 
-      /* — scroll HUD chapters —
+      /* - scroll HUD chapters -
          hud.demo went with the onyx demo band; the clip it labelled is
          the hero's now and hud.intro covers it. */
       'hud.intro':      'Intro',
@@ -420,12 +420,12 @@
       'hud.value':      'Business impact',
       'hud.cta':        'Wrap-up',
 
-      /* — hero —
+      /* - hero -
          The old sub ran 31 words through four gerunds before reaching a
          benefit. This is the same promise in two sentences, and every
          figure on the page is unchanged. */
-      /* The LTR product-name kicker that opened this headline — worded
-         differently here than in the Hebrew — was REMOVED to match, so
+      /* The LTR product-name kicker that opened this headline - worded
+         differently here than in the Hebrew - was REMOVED to match, so
          the span does not come back on a language switch and reopen the
          gap the removal was meant to close. Wording not quoted, for the
          reason given in the Hebrew dictionary above. */
@@ -435,13 +435,13 @@
          business outcome rather than on how the product works. */
       'hero.sub':           'Your shopper sees the garment on themselves and gets their exact size, in real time. You get more conversions and fewer returns.',
       'hero.ctaPrimary':    'Try the widget · 30 seconds',
-      /* hero.ctaSecondary and hero.scrollHint removed — see the Hebrew
+      /* hero.ctaSecondary and hero.scrollHint removed - see the Hebrew
          dictionary above for why. */
       'hero.proof1':        '<span class="font-bold text-slate-700">100% fit confidence</span> at checkout',
       'hero.proof2':        '<span class="font-bold text-slate-700">Zero bracketing</span>, no more 3-size orders',
       'hero.proof3':        '<span class="font-bold text-slate-700">~25% fewer returns</span> and lower OPEX',
 
-      /* — live widget playground —
+      /* - live widget playground -
          Same reasoning as the Hebrew: the title answers the "is this a
          canned demo?" objection instead of asserting realness twice, and
          the sub stops instructing, since the button already does. */
@@ -470,7 +470,7 @@
       /* demo.eyebrow/title/sub belonged to the onyx band. The clip they
          introduced is the hero's now, under the hero's own headline. */
 
-      /* — business impact · the three pillars —
+      /* - business impact · the three pillars -
          Card bodies own their pillar outright; nothing here restates the
          hero metrics or the problem section. Bullets carry a second-order
          consequence, never a paraphrase of the body above them.
@@ -479,11 +479,11 @@
          names the figure its card animates, and each figure is one the
          page already states: 100% from hero.proof1, 3→0 from proof2,
          ~25% from proof3 and value.card3Body. */
-      /* Title makes the claim, sub previews the three cards — the old
+      /* Title makes the claim, sub previews the three cards - the old
          pair said the same thing twice, in consultancy language. */
       'value.eyebrow':       'Business impact',
       'value.title':         'Three ways the right size pays you back',
-      'value.sub':           'Conversion, inventory, operations — what changes in each.',
+      'value.sub':           'Conversion, inventory, operations - what changes in each.',
       'value.card1Tag':      'Conversion',
       'value.card1Title':    'Conversion Boost',
       'value.card1Metric':   'fit confidence',
@@ -503,17 +503,17 @@
       'value.card3Bullet1':  'Less inbound to sort and restock',
       'value.card3Bullet2':  'Shorter cash-conversion cycle',
 
-      /* — final CTA —
+      /* - final CTA -
          A yes/no question invites "not today"; this states the action
          and keeps the number that justifies taking it. */
       'cta.title':     'Start cutting returns this week',
       'cta.sub':       'Five minutes from paste to first try-on.',
-      /* cta.primary removed — see the Hebrew dictionary above. */
+      /* cta.primary removed - see the Hebrew dictionary above. */
       'cta.docs':      'To the integration guide →',
       'cta.contact':   'Talk to us',
       'cta.platforms': 'Shopify · WooCommerce · Magento · custom builds',
 
-      /* — docs view + access gate — */
+      /* - docs view + access gate - */
       'docs.title':             'Widget integration guide',
       'docs.sub':               'Install in <span class="font-semibold text-slate-700">under 5 minutes</span>, in three steps, with no changes to your site architecture.',
       'docs.gateTitle':         'This guide is not public',
@@ -527,9 +527,9 @@
       'docs.errNoPasscode':     'Server misconfiguration: DOCS_PASSCODE is not set.',
       'docs.errRateLimit':      'Too many attempts. Try again in 15 minutes.',
 
-      /* — contact — */
+      /* - contact - */
       'contact.title':          'Let\'s talk',
-      'contact.sub':            'A question about integration, or a demo for your brand — fill in the form or reach us directly.',
+      'contact.sub':            'A question about integration, or a demo for your brand - fill in the form or reach us directly.',
       'contact.fieldName':      'Full name',
       'contact.phName':         'Jane Doe',
       'contact.fieldEmail':     'Email',
@@ -554,21 +554,21 @@
       'contact.directSub':      'Prefer to talk directly? We are available by email.',
       'contact.teamNote':       'The <span class="brand-pear">PEAR</span> team is here for technical questions, brand demos and integration support.',
 
-      /* — footer — */
+      /* - footer - */
       'footer.rights': '© 2026 <span class="brand-pear">PEAR</span> Platform (pearvton), Virtual Try-On · All rights reserved',
 
-      /* — toasts — */
+      /* - toasts - */
       'toast.copied':     'Code copied to clipboard ✓',
       'toast.copyFailed': 'Copy failed. Please copy manually',
 
-      /* — contact-form prefills (set by tagged CTAs) — */
+      /* - contact-form prefills (set by tagged CTAs) - */
       'prefill.integration.subject': 'Help integrating PEAR on our site',
       'prefill.integration.message': 'Hi, I am trying to integrate PEAR on my site and would appreciate a hand from your technical team.',
       'prefill.docsAccess.subject':  'Access request for the integration guide',
       'prefill.docsAccess.message':  'Access request for the integration guide\n\nHi, I would like an access code for the PEAR technical integration guide.\n\n(To approve: reply to this email address with the access code)',
       'prefill.docsAccess.type':     'Integration guide access request',
 
-      /* — the gated implementation guide (markup lives in api/get-docs.js) — */
+      /* - the gated implementation guide (markup lives in api/get-docs.js) - */
       'guide.reqTitle':    'Overview and requirements',
       'guide.reqBody':     'The widget is a lightweight JavaScript snippet that loads asynchronously and does not affect your site speed.\n        It is platform-agnostic. It works with every e-commerce platform:',
       'guide.reqCustom':   'Custom / in-house build',
@@ -602,7 +602,7 @@
   var listeners = [];
 
   /* localStorage throws in Safari private mode and when cookies are
-     blocked entirely — never let a storage failure break the page. */
+     blocked entirely - never let a storage failure break the page. */
   function readStore(key) {
     try { return window.localStorage.getItem(key); } catch (e) { return null; }
   }
@@ -641,7 +641,7 @@
     return match ? normalise(decodeURIComponent(match[1])) : null;
   }
 
-  /* Only ever consulted together with isExplicitChoice() — a stored
+  /* Only ever consulted together with isExplicitChoice() - a stored
      value with no explicit-click flag next to it is not trusted, see
      the boot section below. */
   function fromStorage() {
@@ -657,8 +657,8 @@
 
   /* One provider, one attempt, given a fixed GEO_TIMEOUT_MS to answer in.
      Resolves to an UPPERCASE country code; rejects on anything that
-     isn't a usable answer — bad HTTP status, timeout/abort, network/CORS
-     failure, or a body extract() can't read — so the caller can move on
+     isn't a usable answer - bad HTTP status, timeout/abort, network/CORS
+     failure, or a body extract() can't read - so the caller can move on
      to the next provider. */
   function fetchCountryCode(source, timeoutMs) {
     if (typeof window.fetch !== 'function') {
@@ -691,13 +691,13 @@
 
   /* Country lookup. Tries GEO_SOURCES in order, each getting its own
      fixed GEO_TIMEOUT_MS, and resolves to a language from the first one
-     that answers with a usable country code — falling through to the
+     that answers with a usable country code - falling through to the
      next source immediately on any failure. Rejects once every source
      has failed, which is the caller's (see boot, below) signal to fall
      back to DEFAULT_LANG.
 
      STRICT DEFAULTING: whichever source answers, only an exact 'IL' match
-     resolves to Hebrew — every other code (US, DE, an unrecognised one,
+     resolves to Hebrew - every other code (US, DE, an unrecognised one,
      anything) resolves to English. There is no path from a successful IP
      lookup to a browser-locale guess: a VPN visitor whose browser locale
      happens to be Hebrew still gets English the moment any provider
@@ -731,7 +731,7 @@
     else fn();
   }
 
-  /* querySelectorAll misses the root node itself — which matters when
+  /* querySelectorAll misses the root node itself - which matters when
      apply() is handed a freshly injected subtree whose outermost element
      carries the attribute. */
   function collect(root, attr) {
@@ -767,7 +767,7 @@
     setMeta('meta[name="twitter:description"]',   t('meta.twitterDescription', lang));
     setMeta('meta[name="twitter:image:alt"]',     t('meta.imageAlt', lang));
 
-    /* og:locale:alternate is the mirror of whichever locale is active — it
+    /* og:locale:alternate is the mirror of whichever locale is active - it
        must never repeat og:locale, or the pair stops describing a
        translated document at all. */
     setMeta('meta[property="og:locale:alternate"]', OG_LOCALE[lang === 'he' ? 'en' : 'he']);
@@ -790,7 +790,7 @@
 
     /* Structured data: keep the descriptions in the page's language and
        declare which language that is. The block is an @graph, so the nodes
-       are walked by @type — assigning to the parsed root instead would
+       are walked by @type - assigning to the parsed root instead would
        write two properties that belong to no node at all, localising
        nothing. The [data] fallback keeps this working if the graph is ever
        collapsed back to a single node. */
@@ -816,7 +816,7 @@
   }
 
   /* <body>: every element carrying a data-i18n* attribute.
-     `root` defaults to the whole document but can be a subtree — that is
+     `root` defaults to the whole document but can be a subtree - that is
      how the passcode-gated guide gets translated after it is injected. */
   function applyDOM(root, lang) {
     root = root || document.body;
@@ -824,7 +824,7 @@
     if (!root) return;
 
     /* Rewriting text/innerHTML throws away whatever the page has built on
-       top of it — most visibly the GSAP word-splitter's per-word spans,
+       top of it - most visibly the GSAP word-splitter's per-word spans,
        and the ScrollTrigger instances pointing at them. Each element
        therefore records the language it currently carries, and a pass
        that would rewrite it in that same language is skipped.
@@ -840,7 +840,7 @@
       el.setAttribute(STAMP, lang);
     });
 
-    /* innerHTML, by design — see the security note at the top of the file. */
+    /* innerHTML, by design - see the security note at the top of the file. */
     collect(root, 'data-i18n-html').forEach(function (el) {
       if (el.getAttribute(STAMP) === lang) return;
       el.innerHTML = t(el.getAttribute('data-i18n-html'), lang);
@@ -872,7 +872,7 @@
 
   /* ── Boot ────────────────────────────────────────────────────── */
 
-  /* Makes <head> AND <body> actually reflect `lang`, right now — this is
+  /* Makes <head> AND <body> actually reflect `lang`, right now - this is
      the one place that turns a resolved language into a rendered page.
 
      WHY BOTH AN IMMEDIATE PASS AND A DEFERRED ONE: the old version chose
@@ -882,7 +882,7 @@
      async IP lookup specifically: a fast answer (an already-warm
      connection, a cached response, ipapi.co replying in a handful of
      milliseconds) can resolve its promise while the document is still
-     mid-parse — `document.body` already exists (the parser is somewhere
+     mid-parse - `document.body` already exists (the parser is somewhere
      inside it) but `readyState` is still 'loading'. The either/or logic
      had no case that both applies to what already exists in the DOM
      *and* guarantees a follow-up for what the parser hasn't reached yet;
@@ -892,7 +892,7 @@
      The fix is to stop choosing: apply immediately whenever there is a
      body to apply to, AND separately, unconditionally, schedule a
      follow-up whenever the document is still loading. Both is always
-     safe — applyDOM's per-element language stamp (see STAMP above) makes
+     safe - applyDOM's per-element language stamp (see STAMP above) makes
      a repeat call with the same lang a costless no-op, so running commit
      twice never double-translates or re-shreds an already-split
      headline. This is what actually closes the race the old code had,
@@ -905,7 +905,7 @@
     applyHead(lang, opts.explicitUrl);
     /* Belt-and-suspenders alongside the setAttribute('dir', …) inside
        applyHead: the IDL property and the content attribute reflect each
-       other, so this is a no-op in every real browser — but it means
+       other, so this is a no-op in every real browser - but it means
        anything reading `documentElement.dir` directly (rather than via
        getAttribute) is served just as immediately as the CSS is. */
     document.documentElement.dir = dirFor(lang);
@@ -929,11 +929,11 @@
   }
 
   /* The persisted/manual-switch entry point: applyLanguage() plus the
-     bookkeeping that only a deliberate visitor choice needs — writing
+     bookkeeping that only a deliberate visitor choice needs - writing
      localStorage and keeping the address bar in step with it. The
      explicit flag is what makes this choice survive future reloads
      without being re-checked against (and possibly overwritten by)
-     geo-IP — see isExplicitChoice() and the boot section below. */
+     geo-IP - see isExplicitChoice() and the boot section below. */
   function setLanguage(lang, opts) {
     opts = opts || {};
     lang = normalise(lang) || DEFAULT_LANG;
@@ -961,10 +961,10 @@
     return lang;
   }
 
-  /* ?lang= is read here to decide THIS load's language only — unlike an
+  /* ?lang= is read here to decide THIS load's language only - unlike an
      explicit toggle choice it is deliberately NOT written to LANG_KEY.
      It used to be ("a shared ?lang= link is a choice, also persisted so
-     it sticks") — but that meant one visit via an old marketing link, a
+     it sticks") - but that meant one visit via an old marketing link, a
      search-engine crawl, or a developer previewing a language during
      testing silently and permanently pinned that browser's language,
      indistinguishable afterward from a real click on the toggle, and
@@ -973,7 +973,7 @@
      Hebrew" report this was diagnosed from: a stale, accidental
      app_lang outliving whatever visit actually wrote it. Only an actual
      click on [data-set-lang] (setLanguage's opts.persist path, above)
-     counts as an explicit, sticky choice now — and even that is only
+     counts as an explicit, sticky choice now - and even that is only
      ever read back via isExplicitChoice() below, never a bare
      fromStorage() on its own. */
   var urlLang = fromUrl();
@@ -985,7 +985,7 @@
     // eslint-disable-next-line no-console
     console.log('Active language source:', 'url', urlLang);
   } else if (isExplicitChoice() && fromStorage()) {
-    /* A real toggle click, on a previous load — respected across
+    /* A real toggle click, on a previous load - respected across
        reloads, no geo-IP check at all. This is the only path that
        bypasses geo-IP entirely. */
     var explicitLang = fromStorage();
@@ -996,10 +996,10 @@
     console.log('Active language source:', 'localStorage-explicit', explicitLang);
   } else {
     /* No URL override, no confirmed manual choice: paint DEFAULT_LANG
-       immediately (the safe, non-Hebrew default — see the header
+       immediately (the safe, non-Hebrew default - see the header
        comment for why this needs no cloak), then run a FRESH geo-IP
        lookup right now, every boot, no cache. Whatever it resolves to
-       — including DEFAULT_LANG again if every provider fails — is
+       - including DEFAULT_LANG again if every provider fails - is
        written straight to LANG_KEY (without the explicit flag, so the
        next boot still re-checks) and applied live to the DOM. This is
        what strictly resets a non-Israel visitor to English even if some
@@ -1010,7 +1010,7 @@
     fromIpLookup()
       .catch(function () {
         // eslint-disable-next-line no-console
-        console.warn('[PearI18n] all IP geolocation sources failed — defaulting to', DEFAULT_LANG);
+        console.warn('[PearI18n] all IP geolocation sources failed - defaulting to', DEFAULT_LANG);
         return { lang: DEFAULT_LANG, country: null };   // every GEO_SOURCES provider was blocked, offline, or timed out
       })
       .then(function (resolved) {
@@ -1032,7 +1032,7 @@
     t: t,
     /** Translate a subtree (defaults to <body>). Safe to call repeatedly. */
     apply: function (root) { applyDOM(root || document.body, state.lang); },
-    /** Switch language from the UI — persists to localStorage['app_lang']. */
+    /** Switch language from the UI - persists to localStorage['app_lang']. */
     setLang: function (lang) { return setLanguage(lang, { persist: true }); },
     /** Register a callback fired on every language change. */
     onChange: function (fn) { if (typeof fn === 'function') listeners.push(fn); },

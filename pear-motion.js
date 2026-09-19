@@ -3,7 +3,7 @@
    ------------------------------------------------------------------
    The interaction layer for the landing view: custom cursor, magnetic
    buttons, card tilt with a cursor-tracked highlight, staggered scroll
-   reveals, light parallax, nav state, the footer clock — and the
+   reveals, light parallax, nav state, the footer clock - and the
    skyline hero's copy defocus.
 
    Deliberately NOT included: a smooth-scroll hijacker. This page routes
@@ -91,7 +91,7 @@
   /* The stylesheet keeps #pearStage at opacity 0 so the 3D layer fades
      in rather than popping mid-build. The scene itself is constructed
      by the existing module further down the page, which knows nothing
-     about that class — so the fade is armed here, once a canvas has
+     about that class - so the fade is armed here, once a canvas has
      actually been appended. Without this the whole layer stays
      invisible forever. */
   function initStageReveal() {
@@ -142,7 +142,7 @@
       d.x = damp(d.x, p.x, 34, dt);
       d.y = damp(d.y, p.y, 34, dt);
       /* On a magnetic target the ring stops chasing the pointer and
-         eases to the element's centre — that snap is the whole "the
+         eases to the element's centre - that snap is the whole "the
          button caught it" sensation. */
       var tx = snap ? snap.x : p.x;
       var ty = snap ? snap.y : p.y;
@@ -235,7 +235,7 @@
         el.style.setProperty('--my', (py * 100) + '%');
 
         if (REDUCED || glowOnly) return;
-        // shallow on purpose — past ~8deg the shadow stops agreeing
+        // shallow on purpose - past ~8deg the shadow stops agreeing
         // with the light source and the card reads as a sticker
         ry((px - .5) * 9);
         rx((.5 - py) * 9);
@@ -255,7 +255,7 @@
 
      Three states, in order: press (the surface dips), drag (it leans
      toward the finger and rubber-bands as it is pulled further), release
-     (it springs home). The spring overshoot is the point — a linear
+     (it springs home). The spring overshoot is the point - a linear
      return reads as an animation, an elastic one reads as the object
      having weight.
 
@@ -266,7 +266,7 @@
      Deliberately NOT preventDefault() on touchmove: these cards sit in
      the middle of a scrolling page, and swallowing the gesture would
      mean a finger landing on a card cannot scroll past it. Instead the
-     first few pixels of movement decide — mostly vertical hands the
+     first few pixels of movement decide - mostly vertical hands the
      gesture back to the scroller and the lean is abandoned. */
 
   function initTouch() {
@@ -282,12 +282,12 @@
       var start = null;
       var axis = '';                       // '', 'lean' or 'scroll'
       var raf = 0;
-      // glow-mode surfaces light up under the finger but never lean —
+      // glow-mode surfaces light up under the finger but never lean -
       // see the matching branch in initTilt
       var glowOnly = el.getAttribute('data-pa-tilt') === 'glow';
 
       /* quickTo keeps one tween per property alive rather than spawning a
-         new one per touchmove event — at 120Hz that is the difference
+         new one per touchmove event - at 120Hz that is the difference
          between a lean and a stutter. */
       var rx = gsap.quickTo(el, 'rotationX', { duration: .35, ease: 'power3' });
       var ry = gsap.quickTo(el, 'rotationY', { duration: .35, ease: 'power3' });
@@ -341,7 +341,7 @@
           if (Math.abs(dx) < SLOP && Math.abs(dy) < SLOP) return;
           /* A mostly-vertical drag is the visitor scrolling the page with
              their finger where a card happens to be. Let go of it
-             completely — a card that keeps leaning while the page moves
+             completely - a card that keeps leaning while the page moves
              under it reads as the page being stuck. */
           axis = Math.abs(dy) > Math.abs(dx) * 1.25 ? 'scroll' : 'lean';
           if (axis === 'scroll') return release();
@@ -376,7 +376,7 @@
        small, often inside a scrolling list, and a leaning button is a
        button whose hit area moved out from under the finger.
 
-       Delegated rather than bound per element — the guide's markup and
+       Delegated rather than bound per element - the guide's markup and
        the widget's CTA arrive long after this runs. */
     var TAPPABLE = '.pa-btn, .pa-nav__link, .pa-lang button, .pa-guide__copy, .pa-field__input, .pa-submit';
 
@@ -396,7 +396,7 @@
   /* ─────────── PRODUCT SHOT · MODEL REVEAL FLIP ───────────
      Desktop hover/focus flips the card via CSS alone (see .pa-flip:hover
      in the stylesheet). This wires the tap/click toggle touch devices
-     need — and works for any pointer, since click-to-pin is a harmless
+     need - and works for any pointer, since click-to-pin is a harmless
      superset of hover-to-preview. Runs unconditionally, outside the
      GSAP boot gate, so the shot still answers a tap even if GSAP never
      loads and the rest of the motion layer stays dark. */
@@ -426,8 +426,8 @@
     }
 
     $$('[data-pa-reveal]').forEach(function (el) {
-      /* Inside a [data-pa-seq] group the reveals run in DOM order —
-         eyebrow, then title, then lede — instead of all landing on the
+      /* Inside a [data-pa-seq] group the reveals run in DOM order -
+         eyebrow, then title, then lede - instead of all landing on the
          same frame. The offset is small deliberately: enough to read as
          a sequence, not enough to feel like a queue.
 
@@ -488,8 +488,8 @@
      lede and CTA fade and lift away as the hero scrolls out. Nothing in
      this file touches the film.
 
-     NO BLUR. This used to be a defocus — the same tween carried
-     `filter: blur(0px)` -> `blur(16px)` alongside the fade — and the
+     NO BLUR. This used to be a defocus - the same tween carried
+     `filter: blur(0px)` -> `blur(16px)` alongside the fade - and the
      blur is removed. Two reasons, and the first is the one that
      matters: once the phone hero became a full-bleed film with the copy
      overlaid ON it, a copy block softening over a sharp video read as
@@ -499,16 +499,16 @@
      block on every frame of the scroll.
 
      Nothing else on this page animates `filter`, and nothing ever
-     filtered the film or the stage — verified in the browser across the
+     filtered the film or the stage - verified in the browser across the
      hero's whole scroll range, at 390px and 1440px: #demoVideoEl and
      .pa-skyline__stage compute `filter: none` at every scroll position.
      The one remaining blur in the project is .pa-contact__wash's static
      blur(28px), a decorative radial wash in the contact section that is
      not scroll-driven and not on this hero.
 
-     The scroll-scrubbing that used to live in this function — a ~275vh
+     The scroll-scrubbing that used to live in this function - a ~275vh
      runway, a position:sticky stage, and scroll progress mapped onto
-     the clip's currentTime — has been removed. #hero is a plain 100svh
+     the clip's currentTime - has been removed. #hero is a plain 100svh
      section in normal flow and pear-ad.mp4 is an ordinary background
      video: autoplay + muted + loop + playsinline in the markup, with
      the browser owning playback end to end. The only script that goes
@@ -518,8 +518,8 @@
      That also means there is nothing left to stand down: no runway to
      collapse, no sticky to release, no playback for a fallback to
      start. If this file never runs, or GSAP never loads, the hero is
-     already correct — it is a 100svh section with an autoplaying video
-     in it — and the copy simply never moves. */
+     already correct - it is a 100svh section with an autoplaying video
+     in it - and the copy simply never moves. */
 
   function initSkyline() {
     var sky = $('#hero');
@@ -532,7 +532,7 @@
     if (REDUCED) return;
 
     /* The copy fades and lifts as the hero leaves. `filter` is NOT in
-       this tween — see the note above — so the only properties being
+       this tween - see the note above - so the only properties being
        scrubbed are opacity and transform, both of which a compositor
        can animate on a cached layer without repainting the block.
 

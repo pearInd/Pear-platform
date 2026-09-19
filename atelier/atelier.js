@@ -4,7 +4,7 @@
    One clock drives everything. GSAP's ticker advances Lenis, the
    three.js frame and the cursor lerp in that order, so scroll offset,
    camera framing and cursor position are all sampled from the same
-   instant — which is what stops the 3D from lagging a frame behind
+   instant - which is what stops the 3D from lagging a frame behind
    the DOM during fast scrolls.
    ══════════════════════════════════════════════════════════════════ */
 
@@ -19,7 +19,7 @@ const lerp  = (a, b, t) => a + (b - a) * t;
 const damp = (a, b, lambda, dt) => lerp(a, b, 1 - Math.exp(-lambda * dt));
 
 /* The CDN bundles are `defer`, this module is deferred too, so in
-   practice they're parsed first — but a slow CDN shouldn't take the
+   practice they're parsed first - but a slow CDN shouldn't take the
    whole page down with it. */
 function whenGlobals(names, timeout = 6000) {
   return new Promise((resolve) => {
@@ -131,7 +131,7 @@ function initPreloader(stageReady, hasGsap) {
   signals.then(() => { settled = true; });
 
   /* Creep to 90 on a curve, then let the real signals carry the last
-     10 — a bar that sits at 99% reads as broken. */
+     10 - a bar that sits at 99% reads as broken. */
   const crawl = gsap.to(state, {
     v: 90, duration: 2.4, ease: 'power2.out',
     onUpdate: paint,
@@ -187,8 +187,8 @@ function initCursor() {
   if (!root || REDUCED || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
   const p = { x: innerWidth / 2, y: innerHeight / 2 };
-  const d = { x: p.x, y: p.y };   // dot — tight
-  const r = { x: p.x, y: p.y };   // ring — lagging, gives the trail weight
+  const d = { x: p.x, y: p.y };   // dot - tight
+  const r = { x: p.x, y: p.y };   // ring - lagging, gives the trail weight
   let snap = null;                // magnetic target the ring locks onto
 
   addEventListener('pointermove', (e) => { p.x = e.clientX; p.y = e.clientY; }, { passive: true });
@@ -202,7 +202,7 @@ function initCursor() {
     d.y = damp(d.y, p.y, 34, dt);
 
     /* When a magnetic element is hovered the ring stops chasing the
-       pointer and eases toward the element's centre instead — that
+       pointer and eases toward the element's centre instead - that
        snap is the whole "the button caught it" sensation. */
     const tx = snap ? snap.x : p.x;
     const ty = snap ? snap.y : p.y;
@@ -253,7 +253,7 @@ function initCursor() {
   }
 }
 
-/* Magnetic pull on the element itself — the cursor snapping to the
+/* Magnetic pull on the element itself - the cursor snapping to the
    button and the button leaning toward the cursor are two halves of
    the same effect; either one alone feels broken. */
 function initMagnetic() {
@@ -278,11 +278,11 @@ function initReveals() {
   if (REDUCED) return;
 
   /* The hero is choreographed by the preloader's exit timeline, so it
-     is excluded here — two systems animating the same nodes is how you
+     is excluded here - two systems animating the same nodes is how you
      get a headline that opens twice or never arrives at all. */
   const notHero = (el) => !el.closest('.hero');
 
-  /* Headlines are pre-split into .line > span in the markup — no
+  /* Headlines are pre-split into .line > span in the markup - no
      runtime text surgery, so screen readers and copy-paste get the
      sentence intact and there is no reflow on font swap. */
   $$('[data-split="lines"]').filter(notHero).forEach((h) => {
@@ -317,7 +317,7 @@ function initReveals() {
     });
   });
 
-  /* Parallax on the elevated cards — small offsets only. Anything
+  /* Parallax on the elevated cards - small offsets only. Anything
      past ~10% and the shadow stops agreeing with the light source. */
   const drift = (sel, amount) => $$(sel).forEach((el) => {
     gsap.to(el, {
@@ -350,7 +350,7 @@ function initChapters() {
 
   /* The rail is hidden at both ends of the page: over the hero the
      widget card reaches the right gutter, and over the closing CTA the
-     onyx panel does — in both cases the rail lands on top of a filled
+     onyx panel does - in both cases the rail lands on top of a filled
      surface and reads as a rendering fault rather than a control. */
   const hud = $('#hud');
   let pastHero = false, atEnd = false;
@@ -547,7 +547,7 @@ function initCarousel() {
   track.addEventListener('pointerup', release);
   track.addEventListener('pointercancel', release);
 
-  /* Trackpads emit horizontal deltas Lenis deliberately ignores —
+  /* Trackpads emit horizontal deltas Lenis deliberately ignores -
      claim them here so a two-finger swipe scrolls the rail. */
   track.addEventListener('wheel', (e) => {
     if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
@@ -600,7 +600,7 @@ function initSound() {
     filter.Q.value = 0.8;
     filter.connect(master);
 
-    // two detuned voices a fifth apart — enough motion to feel alive,
+    // two detuned voices a fifth apart - enough motion to feel alive,
     // few enough partials to sit under a voiceover if one is ever added
     [110, 164.81].forEach((hz, i) => {
       const osc = ctx.createOscillator();
@@ -704,7 +704,7 @@ function initClock() {
 
 /* ══════════════════ 11 · WEBGL ATELIER (three.js) ════════════════ */
 
-/* Returns a promise that always resolves — the preloader waits on it,
+/* Returns a promise that always resolves - the preloader waits on it,
    and a machine without WebGL should still see the curtain lift. */
 function initStage() {
   return new Promise((resolve) => {
@@ -738,13 +738,13 @@ async function buildStage(host) {
   camera.position.set(0, 0, 9);
 
   /* RoomEnvironment gives real specular reflections with no HDR file
-     to fetch — which matters here, since the CSP only opens img-src
+     to fetch - which matters here, since the CSP only opens img-src
      to 'self' and a .hdr would need a new origin. */
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
 
   /* The environment is doing most of the lighting. These two are for
-     shaping only — pushed harder and the beige fabrics blow out to
+     shaping only - pushed harder and the beige fabrics blow out to
      white under ACES, which is exactly what makes CG cloth read as
      paper instead of silk. */
   const key = new THREE.DirectionalLight(0xffffff, 0.9);
@@ -797,7 +797,7 @@ async function buildStage(host) {
     /* Displace in the vertex stage and rebuild the normal from the
        displaced surface. Doing it here rather than with a bespoke
        ShaderMaterial keeps the PBR lighting and the environment
-       reflection — which is the entire reason the silk reads as silk. */
+       reflection - which is the entire reason the silk reads as silk. */
     const amp = opts.amp ?? 1;
     const phase = opts.phase ?? 0;
     mat.onBeforeCompile = (shader) => {
@@ -846,14 +846,14 @@ async function buildStage(host) {
 
   /* Local layout rule for this group: the pear sits ON the origin, and
      everything else is placed relative to it. That is what lets a
-     chapter's single `x` value aim the composition — with the subject
+     chapter's single `x` value aim the composition - with the subject
      parked off-origin, every act would need its own hand-tuned offset. */
   const drape = makeCloth(2.9, 3.9, PALETTE.linen, { amp: 1 });
   drape.position.set(0.85, 0.15, -1.6);
   drape.rotation.set(-0.06, 0.28, 0.05);
   atelier.add(drape);
 
-  /* small satellite swatches — the rest of the colourway, floating */
+  /* small satellite swatches - the rest of the colourway, floating */
   const swatchMeshes = [
     { mesh: makeCloth(0.95, 1.30, PALETTE.onyx,  { amp: 1.5, phase: 2.1, roughness: .5 }),  pos: [-1.35,  1.55, 0.3],  rot: [0.10, -0.50, -0.22] },
     { mesh: makeCloth(0.80, 1.10, PALETTE.pear,  { amp: 1.8, phase: 4.4, roughness: .45 }), pos: [ 1.45, -1.35, 0.7],  rot: [-0.12, 0.45,  0.30] },
@@ -909,7 +909,7 @@ async function buildStage(host) {
   /* ── 3 · the pear ─────────────────────────────────────────────── */
   /* Lathed from the brand silhouette: wide bulb low, long neck high.
      The profile is smoothed through a spline so the shoulder between
-     bulb and neck stays continuous — a raw point list facets there. */
+     bulb and neck stays continuous - a raw point list facets there. */
   const profile = [
     [0.001, -1.00], [0.34, -0.94], [0.62, -0.76], [0.76, -0.46],
     [0.78, -0.14], [0.66,  0.14], [0.48,  0.38], [0.34,  0.60],
@@ -990,7 +990,7 @@ async function buildStage(host) {
   const FITS = { linen: 'M', onyx: 'L', pear: 'S', white: 'M' };
 
   /* The swatches dress the garment, not the fruit. The pear is the
-     brand mark — recolouring it to "Onyx" would leave the page with no
+     brand mark - recolouring it to "Onyx" would leave the page with no
      green in the 3D layer at all, which is the one thing the accent
      colour exists to guarantee. */
   const FABRIC_NAME = { linen: 'Linen', onyx: 'Onyx', pear: 'Pear', white: 'Cotton' };
@@ -1023,7 +1023,7 @@ async function buildStage(host) {
 
   /* ── framing per chapter ──────────────────────────────────────── */
   /* The scene never unmounts; each chapter just re-frames it. Values
-     are targets, not applied transforms — the frame loop eases toward
+     are targets, not applied transforms - the frame loop eases toward
      them, so a fast scroll through three chapters still arrives
      smoothly instead of snapping between keyframes. */
   /* x is roughly "which column am I standing in" at this camera:
@@ -1046,7 +1046,7 @@ async function buildStage(host) {
     const a = { ...ACTS[name] };
     if (narrow()) {
       /* One column means the composition has nowhere to stand beside
-         the text — it goes behind it, further back and much fainter,
+         the text - it goes behind it, further back and much fainter,
          because a glossy pear at full opacity under a paragraph costs
          more legibility than the atmosphere is worth. */
       a.x *= 0.28;
@@ -1089,7 +1089,7 @@ async function buildStage(host) {
   }, { passive: true });
 
   /* #stage is pointer-events:none, so the drag surface is the framed
-     vitrine in the try-on section — the same element the cursor
+     vitrine in the try-on section - the same element the cursor
      badges as "Drag 3D". */
   const frame = $('#stageFrame');
   if (frame) {
@@ -1144,7 +1144,7 @@ async function buildStage(host) {
     cur.ry = damp(cur.ry, goal.ry, 2.0, dt);
     cur.rz = damp(cur.rz, goal.rz, 2.0, dt);
 
-    // pointer torque — the group leans toward the cursor
+    // pointer torque - the group leans toward the cursor
     torque.x = damp(torque.x, pointer.y * 0.16, 3.2, dt);
     torque.y = damp(torque.y, pointer.x * 0.28, 3.2, dt);
 
@@ -1162,7 +1162,7 @@ async function buildStage(host) {
       cur.rz
     );
 
-    // idle float — the whole group breathes, objects drift on their own
+    // idle float - the whole group breathes, objects drift on their own
     if (!REDUCED) {
       const t = clock;
       atelier.position.y += Math.sin(t * 0.55) * 0.075;
@@ -1171,7 +1171,7 @@ async function buildStage(host) {
       pear.rotation.y = t * 0.22;
       pear.position.y = -0.35 + Math.sin(t * 0.85) * 0.08;
       // the contact shadow tightens as the pear settles and softens as
-      // it lifts — a shadow that just follows the object reads as a decal
+      // it lifts - a shadow that just follows the object reads as a decal
       shadow.position.y = -1.06 + Math.sin(t * 0.85) * 0.015;
       shadow.material.opacity = 0.62 - Math.sin(t * 0.85) * 0.12;
       shadow.scale.setScalar(1 - Math.sin(t * 0.85) * 0.06);
@@ -1190,7 +1190,7 @@ async function buildStage(host) {
     renderer.render(scene, camera);
   });
 
-  /* Free the PMREM render target — the environment texture it produced
+  /* Free the PMREM render target - the environment texture it produced
      is independent of the generator once it exists. */
   pmrem.dispose();
 

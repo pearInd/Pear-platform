@@ -10,7 +10,7 @@
 
      i18n.js rewrites all of them (plus og:*, twitter:*, keywords,
      canonical and the JSON-LD block) before first paint. Edit the copy
-     in i18n.js, not here — these literals only ever survive with
+     in i18n.js, not here - these literals only ever survive with
      JavaScript disabled, and they must stay byte-identical to DICT.en
      so the pre-JS and post-JS passes never disagree.
      ════════════════════════════════════════════════════════════════ -->
@@ -32,7 +32,7 @@
      side, so the alternates need a URL that actually serves each one:
      ?lang=he / ?lang=en are read by i18n.js before anything renders,
      which makes them genuinely distinct documents to a crawler. The
-     bare root is x-default — it auto-detects, which is exactly what
+     bare root is x-default - it auto-detects, which is exactly what
      "no language matched" should do. Each alternate is self-canonical
      (see applyHead in i18n.js); pointing them all back at / would make
      Google collapse the set and ignore the annotations.
@@ -46,7 +46,7 @@
      of 48, so every size it can pick here is one: favicon.ico carries 16/32/48,
      and the PNGs are 96 (48x2) and 192 (48x4). The 192 file is shared with the
      manifest rather than duplicated. apple-touch-icon stays 180 because that is
-     Apple's required size — iOS, not Google, decides that one. -->
+     Apple's required size - iOS, not Google, decides that one. -->
 <link rel="icon" href="/favicon.ico" sizes="32x32" />
 <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 <link rel="icon" type="image/png" href="/web-app-manifest-192x192.png" sizes="192x192" />
@@ -60,7 +60,7 @@
 <meta property="og:title" content="PEAR Platform | Real-Time AI Virtual Try-On for Fashion E-Commerce" />
 <meta property="og:description" content="Transform your fashion store with PEAR AI Virtual Try-On. Allow shoppers to measure and try on clothes virtually, boosting conversions and slashing return rates." />
 <!-- og-cover.png, NOT PEAR-logo.png. The logo is 1110x1586 portrait, and a
-     summary_large_image / LinkedIn large card is 1.91:1 — a portrait source
+     summary_large_image / LinkedIn large card is 1.91:1 - a portrait source
      gets centre-cropped to a horizontal slice through the middle of the mark,
      which is why the old card looked broken everywhere it was shared.
      og-cover.png is the mark on the site background at exactly 1200x630.
@@ -74,7 +74,7 @@
 
 <!-- Twitter / X · these stay name=, NOT property=. name is the form the
      card spec defines, and applyHead() selects meta[name="twitter:title"]
-     / meta[name="twitter:description"] — switching them to property=
+     / meta[name="twitter:description"] - switching them to property=
      makes setMeta() match nothing and fail silently, freezing the card
      copy in whatever language happened to ship. -->
 <meta name="twitter:card" content="summary_large_image" />
@@ -90,7 +90,7 @@
 
      This is an @graph rather than a single node on purpose. Brand queries
      ("pear ai", "pear platform", "pear vton") resolve against an
-     Organization entity, not a SoftwareApplication one — the Organization
+     Organization entity, not a SoftwareApplication one - the Organization
      node with alternateName + logo is what gives Google something to hang
      a knowledge panel and sitelinks on. The three nodes are wired by @id
      so they read as one entity rather than three unrelated things that
@@ -155,15 +155,15 @@
 <!-- ════════════════════════════════════════════════════════════════
      CSP · honest limitations, read before assuming this is airtight:
      1) script-src and style-src need 'unsafe-inline' because this file
-        has no build step — the whole app logic and the three.js module
+        has no build step - the whole app logic and the three.js module
         live in inline <script> tags, and pear-tailwind.css is loaded
         alongside a small inline <style> block of hand-written CSS.
         A CSP without 'unsafe-inline' would break the entire site, not
         just stop injected scripts. Real inline-script XSS protection
-        needs per-request nonces, which need server-side templating —
+        needs per-request nonces, which need server-side templating -
         a bigger architecture change than a meta tag can deliver.
      2) frame-ancestors is NOT enforced via <meta> at all (silently
-        ignored by every browser) — it only works as a real HTTP
+        ignored by every browser) - it only works as a real HTTP
         response header. See vercel.json for that; it's the same CSP
         plus frame-ancestors, delivered the way that actually works.
      ════════════════════════════════════════════════════════════════
@@ -172,7 +172,7 @@
      and similar). They do NOT loosen production: when two policies are
      present the browser enforces BOTH, and a resource has to pass every
      one of them. Production also gets the vercel.json header policy,
-     which has no ws:// — so ws:// stays blocked there no matter what
+     which has no ws:// - so ws:// stays blocked there no matter what
      this meta tag says. Locally the header is absent, so only this
      policy applies and the reload socket connects.
      ════════════════════════════════════════════════════════════════ -->
@@ -192,7 +192,7 @@
 
 <!-- ════════════════════════════════════════════════════════════════
      I18N · automatic Hebrew / English. Must load HERE and must stay a
-     plain blocking <script> — no defer, no async, nothing above it that
+     plain blocking <script> - no defer, no async, nothing above it that
      renders. i18n.js sets <html lang>/<html dir> and rewrites the title
      and meta description before the browser paints, so an English
      visitor never sees a frame of RTL Hebrew. Adding defer to this tag
@@ -205,7 +205,7 @@
 
      No cloak: i18n.js always paints English immediately and swaps to
      Hebrew live only once geo-IP confirms an Israeli IP, so there is
-     nothing to hide behind a cloak for — see the header comment in
+     nothing to hide behind a cloak for - see the header comment in
      i18n.js for why.
      ════════════════════════════════════════════════════════════════ -->
 <style>
@@ -228,7 +228,7 @@
      whatever it has for that page view, with no later swap and so no
      reflow. A first-time visitor on a slow connection sees the fallback
      for one page view; the file still downloads and is cached, so every
-     subsequent view — and every other page of the site — renders in the
+     subsequent view - and every other page of the site - renders in the
      real face from first paint. That is the trade this page wants: the
      headline moving under the reader's eye is more damaging than one
      uncached view set in Arial.
@@ -246,7 +246,7 @@
      Three purposeful accents, used ONLY inside their category.
 
      pear-tailwind.css is a static build (tailwindcss v3 CLI, config below
-     kept only as documentation of the theme it was built from) — NOT the
+     kept only as documentation of the theme it was built from) - NOT the
      https://cdn.tailwindcss.com runtime JIT compiler. The CDN script ships
      unstyled HTML on first paint and only applies classes once its JS has
      downloaded and compiled them client-side, which on a slow mobile
@@ -287,24 +287,24 @@
   .view { display: none; }
   .view.active { display: block; }
 
-  /* ── Scroll reveal (cosmetic only — a safety sweep guarantees visibility) ── */
+  /* ── Scroll reveal (cosmetic only - a safety sweep guarantees visibility) ── */
   .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s cubic-bezier(.2,.6,.2,1), transform .6s cubic-bezier(.2,.6,.2,1); }
   .reveal.in { opacity: 1; transform: none; }
 
   /* ── Brand logo ──
      PEAR-logo.png ships with a transparent background (the cream paper backdrop
-     was keyed out to alpha), so the black mark drops cleanly onto any surface —
-     the frosted navbar, the footer glass, light or dark — with no halo or box.
+     was keyed out to alpha), so the black mark drops cleanly onto any surface -
+     the frosted navbar, the footer glass, light or dark - with no halo or box.
      Sizing (height + w-auto, to keep the aspect ratio) is done entirely by the
-     h-9/sm:h-10/w-auto utility classes on the <img> — this rule must NOT also
+     h-9/sm:h-10/w-auto utility classes on the <img> - this rule must NOT also
      set height, or the two same-specificity rules race on stylesheet order and
      can render the logo at its full native size (1110×1586px) instead. */
   .brand-logo { display: block; }
 
   /* ── Brand wordmark ──
      Every on-page instance of the "PEAR" name is wrapped in <span class="brand-pear">
-     so the name renders identically wherever it appears — headings, body copy,
-     badges, buttons, both languages — in the high-contrast serif the logo itself
+     so the name renders identically wherever it appears - headings, body copy,
+     badges, buttons, both languages - in the high-contrast serif the logo itself
      uses (Bodoni/Didot family), via Playfair Display.
 
      The canonical rule lives in pear-atelier.css §2a (it loads last and owns the
@@ -313,7 +313,7 @@
      stay in AGREEMENT with the canonical rule, not compete with it.
 
      Playfair Display carries no Hebrew glyphs, which would ordinarily be
-     disqualifying on a Hebrew-first page — but every .brand-pear span wraps only
+     disqualifying on a Hebrew-first page - but every .brand-pear span wraps only
      the four Latin letters "PEAR", never Hebrew text, even mid-Hebrew-sentence,
      so there is no glyph here that needs a Hebrew fallback. Didot/Bodoni MT are
      next in the stack for the (increasingly rare) system that has them; Cinzel
@@ -335,7 +335,7 @@
      added here after the last `npx tailwindcss` run would emit no rules at
      all and the control would render unstyled. Custom CSS always ships.
      The active option is driven by aria-pressed, which i18n.js keeps in sync
-     — so the visual state and the screen-reader state can never disagree. */
+     - so the visual state and the screen-reader state can never disagree. */
   .lang-switch {
     display: inline-flex; align-items: center; gap: 2px;
     padding: 2px; border-radius: 10px;
@@ -358,12 +358,12 @@
      Nearly everything on this page is already direction-agnostic: the
      layout is flex/grid, and the few offsets that matter use logical
      properties (inset-inline, text-start). The exception is the hero
-     mockup's decorative nudge — translate-x is a TRANSFORM, and CSS
+     mockup's decorative nudge - translate-x is a TRANSFORM, and CSS
      transforms ignore direction entirely, so `lg:translate-x-20` pushes
      the card the same physical way in both languages. In RTL that moves
      it inward, toward the copy; in LTR the mockup is already on the
      right, so the same shove pushes it toward the viewport edge.
-     Overriding Tailwind's own custom property is enough — the utility
+     Overriding Tailwind's own custom property is enough - the utility
      reads --tw-translate-x rather than hard-coding a value. */
   html[dir="ltr"] .hero-mockup { --tw-translate-x: 0px; }
 
@@ -447,12 +447,12 @@
   /* ── Testimonial highlight marker ── */
   mark.hl { background: linear-gradient(transparent 55%, rgb(16 185 129 / .28) 55%); color: inherit; font-weight: 800; padding: 0 .1em; }
 
-  /* ── 3D stage: a FIXED full-viewport layer — the pear travels the whole
+  /* ── 3D stage: a FIXED full-viewport layer - the pear travels the whole
        overview page with the scroll. pointer-events:none keeps every click
        working; hidden on mobile (perf) and while the docs view is open. ── */
   /* The pear rides a FIXED layer BEHIND all content (z:-1), above the page
      backdrop (z:-2). Because the UI panels are translucent liquid glass, the
-     pear shows softly THROUGH / around them while text stays crisp on top —
+     pear shows softly THROUGH / around them while text stays crisp on top -
      so it can never obscure what you're reading. */
   #pearStage { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
   #pearStage canvas { width: 100%; height: 100%; display: block; }
@@ -479,14 +479,14 @@
   /* Code blocks are always LTR, regardless of page direction. */
   .code-scroll { direction: ltr; text-align: left; overflow-x: auto; }
 
-  /* ── Pulsing glow ring — the docs-gate lock icon ── */
+  /* ── Pulsing glow ring - the docs-gate lock icon ── */
   @keyframes lockGlow {
     0%, 100% { box-shadow: 0 0 0 0 rgb(16 185 129 / .45), 0 0 22px 2px rgb(16 185 129 / .25); }
     50%      { box-shadow: 0 0 0 9px rgb(16 185 129 / 0), 0 0 34px 8px rgb(16 185 129 / .4); }
   }
   .lock-glow { animation: lockGlow 2.6s ease-in-out infinite; }
 
-  /* ── Docs unlock reveal — content fades/scales/unblurs in once the
+  /* ── Docs unlock reveal - content fades/scales/unblurs in once the
        correct code is entered (or on an already-authorized return visit). ── */
   @keyframes docsUnlock {
     from { opacity: 0; transform: translateY(16px) scale(.98); filter: blur(6px); }
@@ -496,7 +496,7 @@
 
   /* ── Direct one-time measurement modal (#pearDirectMeasureBtn) ──
      Deliberately its own markup/classes, not pear-widget.js's injected
-     .pear-widget-* overlay — that CSS is a runtime implementation detail
+     .pear-widget-* overlay - that CSS is a runtime implementation detail
      of a script fetched from a separate origin, not something this page
      should reach into. */
   .pear-direct-overlay {
@@ -516,7 +516,7 @@
   }
   .pear-direct-close:hover { background: rgba(255,255,255,0.25); }
 
-  /* ── Toast: spring/overshoot entrance (top-center — bottom-right is
+  /* ── Toast: spring/overshoot entrance (top-center - bottom-right is
        already occupied by the scroll HUD) ── */
   @keyframes toastSpring {
     0%   { opacity: 0; transform: translate(-50%, -14px) scale(.94); }
@@ -527,7 +527,7 @@
   .toast-out { opacity: 0; transform: translate(-50%, -10px) scale(.96); transition: opacity .25s ease, transform .25s ease; }
 
   /* ══════════════════════════════════════════════════════════════
-     ENGLISH TYPOGRAPHY TUNING — [lang="en"] only.
+     ENGLISH TYPOGRAPHY TUNING - [lang="en"] only.
 
      The layout was sized around the Hebrew source copy, which says the
      same thing in roughly half the characters. Left unadjusted, the
@@ -537,7 +537,7 @@
 
      Scoped to html[lang="en"] so Hebrew keeps its original scale
      untouched. i18n.js stamps <html lang> in a render-blocking script
-     before first paint, so this is applied on the first frame — no flash
+     before first paint, so this is applied on the first frame - no flash
      of the wrong size. These are hand-written rules on purpose:
      pear-tailwind.css is a static build and cannot JIT new utilities.
      ══════════════════════════════════════════════════════════════ */
@@ -549,7 +549,7 @@
   }
   /* NOTE on the hero CTAs: in English the pair measures 2x296px against a
      512px copy column, so they stack instead of sitting in one row. That is
-     deliberate — trimming them enough to fit needs the padding cut to almost
+     deliberate - trimming them enough to fit needs the padding cut to almost
      nothing, which costs more than the stack does. flex-wrap gives two
      equal-width buttons with the primary on top; leave it alone. */
 
@@ -561,7 +561,7 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
-     IMPLEMENTATION-GUIDE UTILITIES — read before editing the guide.
+     IMPLEMENTATION-GUIDE UTILITIES - read before editing the guide.
 
      pear-tailwind.css is a static build with content: ["index.html"]
      (see the note above the stylesheet link). The guide's markup is
@@ -570,8 +570,8 @@
      Tailwind therefore never sees those class names and emits no rules
      for them.
 
-     This block used to carry the guide's ENTIRE design — code-card
-     chrome, step markers, radii, spacing, shadows — re-declared here by
+     This block used to carry the guide's ENTIRE design - code-card
+     chrome, step markers, radii, spacing, shadows - re-declared here by
      hand because the build could not reach it. The guide has since been
      rebuilt on its own named classes in pear-atelier.css §18, which is
      a stylesheet the guide's markup can simply use, so all of that is
@@ -611,7 +611,7 @@
 <link rel="stylesheet" href="pear-atelier.css">
 <!-- Playfair Display carries only the brand wordmark (.brand-pear below):
      a high-contrast serif to match the logo's Bodoni/Didot character.
-     Bundled into the same request as the page's other two families —
+     Bundled into the same request as the page's other two families -
      one round trip, and it rides the preconnect already opened above. -->
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=optional" rel="stylesheet">
 <script>document.documentElement.classList.add('pa-js');</script>
@@ -689,7 +689,7 @@
 </header>
 
 <!-- ════════════════════════════════════════════════════════════════
-     VIEW 1 · LANDING — four sections, in this order:
+     VIEW 1 · LANDING - four sections, in this order:
 
        1 · #hero       headline over a cinematic pear-ad.mp4 player
        2 · #playground the live fitting room (widget logic UNTOUCHED)
@@ -703,7 +703,7 @@
 
      Two contracts constrain the markup and are easy to break by accident:
        · anything carrying data-i18n-html has its innerHTML replaced, so
-         reveal wrappers cannot nest inside it — the reveal goes on the
+         reveal wrappers cannot nest inside it - the reveal goes on the
          element itself.
        · #pearDirectMeasureBtn is labelled with textContent by the modal
          script, which wipes child nodes, so it stays text-only.
@@ -717,8 +717,8 @@
        runway and the position:sticky stage that went with it are both
        gone, along with the scroll-scrubbing they existed to serve.
 
-       The clip is a plain background video again — autoplay + muted +
-       loop + playsinline, the autoplay-policy-compliant set — and
+       The clip is a plain background video again - autoplay + muted +
+       loop + playsinline, the autoplay-policy-compliant set - and
        nothing in JavaScript touches its currentTime. The only thing
        scroll still drives is the copy's defocus as the hero leaves,
        which is initSkyline's whole job in pear-motion.js now.
@@ -728,7 +728,7 @@
        clear it has been removed from this file, from the stylesheet and
        from both dictionaries. #demoVideoEl is the only id left here.
 
-       THE SAME LAYOUT ON A PHONE. The stage used to split below 768px —
+       THE SAME LAYOUT ON A PHONE. The stage used to split below 768px -
        film panel on top, copy on beige underneath. It does not any
        more: the film is a full-bleed background at every width and the
        copy sits on it in paper-coloured type, carried by the veil.
@@ -736,13 +736,13 @@
        preload="metadata", not "auto": "auto" was here only because
        seeking into an unbuffered range makes a SCRUBBED video stutter.
        Nothing seeks any more, autoplay pulls what it needs on its own,
-       and the clip is 2.9MB at the top of the page — so the first
+       and the clip is 2.9MB at the top of the page - so the first
        paint goes back to not waiting on it. -->
   <section id="hero" data-hud="hud.intro" class="pa-skyline">
     <div class="pa-skyline__stage" id="film">
 
       <!-- width/height are pear-ad.mp4's real intrinsic size. They are
-           not a display size — CSS sizes the element — they are what
+           not a display size - CSS sizes the element - they are what
            lets the browser reserve the right box before the file's
            metadata arrives. The stage is a fixed 100svh so this no
            longer guards the page against the 0.19 CLS the framed
@@ -768,7 +768,7 @@
 
       <!-- The overlay copy. initSkyline animates THIS wrapper as the
            hero scrolls away, while data-pa-reveal inside it is the
-           ordinary entrance the motion layer runs on load — two
+           ordinary entrance the motion layer runs on load - two
            different elements, so the two never fight over the same
            opacity. -->
       <div class="pa-skyline__copy" id="skyCopy">
@@ -777,7 +777,7 @@
                dictionary's hero.title BYTE FOR BYTE, classes included: the
                dictionary's second line carries `block mt-2`, and a fallback
                that omitted it rendered the line inline, then grew by ~15px
-               the moment PearI18n.apply() swapped the real string in —
+               the moment PearI18n.apply() swapped the real string in -
                dragging the CTA and every section below it with it. That
                single mismatch was most of this page's layout shift on a
                phone. Change one, change the other.
@@ -822,14 +822,14 @@
            vtonVolume dictionary keys. The clip is a silent background
            film: autoplay + muted + loop, never unmuted by anything, so
            there is no audio for a control to control. .pa-glass and
-           .pa-glass-knob stay in the stylesheet — the language switch
+           .pa-glass-knob stay in the stylesheet - the language switch
            is their other caller. -->
 
       <!-- The three-pillar proof row (.pa-proof / #skyProof) stood here
            and has been removed. Its three claims are not lost: #value
            below restates all three as the animated counters at block
-           14 — 100% fit confidence, 3→0 bracketing, ~25% fewer returns
-           — so the hero no longer says them twice.
+           14 - 100% fit confidence, 3→0 bracketing, ~25% fewer returns
+           - so the hero no longer says them twice.
 
            The hero.proof1/2/3 keys are still in both dictionaries and
            are now unused by any markup. They are left in place because
@@ -859,7 +859,7 @@
              aria-label="הצגת התמונה על דוגמן/ית">
           <div class="pa-flip__inner">
             <div class="pa-flip__face pa-flip__face--front">
-              <!-- Front/Back garment angle — two stacked, pre-loaded images
+              <!-- Front/Back garment angle - two stacked, pre-loaded images
                    cross-faded by .is-active (see .pa-angle__img), so
                    pearShirtGarment's toggle never swaps an <img> src and
                    never shows a blank frame while a new file decodes.
@@ -903,7 +903,7 @@
         </div>
 
         <!-- Swaps which pre-loaded garment image is opacity:1 inside
-             .pa-flip__face--front — see initAngleToggle() below. Independent
+             .pa-flip__face--front - see initAngleToggle() below. Independent
              of the hover/tap model-preview flip (.pa-flip): this toggle lives
              outside that element so hovering or clicking it never triggers
              the model reveal. -->
@@ -939,7 +939,7 @@
   </section>
 
   <!-- The onyx demo band stood here. Its video, its sound widget and
-       every id inside it now live in the hero — one showcase, at the
+       every id inside it now live in the hero - one showcase, at the
        top, instead of two players competing halfway down the page. -->
 
   <!-- ──────────────── BUSINESS IMPACT · THE THREE PILLARS ──────────
@@ -947,8 +947,8 @@
        panel did not:
 
          · a metric that counts on first reveal (block 7b2). Every
-           figure is one the page already states — 100% from proof1,
-           3→0 from proof2, ~25% from proof3 — rendered as a numeral.
+           figure is one the page already states - 100% from proof1,
+           3→0 from proof2, ~25% from proof3 - rendered as a numeral.
          · a cursor-tracked glow and a 6deg lean, from the shared
            [data-pa-tilt] handler in pear-motion.js. data-pa-touch gives
            a phone the same glow from its touch point.
@@ -956,7 +956,7 @@
            hovered or focused, so the resting row scans as three
            headlines rather than three paragraphs.
 
-       tabindex="0" is what makes :focus-within reachable by keyboard —
+       tabindex="0" is what makes :focus-within reachable by keyboard -
        without it the list would open on pointer only. -->
   <section id="value" data-hud="hud.value" data-stage-space="tight" class="pa-section pa-pad pa-shell">
     <div class="pa-head pa-head--major" data-pa-seq>
@@ -968,13 +968,13 @@
              §9 of pear-atelier.css for the size and leading. -->
         <h2 class="pa-display pa-d-lg pa-head__title pa-head__title--xl" data-pa-reveal data-i18n="value.title">שלוש דרכים שמידה מדויקת מחזירה כסף</h2>
       </div>
-      <p class="pa-lede" data-pa-reveal data-i18n="value.sub">המרה, מלאי ותפעול — מה משתנה בכל אחד מהם.</p>
+      <p class="pa-lede" data-pa-reveal data-i18n="value.sub">המרה, מלאי ותפעול - מה משתנה בכל אחד מהם.</p>
     </div>
 
     <!-- ── The three pillars ────────────────────────────────────────
          Each card is identified by a drawn mark rather than by the
          blinking status dot this section used to carry. The dot was the
-         same glyph three times over — it distinguished nothing, and a
+         same glyph three times over - it distinguished nothing, and a
          2.4s infinite pulse next to a paragraph pulls the eye off the
          copy it is meant to support.
 
@@ -982,7 +982,7 @@
          requests: they inherit currentColor (so they invert on the onyx
          surfaces for free), they scale with the card, and they are
          drawn on the same 24-unit grid with the same 1.6 stroke so the
-         three read as one set. aria-hidden throughout — the pillar name
+         three read as one set. aria-hidden throughout - the pillar name
          is already stated in the tag directly beside each one. -->
     <div class="pa-pillars">
 
@@ -1006,7 +1006,7 @@
         </div>
 
         <!-- The numeral restates hero.proof1 ("100% ביטחון בהתאמה") in
-             figure form — no claim here that the page does not already
+             figure form - no claim here that the page does not already
              make. dir="ltr" because a Hebrew paragraph must not reorder
              a number and its unit. The element ships its FINAL value as
              text, so with JS off or reduced-motion on it simply reads
@@ -1154,7 +1154,7 @@
     <!-- ── Locked stage ─────────────────────────────────────────────────
          Shown until /api/get-docs hands the guide back. Note what is NOT
          here: the guide. #docs-secure-viewport below ships empty, so
-         there's nothing in the page source to un-blur — and nothing for
+         there's nothing in the page source to un-blur - and nothing for
          a max-height clamp to hold back either, which is why this is a
          plain fixed-height stage for the card to stand on. -->
     <div id="docsGateStage" class="pa-gate">
@@ -1209,7 +1209,7 @@
       <p class="pa-eyebrow">Get In Touch</p>
       <h1 data-i18n="contact.title">בואו נדבר</h1>
       <p data-i18n="contact.sub">
-        שאלה על הטמעה או דמו למותג שלכם — מלאו את הטופס או פנו אלינו ישירות.
+        שאלה על הטמעה או דמו למותג שלכם - מלאו את הטופס או פנו אלינו ישירות.
       </p>
     </div>
   </section>
@@ -1234,14 +1234,14 @@
            invalid value nowhere to render and gave a thumb nothing to
            aim at. These have a focus glow and an error state, and the
            error only ever appears after the field has been left or the
-           form has been submitted — see .was-touched / .was-submitted in
+           form has been submitted - see .was-touched / .was-submitted in
            pear-atelier.css §19 and the handler in block 5. -->
       <div class="pa-panel reveal" data-pa-touch>
         <div class="pa-panel__pad">
           <form id="contactForm" class="pa-form">
             <input type="hidden" name="access_key" value="3784c35e-7ff4-493c-80a9-cada9bc84313">
             <!-- Set by PREFILLS when a visitor arrives via a tagged CTA (e.g. the docs
-                 access-request link) — shows up as its own labeled line in the Web3Forms
+                 access-request link) - shows up as its own labeled line in the Web3Forms
                  notification email, so it's easy to spot at a glance. Empty for a normal inquiry. -->
             <input type="hidden" name="request_type" value="">
             <!-- Honeypot: real visitors never see or fill this; Web3Forms auto-rejects submissions where it's checked. -->
@@ -1381,7 +1381,7 @@
 
      This has to happen BEFORE the two GSAP tags below, not after them.
      They are parser-blocking external scripts: while they are in flight
-     the browser has a fully parsed body and loaded CSS, so it paints —
+     the browser has a fully parsed body and loaded CSS, so it paints -
      and everything above is still the Hebrew baked into the markup. A
      slow or blocked jsDelivr therefore showed English visitors a Hebrew
      page for as long as the CDN took, which is exactly the flash the
@@ -1389,14 +1389,14 @@
 
      Body markup effectively ends here (the footer closed a few lines
      up), so this single call translates the whole visible page. The
-     bootstrap call in the main script below is now a cheap no-op —
+     bootstrap call in the main script below is now a cheap no-op -
      i18n.js stamps each translated element and skips re-writing one that
-     already carries the active language — and is kept because it also
+     already carries the active language - and is kept because it also
      guards the case where this tag is ever moved or removed.
      ════════════════════════════════════════════════════════════════ -->
 <script>window.PearI18n?.apply();</script>
 
-<!-- GSAP + ScrollTrigger — the cinematic scroll engine -->
+<!-- GSAP + ScrollTrigger - the cinematic scroll engine -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 
@@ -1413,14 +1413,14 @@
    THIS MUST STAY FIRST. Two blocks below read the DOM's text as data
    rather than just displaying it, and both break if they run against
    untranslated markup:
-     • 9.5 shreds every [data-split] headline into per-word <span>s —
+     • 9.5 shreds every [data-split] headline into per-word <span>s -
        run before translation and it splits Hebrew that is about to be
        replaced, throwing the spans away;
      • the widget block at the end of <body> captures the direct-measure
        button's idle label to restore later.
    PearI18n itself resolved the language back in <head> (see i18n.js).
    The tag just above the GSAP scripts is what actually pushes it into
-   the body — deliberately ahead of them, so a slow CDN cannot leave an
+   the body - deliberately ahead of them, so a slow CDN cannot leave an
    English visitor staring at Hebrew. This call repeats it as a cheap
    no-op (i18n.js skips elements already stamped with the active
    language) so the invariant holds even if that tag moves.
@@ -1454,14 +1454,14 @@ function renderView(view, { scroll = true } = {}) {
 }
 
 /* ── 2 · Smooth-scroll CTA buttons (data-scroll="sectionId", optional
-   data-view="overview|docs|contact" — defaults to overview, optional
-   data-prefill="key" — see PREFILL_KEYS below) ────────────────────
+   data-view="overview|docs|contact" - defaults to overview, optional
+   data-prefill="key" - see PREFILL_KEYS below) ────────────────────
    If the target section's view isn't on screen, switch to it first
    (which jumps to top), then smooth-scroll down to the section once
    the new view has rendered. The cross-view delay is 220ms, not the
    old 60ms: renderView() schedules its own ScrollTrigger.refresh()
    60ms after the hashchange, and refresh() briefly yanks scroll back
-   to measure pinned sections (the "demo" video is pin:true) — firing
+   to measure pinned sections (the "demo" video is pin:true) - firing
    our scrollIntoView before that settles gets it cancelled mid-flight.
 
    PREFILL COPY IS RESOLVED AT CLICK TIME, not here: a visitor who
@@ -1491,7 +1491,7 @@ function bindScrollButtons(root = document) {
     const targetForm = btn.dataset.scroll === 'contact-section' && document.getElementById('contactForm');
     if (targetForm) {
       // request_type is a hidden field the visitor never edits, so it's always
-      // safe to sync it to whichever button was actually clicked — unlike
+      // safe to sync it to whichever button was actually clicked - unlike
       // subject/message below, there's no risk of clobbering typed-in text.
       const reqType = targetForm.querySelector('[name="request_type"]');
       if (reqType) reqType.value = preset?.requestType || '';
@@ -1521,7 +1521,7 @@ bindScrollButtons();
 
    The passcode is kept in sessionStorage so a reload inside the same
    tab doesn't re-prompt. That is a deliberate trade: it means the code
-   sits in this tab's storage for the session — readable by anyone who
+   sits in this tab's storage for the session - readable by anyone who
    already has the code and the machine. Closing the tab clears it. */
 const DOCS_SESSION_KEY = 'pear_docs_passcode';
 
@@ -1531,7 +1531,7 @@ const docsGateForm  = document.getElementById('docsGateForm');
 
 /* api/get-docs.js is a Node serverless function. A plain static file server
    (VS Code Live Server, `python -m http.server`, …) has no runtime to execute
-   it, so the POST below 404s and every passcode — including the correct one —
+   it, so the POST below 404s and every passcode - including the correct one -
    surfaces as "wrong code". Tell the truth in that case instead. Use
    `vercel dev`, which runs the function and applies vercel.json headers. */
 const IS_LOCAL_HOST = ['localhost', '127.0.0.1', '[::1]', ''].includes(location.hostname);
@@ -1546,10 +1546,10 @@ async function requestDocs(passcode) {
     const err = new Error('docs_denied');
     err.status = res.status;
     /* 404 = route absent (no runtime). 405 = a static server answered the
-       path but refuses POST. Either way it is the server, not the passcode —
+       path but refuses POST. Either way it is the server, not the passcode -
        and only worth claiming on a local host, since in production a 404 here
        would be a genuine deploy fault. 500 means the function DID run but
-       DOCS_PASSCODE is unset (api/get-docs.js:334) — a config gap, also not
+       DOCS_PASSCODE is unset (api/get-docs.js:334) - a config gap, also not
        a wrong code. */
     err.noRuntime = IS_LOCAL_HOST && (res.status === 404 || res.status === 405);
     err.noPasscodeConfigured = res.status === 500;
@@ -1564,7 +1564,7 @@ function mountDocs(html) {
   docsViewport.classList.add('docs-unlocking');
   docsGateStage?.classList.add('hidden');
   // The guide arrived after page load, so the delegated-at-boot listeners
-  // never saw it — bind its copy buttons and CTAs now.
+  // never saw it - bind its copy buttons and CTAs now.
   // Same for i18n: api/get-docs.js ships the guide marked up with data-i18n
   // keys and Hebrew defaults, so this subtree has to be translated on
   // arrival. Passing the root scopes the sweep to just the new nodes.
@@ -1576,7 +1576,7 @@ function mountDocs(html) {
 
 if (docsViewport) {
   // Returning visitor in the same tab: re-fetch silently. A rejection here
-  // just means the code was rotated server-side — drop it and re-prompt.
+  // just means the code was rotated server-side - drop it and re-prompt.
   const saved = sessionStorage.getItem(DOCS_SESSION_KEY);
   if (saved) {
     requestDocs(saved)
@@ -1662,7 +1662,7 @@ bindCopyButtons();
 
 /* ── 4 · Toast ────────────────────────────────────────────────────
    type: 'default' | 'success' | 'error'. `msg` must stay a literal we
-   wrote — it's injected via innerHTML for the icon, so never pass
+   wrote - it's injected via innerHTML for the icon, so never pass
    user- or API-supplied text through here. Values from PearI18n.t()
    qualify: the dictionary in i18n.js is author-written and ships with
    the site, exactly like the literals it replaced. */
@@ -1690,7 +1690,7 @@ function showToast(msg, type = 'default') {
    No backend of our own, so submissions POST straight to Web3Forms,
    which relays them to pearytrank@gmail.com (reply-to set to whatever
    the visitor typed). The access key lives in the form's own hidden
-   access_key input — one source of truth, no key duplicated in JS. */
+   access_key input - one source of truth, no key duplicated in JS. */
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
   const submitBtn = document.getElementById('contactSubmit');
@@ -1702,13 +1702,13 @@ if (contactForm) {
   /* Error styling is opt-in per field rather than a bare :invalid rule.
      :invalid matches a required field that is simply still empty, so on
      its own it paints the whole form red before a single character has
-     been typed — the fastest way to make a form feel like it is already
+     been typed - the fastest way to make a form feel like it is already
      scolding you. A field earns .was-touched once the visitor has been
      in it and left it; the form earns .was-submitted only after a submit
      that the browser refused. */
   contactForm.querySelectorAll('.pa-field__input').forEach((el) => {
     el.addEventListener('blur', () => el.classList.add('was-touched'));
-    // Typing again is an attempt to fix it — stop marking it wrong
+    // Typing again is an attempt to fix it - stop marking it wrong
     // mid-keystroke and let :invalid re-assert itself on the next blur.
     el.addEventListener('input', () => el.classList.remove('was-touched'));
   });
@@ -1725,7 +1725,7 @@ if (contactForm) {
     if (submitBtn.disabled) return;
 
     const data = new FormData(contactForm);
-    if (data.get('botcheck')) return;     // honeypot tripped — silently drop, no UI feedback for bots
+    if (data.get('botcheck')) return;     // honeypot tripped - silently drop, no UI feedback for bots
 
     submitBtn.disabled = true;
     spinner.classList.remove('hidden');
@@ -1764,7 +1764,7 @@ if (contactForm) {
       label.textContent = t('contact.sent');
       /* The confirmation lands on the button as well as in the toast.
          The toast is pinned to the top of the viewport and the submit
-         button is usually the bottom of a long form — on a phone the two
+         button is usually the bottom of a long form - on a phone the two
          are a full screen apart, and the toast alone is a success
          message shown somewhere the visitor is not looking. */
       submitBtn.classList.add('is-sent');
@@ -1795,12 +1795,12 @@ if (contactForm) {
 /* Block 7 drove a mouse-tilt on the hero's phone mockup (#tiltCard) and
    block 7b ran the silent pear-VTon.mp4 loop inside it. Both left with
    that stage when the hero became a single cinematic player. REDUCED
-   stays — the GSAP gate at block 8 reads it. */
+   stays - the GSAP gate at block 8 reads it. */
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ── 7a · Pillar metric counters ──────────────────────────────────
    Counts each [data-pa-count] from data-count-from to data-count-to the
-   first time its card scrolls into view, then disconnects — a metric
+   first time its card scrolls into view, then disconnects - a metric
    that re-runs every time you scroll past it is a distraction, not an
    accent.
 
@@ -1841,7 +1841,7 @@ document.querySelectorAll('[data-pa-count]').forEach((el) => {
   io.observe(el);
 });
 
-/* wireSoundControl() — the mute-button + volume-slider binder — stood
+/* wireSoundControl() - the mute-button + volume-slider binder - stood
    here and is REMOVED with the widget it drove. The hero clip is a
    silent autoplaying background film; there is no audio on the page for
    a control to control, so there is no sound control. */
@@ -1850,8 +1850,8 @@ document.querySelectorAll('[data-pa-count]').forEach((el) => {
    One drag engine, today the language switch's alone (the volume
    sliders it also served are gone): a plain 0..1
    drag surface, measured against trackEl's own box, that reports how
-   far PAST either edge the raw pointer position has gone — negative
-   before the start, positive beyond the end — so a caller can turn
+   far PAST either edge the raw pointer position has gone - negative
+   before the start, positive beyond the end - so a caller can turn
    that into the rubber-band stretch the brief asks for. Rendering
    (where a knob actually goes, how the stretch looks) is entirely the
    caller's job via the callbacks; this only owns the pointer math and
@@ -1899,18 +1899,18 @@ function makeElasticDrag(surfaceEl, trackEl, { onDrag, onRelease, onTap } = {}) 
   });
 }
 
-/* The hero player needs no lazy-attach gate — it is the thing the
+/* The hero player needs no lazy-attach gate - it is the thing the
    visitor came to see, above the fold, not an asset a phone should be
    spared. It autoplays muted and loops, which is the whole of its
    behaviour: nothing reads or writes its currentTime any more, and
-   nothing unmutes it — the sound control that used to is gone. */
+   nothing unmutes it - the sound control that used to is gone. */
 const heroFilm = document.getElementById('demoVideoEl');
 
 /* An 18s clip looping forever behind the headline is exactly the moving
    content prefers-reduced-motion exists to stop, and the markup's
    `autoplay` attribute fires before any script can have an opinion. So
    it is stopped here, on the first frame, and the observer below is
-   gated to match — otherwise scrolling the hero back into view would
+   gated to match - otherwise scrolling the hero back into view would
    start it again.
 
    The visitor keeps the whole hero: a full-bleed still frame under the
@@ -1922,7 +1922,7 @@ const heroFilm = document.getElementById('demoVideoEl');
    issued now would be overtaken a moment later. Clearing .autoplay
    stops it if it has not begun, the pause() stops it if it has, and the
    one-shot `play` listener catches the case where it begins in between.
-   `once` matters — after that single catch the element is free to play
+   `once` matters - after that single catch the element is free to play
    normally, so nothing here permanently pins the clip shut. */
 if (heroFilm && REDUCED) {
   heroFilm.autoplay = false;
@@ -1933,7 +1933,7 @@ if (heroFilm && REDUCED) {
 /* Park the decoder once the hero has scrolled away, and start it again
    when it comes back. A 2.9MB clip looping against a page the visitor
    has scrolled past is battery and GPU spent on something nobody can
-   see — this is the whole reason the observer exists.
+   see - this is the whole reason the observer exists.
 
    It PLAYS as well as pauses again now. While scroll drove the playhead
    it could only pause, because resuming would have fought the scrub;
@@ -2006,7 +2006,7 @@ try {
     gsap.registerPlugin(ScrollTrigger);
 
     /* Split every [data-split] headline into word spans (nested colored
-       spans survive — we walk text nodes recursively), then unfold each
+       spans survive - we walk text nodes recursively), then unfold each
        word as the headline scrolls in.
 
        Extracted into a named function and exposed on window because a
@@ -2019,7 +2019,7 @@ try {
       /* Only ever split plain text. Block 10 re-runs this on every
          language change, but a change that resolves to the language
          already on screen leaves the headline untouched (i18n.js skips
-         same-language rewrites) — and walking already-split markup would
+         same-language rewrites) - and walking already-split markup would
          nest a .w span inside every existing one, doubling the transform
          on each word. */
       if (el.querySelector('.w')) return;
@@ -2048,7 +2048,7 @@ try {
         gsap.fromTo(eyebrow, { x: 26, opacity: 0 },
           { x: 0, opacity: 1, duration: .6, ease: 'power2.out', scrollTrigger: trig });
 
-      /* The subtitle (next sibling) "opens up" — a soft upward mask-wipe.
+      /* The subtitle (next sibling) "opens up" - a soft upward mask-wipe.
          Skip ones already handled by the .reveal system to avoid double-play. */
       const sub = el.nextElementSibling;
       if (sub && sub.tagName === 'P' && !sub.classList.contains('reveal'))
@@ -2064,7 +2064,7 @@ try {
     splitHeadlines();
     window.__pearSplitHeadlines = splitHeadlines;
 
-    /* Glowing stat counters — numbers count up when they enter view. */
+    /* Glowing stat counters - numbers count up when they enter view. */
     document.querySelectorAll('.stat-num').forEach((el) => {
       const to = parseFloat(el.dataset.to), dec = +(el.dataset.dec || 0);
       const pre = el.dataset.prefix || '', suf = el.dataset.suffix || '';
@@ -2074,7 +2074,7 @@ try {
         onUpdate: () => { el.textContent = pre + st.v.toFixed(dec) + suf; } });
     });
 
-    /* Magnetic primary CTAs — the button leans toward the cursor. */
+    /* Magnetic primary CTAs - the button leans toward the cursor. */
     document.querySelectorAll('.cta-glow').forEach((btn) => {
       btn.addEventListener('mousemove', (e) => {
         const r = btn.getBoundingClientRect();
@@ -2108,15 +2108,15 @@ try {
     });
 
     /* The skyline hero's scrub engine used to sit here. The scrubbing
-       is gone entirely — the clip is an ordinary autoplaying background
-       video — and what survives of it is the copy's defocus on scroll,
+       is gone entirely - the clip is an ordinary autoplaying background
+       video - and what survives of it is the copy's defocus on scroll,
        which lives in pear-motion.js as initSkyline(). Nothing in this
        file drives the hero any more; what is left of it here is the
        markup and the observer above that parks the decoder off-screen. */
 
     /* HUD chapter label follows the section under the viewport center.
        data-hud holds a TRANSLATION KEY, so it is resolved here and the
-       key is also written onto the label as data-i18n — that way a
+       key is also written onto the label as data-i18n - that way a
        language switch re-translates whatever chapter is currently
        showing through the ordinary i18n sweep, with no extra wiring. */
     document.querySelectorAll('#view-overview [data-hud]').forEach((sec) => {
@@ -2136,7 +2136,7 @@ try {
   }
 } catch (e) { console.warn('[PEAR] cinematics skipped:', e?.message || e); }
 
-/* ── 10 · Boot — after ALL definitions above ──────────────────── */
+/* ── 10 · Boot - after ALL definitions above ──────────────────── */
 
 /* Language switch. Delegated from the document so it keeps working no
    matter which view is mounted, and so the same handler covers any
@@ -2151,7 +2151,7 @@ document.addEventListener('click', (e) => {
 
 /* Language switch thumb: a frosted glass knob that slides under
    whichever button is active, and doubles as a drag handle (press
-   anywhere in the track, drag toward a side, release to land on it) —
+   anywhere in the track, drag toward a side, release to land on it) -
    the same makeElasticDrag() engine the volume sliders use (defined in
    block 7b, above the vton video wiring), so dragging past either end
    of the track rubber-bands the knob instead of just stopping dead.
@@ -2187,7 +2187,7 @@ document.addEventListener('click', (e) => {
 
   // width stays fixed at whatever the active button measured (the
   // knob doesn't resize mid-drag, only on the release snap via
-  // placeThumb — same trade-off the volume knobs make), only its
+  // placeThumb - same trade-off the volume knobs make), only its
   // translateX + elastic scaleX move during the drag itself.
   let atLimit = null;
   const triggerShimmer = () => {
@@ -2220,7 +2220,7 @@ document.addEventListener('click', (e) => {
       render(x, over);
     },
     onRelease: (fraction, velocity) => {
-      /* A fast flick wins over exact release position — matches the
+      /* A fast flick wins over exact release position - matches the
          gesture a visitor actually made rather than where their finger
          happened to be at the last sampled frame. Buttons are sorted by
          their OWN measured left edge, not DOM/array order, so this
@@ -2240,7 +2240,7 @@ document.addEventListener('click', (e) => {
          onChange: setLang() is a no-op (no notify, so sync() never
          fires) when the drag lands back on the language that was
          already active, which used to leave the knob wherever the
-         drag's live approximate position last put it — the "stuck
+         drag's live approximate position last put it - the "stuck
          floating between states" bug. This makes the snap unconditional. */
       placeThumb(target);
     },
@@ -2258,19 +2258,19 @@ window.PearI18n?.onChange(() => {
 
 window.addEventListener('hashchange', () => renderView(currentView()));
 renderView(currentView(), { scroll: false });
-setTimeout(revealAll, 1500);          // safety net — nothing may remain invisible
+setTimeout(revealAll, 1500);          // safety net - nothing may remain invisible
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
      3D SCENE · a PHOTOREAL pear that TRAVELS the page with the scroll.
-     Realism stack (all procedural — zero asset downloads):
+     Realism stack (all procedural - zero asset downloads):
        • high-res LatheGeometry (128 segs) + organic vertex noise, so the
          silhouette is asymmetric like real fruit;
        • canvas-generated skin: green gradient + russet sun-blush +
          thousands of lenticel speckles → color, bump AND roughness maps;
        • MeshPhysicalMaterial with sheen (subsurface feel) + light
          clearcoat (waxy skin), lit by a PMREM RoomEnvironment (IBL) and
-         ACES filmic tone mapping — the PBR combo that reads "real";
+         ACES filmic tone mapping - the PBR combo that reads "real";
        • bent stem (tube along a curve) + a leaf.
      Travel: GSAP ScrollTrigger waypoints per section fly the pear across
      the FIXED full-viewport canvas as each chapter enters; mouse leans
@@ -2285,13 +2285,13 @@ setTimeout(revealAll, 1500);          // safety net — nothing may remain invis
 </script>
 <script type="module">
 /* ══════════════════════════════════════════════════════════════════
-   PEAR · ATELIER 3D LAYER — contextual, section-anchored rigs
+   PEAR · ATELIER 3D LAYER - contextual, section-anchored rigs
    ------------------------------------------------------------------
    REPLACES the single continuous-path scene: one atelier group used to
    travel a table of hand-tuned world-x waypoints across the ENTIRE
    scroll, reframing itself at every section boundary via ScrollTrigger.
    That produced one object doing seven different jobs, and it made the
-   composition somebody else's job to avoid — every new section had to
+   composition somebody else's job to avoid - every new section had to
    be checked against where the travelling object happened to be.
 
    The replacement is the opposite shape: several small, independent
@@ -2302,22 +2302,22 @@ setTimeout(revealAll, 1500);          // safety net — nothing may remain invis
 
    Still one shared WebGLRenderer/Scene/camera (a context per rig would
    multiply GPU cost for a handful of small meshes with nothing to show
-   for it) — but the shared canvas hosts independent groups, not one
+   for it) - but the shared canvas hosts independent groups, not one
    travelling composition.
 
-   Two rigs (a third, "hero" — hanger + pear + cloth swatches parked
-   behind the try-on phone — was removed after several rounds of visual
+   Two rigs (a third, "hero" - hanger + pear + cloth swatches parked
+   behind the try-on phone - was removed after several rounds of visual
    tuning; the section now shows the phone card with no 3D backdrop):
-     · playground   — a smaller cloth pair, parked in whatever margin
+     · playground   - a smaller cloth pair, parked in whatever margin
                        is actually free beside the widget card.
-     · value        — a single pear + contact shadow, parked in the
+     · value        - a single pear + contact shadow, parked in the
                        whitespace above the leftmost pillar card (the
                        gap that opens above the sub-headline once it
                        bottom-aligns against the taller section title).
 
    Each rig's anchor position and its own opacity ceiling are BOTH
    derived from measuring real layout (the DOM rects of the elements
-   it sits beside), never from a hand-picked breakpoint — a rig fades
+   it sits beside), never from a hand-picked breakpoint - a rig fades
    toward zero on its own if the margin it depends on has narrowed
    away, which is what keeps this from ever needing per-breakpoint
    special-casing or a manual RTL mirror: screen-space rects are
@@ -2338,7 +2338,7 @@ try {
 
     const lowPower = (navigator.hardwareConcurrency || 8) <= 4;
 
-    /* preserveDrawingBuffer:true — without it, three rigs that fade
+    /* preserveDrawingBuffer:true - without it, three rigs that fade
        independently via IntersectionObserver end up with long stretches
        where the loop redraws the SAME frame content (nothing on screen
        has changed: no chapter travel anymore, no per-frame DOM style
@@ -2360,7 +2360,7 @@ try {
     camera.position.set(0, 0, 9);
 
     /* RoomEnvironment gives real specular reflections with no HDR file to
-       fetch — which matters here, because the site CSP opens img-src to
+       fetch - which matters here, because the site CSP opens img-src to
        'self' only and an .hdr would need a new origin. */
     const pmrem = new THREE.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
@@ -2380,7 +2380,7 @@ try {
     const clothTime = { value: 0 };
 
     /* ═══════════════ GEOMETRY FACTORIES ═══════════════════════════
-       Pure builders — no scroll/chapter knowledge, no position beyond
+       Pure builders - no scroll/chapter knowledge, no position beyond
        a sane local origin. Each rig places its own instances afterward.
        ═══════════════════════════════════════════════════════════════ */
 
@@ -2392,17 +2392,17 @@ try {
         sheen: 1, sheenRoughness: 0.42, sheenColor: new THREE.Color(0xffffff),
         clearcoat: 0.16, clearcoatRoughness: 0.5, side: THREE.DoubleSide,
         transparent: true, opacity: 1,
-        /* depthWrite:false — these panes routinely sit close together
+        /* depthWrite:false - these panes routinely sit close together
            (a green anchor plus a white satellite, a few cloths in the
            same rig): with depth WRITES on, a translucent plane still
            fully occupies the depth buffer, so whatever's a hair behind
-           it gets hard-clipped instead of soft-blended — the exact
+           it gets hard-clipped instead of soft-blended - the exact
            "clips awkwardly" artifact. depthTest stays on, so they still
            sort correctly against the opaque hanger/pear/shadow. */
         depthWrite: false, depthTest: true,
       });
       /* Displace in the vertex stage and rebuild the normal from the
-         displaced surface — keeps the PBR lighting and the environment
+         displaced surface - keeps the PBR lighting and the environment
          reflection, which is the entire reason the silk reads as silk. */
       const amp = opt.amp ?? 1, phase = opt.phase ?? 0;
       mat.onBeforeCompile = (sh) => {
@@ -2488,7 +2488,7 @@ try {
     /* ═══════════════ WORLD ⇄ SCREEN PROJECTION ══════════════════════
        Anchors are chosen in DOM pixels (the actual whitespace beside a
        real element) and converted to a world position at a fixed depth
-       — the inverse of the usual project(). Vertical FOV is what the
+       - the inverse of the usual project(). Vertical FOV is what the
        camera stores, so the visible height at a given depth is what
        both dimensions are derived from. */
     function screenToWorld(px, py, z) {
@@ -2519,8 +2519,8 @@ try {
         anchorPx: { x: innerWidth / 2, y: innerHeight / 2 },
         depthZ: -2.6, restScale: 0.7,
         cur: { x: 0, y: 0, z: -2.6 },
-        marginFactor: 1,          // 0..1 — how much real whitespace is there right now
-        sectionRatio: 0,          // 0..1 — IntersectionObserver's isIntersecting, as a target
+        marginFactor: 1,          // 0..1 - how much real whitespace is there right now
+        sectionRatio: 0,          // 0..1 - IntersectionObserver's isIntersecting, as a target
         opacity: 0,               // current, damped each frame
         seed: Math.random() * 10,
       };
@@ -2560,7 +2560,7 @@ try {
 
     /* ── VALUE RIG · a single pear parked above the leftmost pillar ──
        Sits in the gap that opens above .pa-lede once the section head's
-       two columns bottom-align (see anchorValue below) — directly over
+       two columns bottom-align (see anchorValue below) - directly over
        the third pillar card ("operational efficiency" in Hebrew), on
        the opposite side of the row from the section title. A contact
        shadow rides underneath it: opacity and scale breathe against the
@@ -2569,9 +2569,9 @@ try {
 
        buildShadow()'s default tilt (rotation.x = -90°) lays the disc
        flat, which reads as a contact shadow only to a camera looking
-       down at it. This scene's camera never does — it stays level at
+       down at it. This scene's camera never does - it stays level at
        z:9 for every rig and reframes by moving the OBJECT in x/y, never
-       by aiming down — so a flat disc here is viewed edge-on and is
+       by aiming down - so a flat disc here is viewed edge-on and is
        functionally invisible. Facing it at the camera instead (and
        counter-rotating it against the rig's own Y-spin every frame, in
        the render loop below) keeps it a soft, static ellipse under the
@@ -2596,17 +2596,17 @@ try {
     /* ═══════════════ ANCHORING · measured, not authored ═════════════
        Each rig picks its own screen point and its own margin factor
        from the current layout. Run on load, on resize, on scroll
-       (rAF-throttled — these read layout, so they are kept off the
+       (rAF-throttled - these read layout, so they are kept off the
        render loop), and after a language switch re-flows every line. */
 
     /* The card sits on a max-width, centered (via margin-inline:auto)
-       inside its own grid track — so the free margin beside it is
+       inside its own grid track - so the free margin beside it is
        (trackWidth - cardWidth) / 2. The track's own boundary is derived
        from the copy column's rect plus the grid's own computed gap, not
-       guessed — but WHICH side of the copy column the card's track
+       guessed - but WHICH side of the copy column the card's track
        falls on is read from the actual rects, not assumed from DOM
        order. .pa-play__card is the first grid child, which sits at the
-       grid's inline-start — the physical LEFT in English, the physical
+       grid's inline-start - the physical LEFT in English, the physical
        RIGHT under dir="rtl". Assuming "first child ⇒ left" (an easy
        mistake reaching for this) makes the derived track run backwards
        on the Hebrew page: trackRight ends up left of trackLeft, the
@@ -2617,7 +2617,7 @@ try {
        Below the 2-column breakpoint the copy column sits UNDER the card
        instead of beside it, which this notices on its own: the derived
        track width collapses toward the card's own width, margin goes to
-       ~0, and marginFactor fades the rig out — no breakpoint number
+       ~0, and marginFactor fades the rig out - no breakpoint number
        duplicated here from the stylesheet. */
     function anchorPlayground() {
       const grid = document.querySelector('#playground .pa-play');
@@ -2649,10 +2649,10 @@ try {
     /* .pa-head--major bottom-aligns its two columns (align-items: end),
        so the row's top is set by the taller title column and the
        shorter sub-headline (.pa-lede) sits flush with the bottom,
-       leaving open space above it — exactly the whitespace the brief
+       leaving open space above it - exactly the whitespace the brief
        asks for, above the leftmost pillar card and opposite the title
        on the other side of the row. Nothing here is hand-picked: the x
-       comes from the card's own rect (third pillar in DOM order — the
+       comes from the card's own rect (third pillar in DOM order - the
        "operational efficiency" card, always the visually leftmost one
        once the section flows for the active language/direction) and
        the margin that gates opacity is the literal gap measured above
@@ -2731,7 +2731,7 @@ try {
         /* x/y track the DOM anchor with NO damping: anchorPx is already
            re-measured every scroll frame (scheduleAnchor, rAF-throttled),
            so a damped chase here just adds a second, slower lag on top of
-           that — the exact mismatch that reads as the rig "leaking"
+           that - the exact mismatch that reads as the rig "leaking"
            outside its card during a fast scroll/flick, since the anchor
            snaps to the new layout position instantly while the damped
            mesh keeps catching up over several hundred ms. Depth (z) still
@@ -2743,7 +2743,7 @@ try {
         rig.cur.y = target.y;
         rig.cur.z = damp(rig.cur.z, rig.depthZ, 2.4, dt);
 
-        // gentle idle float — a sine bob plus a slow spin, per rig seed
+        // gentle idle float - a sine bob plus a slow spin, per rig seed
         // so three rigs never breathe in lockstep
         const bob = Math.sin(t * 0.55 + rig.seed) * 0.09;
         rig.group.position.set(rig.cur.x, rig.cur.y + bob, rig.cur.z);
@@ -2757,8 +2757,8 @@ try {
           const u = rig.group.userData;
           u.shadow.rotation.y = -rig.group.rotation.y;
 
-          // and breathe it opposite the group's own bob — fainter and
-          // smaller as the pear rises, denser as it settles — the depth
+          // and breathe it opposite the group's own bob - fainter and
+          // smaller as the pear rises, denser as it settles - the depth
           // cue that sells "floating", not "pinned flat".
           const s = 1 - bob * 0.5;
           u.shadow.scale.set(s, s * 0.4, s);
@@ -2766,12 +2766,12 @@ try {
         }
       }
 
-      if (!anyVisible) return;   // nothing to draw — skip the render call
+      if (!anyVisible) return;   // nothing to draw - skip the render call
       renderer.render(scene, camera);
     }
 
     /* A resize that crosses back below 1024px (a real window resize, not
-       just devtools jitter) stops the loop outright — CSS has already
+       just devtools jitter) stops the loop outright - CSS has already
        hidden the div, and there is no reason to keep animating three
        rigs nobody can see. Rebuilding if the window widens again is out
        of scope here, same as the original module: this only ever runs
@@ -2795,7 +2795,7 @@ try {
      The always-on <script> embed that used to sit here has been removed.
      pear-widget.js boots itself the instant it lands and injects its own
      black "מדוד וירטואלית" button (.pear-widget-btn, background #000)
-     next to every Add-to-Cart it finds — that is exactly the button this
+     next to every Add-to-Cart it finds - that is exactly the button this
      page no longer wants.
 
      The script is still fetched, but only when a visitor clicks
@@ -2830,11 +2830,11 @@ try {
      shows the used state immediately and survives a reload.
 
      The script injection below is still performed on click (per spec),
-     but its UI is suppressed — see suppressWidgetButtons().
+     but its UI is suppressed - see suppressWidgetButtons().
      ════════════════════════════════════════════════════════════════ -->
 <script>
   /* Single source of truth for the demo garment's dual-sided assets.
-     Plain top-level const in a classic (non-module) script — later inline
+     Plain top-level const in a classic (non-module) script - later inline
      <script> tags on this page share the same global lexical scope, so
      both openDirectFittingRoom() below and initAngleToggle() (bottom of
      body) read this one object instead of each re-deriving image paths. */
@@ -2859,11 +2859,11 @@ try {
   const t = (key) => (window.PearI18n ? window.PearI18n.t(key) : key);
 
   /* This button has three labels (idle / loading / already-used), so it
-     cannot carry a plain data-i18n attribute — the sweep would clobber
+     cannot carry a plain data-i18n attribute - the sweep would clobber
      whichever state it is in. renderState() is the one place that knows
      which label is correct, and it is re-run on every language change.
      NOTE: the idle label is read from the dictionary, NOT captured from
-     btn.textContent at boot as it used to be — a captured string would
+     btn.textContent at boot as it used to be - a captured string would
      freeze the language that happened to be active at load and reappear
      later, in the wrong language, when the widget script fails. */
   let used = false;
@@ -2897,7 +2897,7 @@ try {
      black .pear-widget-btn ("מדוד וירטואלית") somewhere. Two different code paths
      can produce it, so this page needs two defences:
 
-       1. When cart buttons exist, injectAfterButton() decorates each one — but it
+       1. When cart buttons exist, injectAfterButton() decorates each one - but it
           early-returns on data-pear-injected="true", so stamp them first. Nothing
           on this page matches today (the stand-in "הוסף לסל" button was removed),
           but this keeps the card clean if one is ever added back.
@@ -2905,7 +2905,7 @@ try {
           injects the button straight after the hero <h1> instead. Stamping can't
           stop that, so a MutationObserver installed BEFORE the script is appended
           strips .pear-widget-btn the moment it appears. Observer callbacks run as
-          microtasks, so the node never survives to a paint — no visible flash.
+          microtasks, so the node never survives to a paint - no visible flash.
 
      These don't fight the widget's own observer: it guards the fallback with an
      internal _fallbackDone flag, so nothing is re-injected after the first strip. */
@@ -3014,7 +3014,7 @@ try {
 <!-- ════════════════════════════════════════════════════════════════
      FRONT/BACK ANGLE TOGGLE · product shot preview
      Independent of pearShirtGarment's use in the fitting-room iframe
-     above — this only swaps which of the two pre-loaded
+     above - this only swaps which of the two pre-loaded
      [data-pa-angle-img] elements is opacity:1 inside
      .pa-flip__face--front. Both <img>s are already in the DOM and
      decoded, so the switch is instant with no flicker and no path

@@ -1,5 +1,5 @@
 {
-  // Live Server cannot run api/get-docs.js — use `npm run dev` (vercel dev) for
+  // Live Server cannot run api/get-docs.js - use `npm run dev` (vercel dev) for
   // anything touching the docs gate. These settings only make Live Server safe
   // for pure CSS/markup work.
   //

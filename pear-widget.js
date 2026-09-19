@@ -1,5 +1,5 @@
 /* ============================================================================
-   PEAR Widget — embeddable virtual try-on button for any store
+   PEAR Widget - embeddable virtual try-on button for any store
    ----------------------------------------------------------------------------
    One-line embed:
      <script src="https://pear-web-demo.vercel.app/widget/pear-widget.js"
@@ -27,7 +27,7 @@
 (function (w, d) {
   "use strict";
 
-  /* Re-embed guard — a page that includes the script twice gets one widget. */
+  /* Re-embed guard - a page that includes the script twice gets one widget. */
   if (w.__pearWidgetLoaded) return;
   w.__pearWidgetLoaded = true;
 
@@ -56,8 +56,8 @@
   var REQUIRE_BOTH_VIEWS = _reqBoth !== null && _reqBoth !== "false";
 
   /* Main-platform gate: the single-measurement lock applies ONLY when the
-     top-level browser tab is one of our own sites. Everywhere else —
-     pear-web-demo.vercel.app, any real merchant storefront — stays unlimited.
+     top-level browser tab is one of our own sites. Everywhere else -
+     pear-web-demo.vercel.app, any real merchant storefront - stays unlimited.
 
      This is a LIST, not one string, for two reasons that were both silent
      bugs when it was a single equality check against pear-platform.vercel.app:
@@ -82,7 +82,7 @@
       if (w.top && w.top.location && w.top.location.hostname) {
         return w.top.location.hostname;
       }
-    } catch (_) { /* cross-origin parent frame — location is unreadable */ }
+    } catch (_) { /* cross-origin parent frame - location is unreadable */ }
     try {
       if (d.referrer) return new URL(d.referrer).hostname;
     } catch (_) {}
@@ -148,7 +148,7 @@
     return (el && el.getAttribute && el.getAttribute(name)) || "";
   }
 
-  /* Normalise for comparison — CDNs vary query params, so match on the path only. */
+  /* Normalise for comparison - CDNs vary query params, so match on the path only. */
   function samePhoto(a, b) {
     return (a || "").split("?")[0] === (b || "").split("?")[0];
   }
@@ -158,7 +158,7 @@
   }
 
   /* Fall back to the next distinct product-gallery image as an approximate rear
-     reference (best-effort — gallery order is a storefront convention, not a rule). */
+     reference (best-effort - gallery order is a storefront convention, not a rule). */
   function findGalleryBack(primaryUrl) {
     var sel = d.querySelectorAll(PRODUCT_IMG_SELECTORS);
     for (var i = 0; i < sel.length; i++) {
@@ -172,7 +172,7 @@
     return "";
   }
 
-  /* ── STEP 1 — scan the page for garment images ──────────────────────────── */
+  /* ── STEP 1 - scan the page for garment images ──────────────────────────── */
   function findProductImages() {
     var found = [];
     var seen = [];
@@ -184,21 +184,21 @@
       found.push(img);
     }
 
-    /* Priority 1 — the og:image, when a visible <img> carries the same URL. */
+    /* Priority 1 - the og:image, when a visible <img> carries the same URL. */
     var og = d.querySelector('meta[property="og:image"]');
     var ogUrl = og && og.content ? og.content : "";
     if (ogUrl) {
       var imgs = d.querySelectorAll("img");
       for (var i = 0; i < imgs.length; i++) {
         var src = imgs[i].currentSrc || imgs[i].src || "";
-        /* match on the path part — CDNs often vary query params / protocol */
+        /* match on the path part - CDNs often vary query params / protocol */
         if (src && (src === ogUrl || src.split("?")[0] === ogUrl.split("?")[0])) {
           push(imgs[i]);
         }
       }
     }
 
-    /* Priority 2 — well-known product-image selectors. */
+    /* Priority 2 - well-known product-image selectors. */
     if (!found.length) {
       var sel = d.querySelectorAll(PRODUCT_IMG_SELECTORS);
       for (var j = 0; j < sel.length; j++) {
@@ -209,7 +209,7 @@
       }
     }
 
-    /* Priority 3 — any big image that doesn't look like chrome/logo. */
+    /* Priority 3 - any big image that doesn't look like chrome/logo. */
     if (!found.length) {
       var all = d.querySelectorAll("img");
       for (var k = 0; k < all.length; k++) {
@@ -284,7 +284,7 @@
      this visit. sessionStorage (not a plain in-memory var) so the lock
      survives a page reload within the same tab but clears on a fresh visit.
      A page can inject more than one button (multiple product images), so
-     every tracked button is disabled together — no instance can be used to
+     every tracked button is disabled together - no instance can be used to
      route around another's lock. */
   var MEASURE_FLAG_KEY = "pearWidgetHasMeasured";
   var hasMeasured = false;
@@ -313,7 +313,7 @@
     for (var i = 0; i < trackedButtons.length; i++) setButtonDisabled(trackedButtons[i], true);
   }
 
-  /* ── STEP 3 — fullscreen modal with the fitting-room iframe ─────────────── */
+  /* ── STEP 3 - fullscreen modal with the fitting-room iframe ─────────────── */
   var activeOverlay = null;
   var escHandler = null;
 
@@ -373,7 +373,7 @@
     activeOverlay = overlay;
   }
 
-  /* ── STEP 2 — inject a try-on button onto each product image ────────────── */
+  /* ── STEP 2 - inject a try-on button onto each product image ────────────── */
   function injectButton(entry, name, category) {
     var img = entry.img;
     var container = img.parentElement || img;
@@ -386,7 +386,7 @@
     var btn = d.createElement("button");
     btn.className = "pear-widget-btn";
     btn.type = "button";
-    /* Text only — the dress emoji that led this label was removed in the
+    /* Text only - the dress emoji that led this label was removed in the
        site-wide emoji sweep. Note this button renders on MERCHANT
        storefronts, so the change reaches every shop already embedding
        the widget the next time they load this file. */
@@ -396,7 +396,7 @@
       e.stopPropagation();
       /* Logic safeguard: block re-entry even if a disabled button somehow
          still receives a click (programmatic dispatch, stale reference,
-         a second widget instance, etc.) — disabled styling alone is UI,
+         a second widget instance, etc.) - disabled styling alone is UI,
          this is the actual gate. */
       if (hasMeasured) return;
       lockMeasurement();
