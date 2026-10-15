@@ -336,8 +336,13 @@ body.pa .pa-gate__card .brand-pear {
 }
 .pa-cursor.is-hover .pa-cursor__ring {
   width: 74px; height: 74px;
-  background: rgba(155,181,58,.22);
+  background: rgba(155,181,58,.28);
   border-color: var(--pa-pear);
+  /* The resting ring's difference blend + invert turned this pear fill
+     lavender/white over the buttons (reported 2026-10-15). On a hover
+     the ring shows the site's own pear green, unblended. */
+  mix-blend-mode: normal;
+  filter: none;
 }
 .pa-cursor.is-hover .pa-cursor__dot { opacity: 0; }
 .pa-cursor.is-badge .pa-cursor__ring {
@@ -1315,14 +1320,6 @@ html[dir="ltr"] .pa-skyline__veil {
 
 .pa-play__meta { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1rem .85rem .5rem; }
 .pa-play__name { font-weight: 600; letter-spacing: -0.02em; font-size: .96rem; }
-.pa-play__sub { font-size: .78rem; color: var(--pa-ink-50); margin-top: .15rem; }
-.pa-sizes { display: flex; gap: .3rem; }
-.pa-sizes b {
-  font-family: var(--pa-mono); font-size: .62rem; font-weight: 500;
-  width: 25px; height: 25px; display: grid; place-items: center;
-  border: 1px solid var(--pa-hair); border-radius: 7px; color: var(--pa-ink-35);
-}
-.pa-sizes b.is-fit { background: var(--pa-pear); border-color: var(--pa-pear); color: var(--pa-onyx); }
 .pa-play__note { font-size: .72rem; color: var(--pa-ink-35); text-align: center; padding: .6rem .85rem .2rem; line-height: 1.5; }
 
 /* Fit-type pill under the product name. Inline flow (not position:absolute
