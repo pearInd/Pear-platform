@@ -160,6 +160,9 @@
          named - the hero film is silent and has no controls at all.
          demoVideo is the one survivor: it labels the <video> itself. */
       'a11y.demoVideo':     'סרטון הדגמה מלא של הוידג\'ט PEAR AI Virtual Try-On',
+      'a11y.vtonMute':      'השתקת הקול',
+      'a11y.vtonUnmute':    'ביטול השתקה',
+      'a11y.vtonVolume':    'עוצמת קול',
       'a11y.directMeasure': 'מדידה וירטואלית חד-פעמית, ללא שלב הרשמה, פעם אחת בביקור',
       'a11y.fittingRoom':   'PEAR, מדידה וירטואלית חד-פעמית',
       'a11y.closeModal':    'סגירה',
@@ -400,6 +403,9 @@
          named - the hero film is silent and has no controls at all.
          demoVideo is the one survivor: it labels the <video> itself. */
       'a11y.demoVideo':     'PEAR AI Virtual Try-On Widget, full demo video',
+      'a11y.vtonMute':      'Mute sound',
+      'a11y.vtonUnmute':    'Unmute sound',
+      'a11y.vtonVolume':    'Volume',
       'a11y.directMeasure': 'One-time virtual try-on, no signup step, once per visit',
       'a11y.fittingRoom':   'PEAR, one-time virtual try-on',
       'a11y.closeModal':    'Close',

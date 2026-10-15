@@ -815,15 +815,31 @@
            visitor to scroll in order to play a film that now plays on
            its own. -->
 
-      <!-- The liquid-glass mute/volume widget (#demoSound and the seven
-           ids inside it) stood here and is REMOVED, along with
-           wireSoundControl() at block 7b, its whole .pa-glass-sound /
-           .pa-glass-slider ruleset, and the a11y.vtonMute / vtonUnmute /
-           vtonVolume dictionary keys. The clip is a silent background
-           film: autoplay + muted + loop, never unmuted by anything, so
-           there is no audio for a control to control. .pa-glass and
-           .pa-glass-knob stay in the stylesheet - the language switch
-           is their other caller. -->
+      <!-- Liquid-glass mute/volume widget, bottom corner. Shared
+           .pa-glass-sound system (see pear-atelier.css and block 10's
+           makeElasticDrag). demoMuteBtn's aria-label alternates with
+           mute state, so it carries no data-i18n-aria-label; the
+           slider's own label is static, so it keeps one. -->
+      <div id="demoSound" class="pa-glass-sound">
+        <button id="demoMuteBtn" type="button" class="pa-glass-btn pa-glass"
+                aria-label="השתקת הקול" data-pa-hover>
+          <svg id="demoSoundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H3v6h3l5 4z"/>
+            <path id="demoSoundWave1" d="M15.2 8.8a5 5 0 0 1 0 6.4"/>
+            <path id="demoSoundWave2" d="M18.3 5.7a9.5 9.5 0 0 1 0 12.6"/>
+            <path id="demoSoundMuteX" d="m22.5 9-5.5 5.5M17 9l5.5 5.5"/>
+          </svg>
+        </button>
+        <div id="demoVolumeTrack" class="pa-glass-slider pa-glass" role="slider" tabindex="0"
+             aria-label="עוצמת קול" data-i18n-aria-label="a11y.vtonVolume"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
+          <div class="pa-glass-slider__fill" id="demoVolumeFill"></div>
+          <div class="pa-glass-slider__thumb pa-glass-knob" id="demoVolumeThumb">
+            <span class="pa-glass-knob__shimmer"></span>
+          </div>
+        </div>
+      </div>
 
       <!-- The three-pillar proof row (.pa-proof / #skyProof) stood here
            and has been removed. Its three claims are not lost: #value
@@ -1839,14 +1855,9 @@ document.querySelectorAll('[data-pa-count]').forEach((el) => {
   io.observe(el);
 });
 
-/* wireSoundControl() - the mute-button + volume-slider binder - stood
-   here and is REMOVED with the widget it drove. The hero clip is a
-   silent autoplaying background film; there is no audio on the page for
-   a control to control, so there is no sound control. */
-
 /* ── Liquid-glass elastic drag ──────────────────────────────────────
-   One drag engine, today the language switch's alone (the volume
-   sliders it also served are gone): a plain 0..1
+   One drag engine, shared by the language switch and the hero's
+   volume slider: a plain 0..1
    drag surface, measured against trackEl's own box, that reports how
    far PAST either edge the raw pointer position has gone - negative
    before the start, positive beyond the end - so a caller can turn
@@ -1897,12 +1908,116 @@ function makeElasticDrag(surfaceEl, trackEl, { onDrag, onRelease, onTap } = {}) 
   });
 }
 
+function wireSoundControl(video, ids) {
+  const btn = document.getElementById(ids.btnId);
+  const track = document.getElementById(ids.sliderId);
+  const fill = document.getElementById(ids.fillId);
+  const thumb = document.getElementById(ids.thumbId);
+  const wave1 = document.getElementById(ids.wave1Id);
+  const wave2 = document.getElementById(ids.wave2Id);
+  const muteX = ids.muteXId ? document.getElementById(ids.muteXId) : null;
+  if (!video || !btn || !track || !fill || !thumb || !wave1 || !wave2) return;
+
+  video.volume = 0.8;
+
+  /* Positions the knob (left, in px) and fill (width, in px) for a
+     given 0..1 level. pad keeps the knob's own radius inside the
+     track's rounded ends instead of poking through them. */
+  const renderVolume = (v) => {
+    const w = track.clientWidth || 92, pad = 9;
+    const x = pad + v * Math.max(0, w - pad * 2);
+    fill.style.width = `${Math.max(0, x - pad)}px`;
+    thumb.style.left = `${x}px`;
+  };
+
+  const sync = () => {
+    const muted = video.muted || video.volume === 0;
+    const shown = muted ? 0 : video.volume;
+    wave1.style.display = muted ? 'none' : '';
+    wave2.style.display = (muted || shown < 0.5) ? 'none' : '';
+    if (muteX) muteX.style.display = muted ? '' : 'none';
+    btn.setAttribute('aria-label', t(muted ? 'a11y.vtonUnmute' : 'a11y.vtonMute'));
+    renderVolume(shown);
+    track.setAttribute('aria-valuenow', String(Math.round(shown * 100)));
+  };
+  window.PearI18n?.onChange(sync);
+  addEventListener('resize', sync);
+
+  const apply = (v) => {
+    video.volume = v;
+    video.muted = v === 0;   // dragging up from 0 unmutes; dragging to 0 mutes
+    sync();
+  };
+
+  btn.addEventListener('click', () => {
+    video.muted = !video.muted;
+    // coming back from 0 (via the slider, not the button) would
+    // otherwise unmute into silence
+    if (!video.muted && video.volume === 0) video.volume = 0.8;
+    sync();
+  });
+
+  /* The knob's own edge-stretch: a native <input type=range> can't be
+     dragged past its min/max, so this custom slider is what makes the
+     rubber-band overshoot possible at all. transform:scaleX from the
+     anchored edge keeps that edge fixed while the far side stretches
+     toward the pointer; a one-shot shimmer fires the instant a drag
+     first reaches a limit (not every frame it stays there). */
+  let atLimit = null;
+  const triggerShimmer = () => {
+    const shimmer = thumb.querySelector('.pa-glass-knob__shimmer');
+    if (!shimmer) return;
+    shimmer.classList.remove('is-active');
+    void shimmer.offsetWidth; // restart the animation
+    shimmer.classList.add('is-active');
+  };
+  const setElastic = (over) => {
+    const stretch = 1 + Math.min(0.32, Math.abs(over) * 1.7);
+    if (stretch < 1.015) {
+      thumb.classList.remove('is-elastic');
+      thumb.style.transform = '';
+      atLimit = null;
+      return;
+    }
+    thumb.classList.add('is-elastic');
+    thumb.style.transformOrigin = over < 0 ? 'right center' : 'left center';
+    thumb.style.transform = `scaleX(${stretch})`;
+    const edge = over < 0 ? 'start' : 'end';
+    if (atLimit !== edge) { atLimit = edge; triggerShimmer(); }
+  };
+
+  makeElasticDrag(track, track, {
+    onDrag: (fraction, over) => { apply(fraction); setElastic(over); },
+    onTap: apply,
+  });
+
+  // Arrow-key/Home/End support — what this custom slider had to pick
+  // back up itself after replacing a native <input type=range>.
+  track.addEventListener('keydown', (e) => {
+    const cur = video.muted ? 0 : video.volume;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') apply(Math.min(1, cur + 0.05));
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') apply(Math.max(0, cur - 0.05));
+    else if (e.key === 'Home') apply(0);
+    else if (e.key === 'End') apply(1);
+    else return;
+    e.preventDefault();
+  });
+
+  sync();
+}
+
 /* The hero player needs no lazy-attach gate - it is the thing the
    visitor came to see, above the fold, not an asset a phone should be
    spared. It autoplays muted and loops, which is the whole of its
-   behaviour: nothing reads or writes its currentTime any more, and
-   nothing unmutes it - the sound control that used to is gone. */
+   behaviour: nothing reads or writes its currentTime any more, the
+   sound control at its corner (restored 2026-10-15) unmutes it. */
 const heroFilm = document.getElementById('demoVideoEl');
+
+wireSoundControl(heroFilm, {
+  btnId: 'demoMuteBtn', sliderId: 'demoVolumeTrack',
+  fillId: 'demoVolumeFill', thumbId: 'demoVolumeThumb',
+  wave1Id: 'demoSoundWave1', wave2Id: 'demoSoundWave2', muteXId: 'demoSoundMuteX',
+});
 
 /* An 18s clip looping forever behind the headline is exactly the moving
    content prefers-reduced-motion exists to stop, and the markup's

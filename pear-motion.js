@@ -68,7 +68,8 @@
       });
 
       initStageReveal();
-      initCursor();
+      /* initCursor() is not called (2026-10-15, owner's call): the trailing
+         ring lagged behind the pointer. The site uses the native cursor. */
       initMagnetic();
       initTilt();
       initTouch();

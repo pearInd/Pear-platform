@@ -513,14 +513,55 @@ body.pa .pa-nav__tools .pa-btn--sm { padding: .34rem .85rem; font-size: .74rem; 
 .pa-lang button:hover { color: var(--pa-ink); }
 .pa-lang button[aria-pressed="true"] { color: var(--pa-ink); font-weight: 700; }
 
-/* The video sound widgets (.pa-glass-sound, .pa-glass-btn and the whole
-   custom .pa-glass-slider - track, fill, thumb and its hover/touch
-   reveal) stood here and are REMOVED. The hero film is silent and has
-   no controls; nothing else on the site ever used them.
+/* video sound widget — the hero film's mute + volume (#demoSound),
+   anchored to the bottom corner of its video frame. */
+.pa-glass-sound {
+  position: absolute; bottom: 1rem; inset-inline-end: 1rem; z-index: 5;
+  display: flex; align-items: center; gap: .6rem;
+}
+.pa-glass-btn {
+  flex: none; width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--pa-ink); cursor: pointer;
+  transition: transform .3s var(--pa-ease-out);
+}
+.pa-glass-btn:hover { transform: scale(1.08); }
+.pa-glass-btn:active { transform: scale(.94); }
+.pa-glass-btn svg { width: 16px; height: 16px; }
 
-   .pa-glass and .pa-glass-knob above are NOT part of that removal: the
-   language switch is their other caller and still draws its track and
-   sliding thumb from them, shimmer and elastic states included. */
+/* custom slider (not a native <input type=range>): a native range
+   can't be dragged past its own min/max, so it can't produce the
+   rubber-band overshoot the brief asks for. This is a plain glass
+   track + a positioned knob, driven entirely by JS/makeElasticDrag —
+   but role="slider" + the aria-value* attributes + arrow-key support
+   (block 10) keep it as accessible as the input it replaces. */
+.pa-glass-slider {
+  position: relative;
+  width: 0; height: 34px; border-radius: 999px;
+  opacity: 0; pointer-events: none;
+  transition: width .3s var(--pa-ease-out), opacity .25s var(--pa-ease-out);
+  touch-action: none; cursor: pointer;
+}
+.pa-glass-sound:hover .pa-glass-slider,
+.pa-glass-sound:focus-within .pa-glass-slider,
+.pa-glass-slider.is-dragging {
+  width: 92px; opacity: 1; pointer-events: auto;
+}
+.pa-glass-slider__fill {
+  position: absolute; top: 50%; margin-top: -2px; left: 9px;
+  height: 4px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--pa-pear), var(--pa-pear-deep));
+  width: 0;
+}
+.pa-glass-slider__thumb {
+  position: absolute; top: 50%; margin-top: -9px; left: 9px;
+  width: 18px; height: 18px; border-radius: 50%;
+}
+@media (hover: none) {
+  /* touch has no hover to reveal it with, and it needs to stay
+     reachable without a pointer */
+  .pa-glass-slider { width: 64px; opacity: 1; pointer-events: auto; }
+}
 
 /* ──────────────────────── 6 · BUTTONS ───────────────────────────── */
 body.pa .pa-btn {
@@ -1408,8 +1449,8 @@ html[dir="ltr"] .pa-skyline__veil {
    Written as `.pa-close .pa-btn--ghost` it scores (0,2,0) and LOSES,
    which paints these two buttons onyx-on-onyx - invisible. */
 body.pa .pa-close .pa-btn--ghost { border-color: rgba(244,241,234,.28); color: var(--pa-beige); }
-body.pa .pa-close .pa-btn--ghost::before { background: var(--pa-beige); }
-body.pa .pa-close .pa-btn--ghost:hover { color: var(--pa-onyx); border-color: var(--pa-beige); }
+body.pa .pa-close .pa-btn--ghost::before { background: var(--pa-pear); }
+body.pa .pa-close .pa-btn--ghost:hover { color: var(--pa-onyx); border-color: var(--pa-pear); }
 
 /* ─────────────────────────── 14 · FOOTER ────────────────────────── */
 body.pa .pa-foot {
