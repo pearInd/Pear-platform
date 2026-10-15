@@ -899,7 +899,6 @@
             <p class="pa-play__sub" data-i18n="play.productMeta">בז' · מידות S-XXL</p>
             <span class="pa-fit-tag" data-i18n="play.fitTag">גזרה רפויה / אוברסייז</span>
           </div>
-          <div class="pa-sizes" aria-hidden="true"><b>S</b><b class="is-fit">M</b><b>L</b><b>XL</b></div>
         </div>
 
         <!-- Swaps which pre-loaded garment image is opacity:1 inside
@@ -2305,11 +2304,11 @@ setTimeout(revealAll, 1500);          // safety net - nothing may remain invisib
    for it) - but the shared canvas hosts independent groups, not one
    travelling composition.
 
-   Two rigs (a third, "hero" - hanger + pear + cloth swatches parked
+   One rig now (a third, "hero" - hanger + pear + cloth swatches parked
    behind the try-on phone - was removed after several rounds of visual
    tuning; the section now shows the phone card with no 3D backdrop):
-     · playground   - a smaller cloth pair, parked in whatever margin
-                       is actually free beside the widget card.
+     (The "playground" cloth pair beside the widget card was removed
+      2026-10-15 at the owner's request.)
      · value        - a single pear + contact shadow, parked in the
                        whitespace above the leftmost pillar card (the
                        gap that opens above the sub-headline once it
@@ -2545,19 +2544,6 @@ try {
       }
     }
 
-    /* ── PLAYGROUND RIG · a swatch parked in whatever margin is free
-       beside the widget card ── */
-    const playRig = makeRig('playground', 'playground', (group, materials) => {
-      const c1 = buildCloth(1.05, 1.45, LINEN, { amp: 1.3, phase: 1.2, roughness: .5 });
-      group.add(c1); materials.push(c1.material);
-
-      const c2 = buildCloth(0.72, 1.0, PEAR, { amp: 1.7, phase: 3.6, roughness: .42 });
-      c2.position.set(0.42, -0.62, 0.45); c2.rotation.set(0.08, -0.3, 0.1);
-      group.add(c2); materials.push(c2.material);
-    });
-    playRig.depthZ = -2.1;
-    playRig.restScale = 0.5;
-
     /* ── VALUE RIG · a single pear parked above the leftmost pillar ──
        Sits in the gap that opens above .pa-lede once the section head's
        two columns bottom-align (see anchorValue below) - directly over
@@ -2599,53 +2585,6 @@ try {
        (rAF-throttled - these read layout, so they are kept off the
        render loop), and after a language switch re-flows every line. */
 
-    /* The card sits on a max-width, centered (via margin-inline:auto)
-       inside its own grid track - so the free margin beside it is
-       (trackWidth - cardWidth) / 2. The track's own boundary is derived
-       from the copy column's rect plus the grid's own computed gap, not
-       guessed - but WHICH side of the copy column the card's track
-       falls on is read from the actual rects, not assumed from DOM
-       order. .pa-play__card is the first grid child, which sits at the
-       grid's inline-start - the physical LEFT in English, the physical
-       RIGHT under dir="rtl". Assuming "first child ⇒ left" (an easy
-       mistake reaching for this) makes the derived track run backwards
-       on the Hebrew page: trackRight ends up left of trackLeft, the
-       subtraction goes negative, Math.max(0, …) floors it at zero, and
-       the rig silently never appears in the one language most of this
-       site's traffic reads it in.
-
-       Below the 2-column breakpoint the copy column sits UNDER the card
-       instead of beside it, which this notices on its own: the derived
-       track width collapses toward the card's own width, margin goes to
-       ~0, and marginFactor fades the rig out - no breakpoint number
-       duplicated here from the stylesheet. */
-    function anchorPlayground() {
-      const grid = document.querySelector('#playground .pa-play');
-      const card = document.querySelector('#playground .pa-play__card');
-      const copy = document.querySelector('#playground .pa-play__copy');
-      if (!grid || !card || !copy) { playRig.marginFactor = 0; return; }
-
-      const gridRect = grid.getBoundingClientRect();
-      const cardRect = card.getBoundingClientRect();
-      const copyRect = copy.getBoundingClientRect();
-      const gap = parseFloat(getComputedStyle(grid).columnGap || '0') || 0;
-
-      const cardOnRight = cardRect.left > copyRect.left;
-      const trackLeft = cardOnRight ? copyRect.right + gap : gridRect.left;
-      const trackRight = cardOnRight ? gridRect.right : copyRect.left - gap;
-      const trackWidth = trackRight - trackLeft;
-      const margin = Math.max(0, (trackWidth - cardRect.width) / 2);
-
-      // which side of the card the free margin actually falls on
-      const side = (cardRect.left - trackLeft) <= (trackRight - cardRect.right) ? -1 : 1;
-      const x = side < 0 ? cardRect.left - margin * 0.55 : cardRect.right + margin * 0.55;
-      const y = cardRect.top + cardRect.height * 0.5;
-
-      playRig.anchorPx = { x, y };
-      // 60px of real margin is comfortable; below that the rig recedes
-      playRig.marginFactor = Math.max(0, Math.min(1, margin / 60));
-    }
-
     /* .pa-head--major bottom-aligns its two columns (align-items: end),
        so the row's top is set by the taller title column and the
        shorter sub-headline (.pa-lede) sits flush with the bottom,
@@ -2679,7 +2618,7 @@ try {
       valueRig.marginFactor = Math.max(0, Math.min(1, margin / 40));
     }
 
-    function anchorAll() { anchorPlayground(); anchorValue(); }
+    function anchorAll() { anchorValue(); }
     anchorAll();
 
     let anchorTick = 0;
